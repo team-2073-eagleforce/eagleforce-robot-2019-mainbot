@@ -1,0 +1,18 @@
+# Build files #
+build/
+out/
+target/
+
+# IDE #
+.idea/
+
+# MAC #
+.DS_Store
+
+# Gradle #
+.gradle/
+gradle-app.setting
+.gradletasknamecache
+
+# Except #
+!gradle-wrapper.jar
