@@ -1,7 +1,11 @@
 package com.team2073.robot;
 
-public class Robot {
-	public static void main(String[] args) {
-//		oops
+import com.team2073.common.robot.AbstractRobotDelegator;
+
+public class Robot extends AbstractRobotDelegator {
+
+	public Robot() {
+		super(new RobotDelegate());
 	}
+
 }
