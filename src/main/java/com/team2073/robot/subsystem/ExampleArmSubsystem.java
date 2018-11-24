@@ -46,7 +46,7 @@ public class ExampleArmSubsystem implements PeriodicRunnable {
 	private MotionProfileControlloop controller = new MotionProfileControlloop(.001, 0,
 			PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, .2 / MAX_ACCELERATION, 1);
 	private TrapezoidalProfileManager profileManager = new TrapezoidalProfileManager(controller, profileConfig,
-			this::positon, holdingPID);
+			this::position, holdingPID);
 
 	private Zeroer zeroer = new Zeroer(armMagnetSensor,  armMaster, converter, "armZeroer");
 
@@ -81,9 +81,8 @@ public class ExampleArmSubsystem implements PeriodicRunnable {
 
 	}
 
-	private double positon(){
-//		TODO: look into getting getSelectedSensorPosition to run at an appropriate rate (new data every 10ms instead of every 100ms).
-		return converter.asPosition(((TalonSRX) armMaster).getSensorCollection().getQuadraturePosition());
+	private double position(){
+		return converter.asPosition(armMaster.getSelectedSensorPosition(0));
 	}
 
 	private static PositionConverter converter = new PositionConverter() {
