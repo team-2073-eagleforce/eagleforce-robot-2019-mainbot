@@ -1,5 +1,6 @@
 plugins {
-    id 'java'
+    id "java"
+    id "jaci.openrio.gradle.GradleRIO" version "2018.03.06"
 }
 
 group 'com.team2073'
@@ -8,9 +9,75 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
+
+def ROBOT_MAIN_CLASS = "com.team2073.robot.Robot"
+def TEAM_NUMBER = 2073
+def DEBUG_MODE = false
+def IP_ADDRESS = "10.20.73.2"
+def ROBOT_CLASS = "com.team2073.robot.Robot"
+
+// Define my targets (RoboRIO) and artifacts (deployable files)
+// This is added by GradleRIO's backing project EmbeddedTools.
+deploy {
+    targets {
+        target("roborio", jaci.openrio.gradle.frc.RoboRIO) {
+            team = TEAM_NUMBER
+            addresses << IP_ADDRESS
+        }
+    }
+    artifacts {
+        artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
+            targets << "roborio"
+
+            jvmArgs << '-Xmx10m'      // Set more JVM Arguments. Optional.
+            debug = DEBUG_MODE        // Enable to enable java debugging on the RoboRIO. Default: false
+            debugPort = 8348            // Set the debugging port. Default: 8348
+/*
+            arguments << 'myCustomArgs' // The command-line arguments to launch your jar with. Optional.
+            robotCommand = './myOtherProgram'       // Set the contents of robotCommand. Optional, usually created depending on above values.
+*/
+            // Other values can be edited through EmbeddedTools.
+            // See https://github.com/JacisNonsense/EmbeddedTools#spec
+        }
+    }
+}
+
+
+// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
+// Also defines JUnit 4.
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'com.team2073', name: 'common-util', version: '0.3.0-SNAPSHOT'
+    compile group: 'com.team2073', name: 'common-wpi-util', version: '0.3.0-SNAPSHOT'
+    compile group: 'com.team2073', name: 'common-guice', version: '0.3.0-SNAPSHOT'
+    compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+    compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.1.0'
+    compile group: 'com.google.inject.extensions', name: 'guice-throwingproviders', version: '4.1.0'
+    compile group: 'com.mycila.guice.extensions', name: 'mycila-guice-jsr250', version: '4.0.rc1'
+    compile group: 'org.mockito', name: 'mockito-core', version: '2.15.0'
+    compile group: 'com.google.inject', name: 'guice', version: '3.0'
+
+    testCompile 'junit:junit:4.12'
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    testCompile group: 'com.team2073', name: 'common-wpi-simulation', version: '0.3.0-SNAPSHOT'
+//    testCompile group: 'com.team2073', name: 'common-wpi-simulation-stubs', version: '0.3.0-SNAPSHOT'
+
+    compile wpilib()
+    compile ctre()
+}
+
+// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
+// in order to make them all available at runtime. Also adding the manifest so WPILib
+// knows where to look for our Robot Class.
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest(ROBOT_CLASS)
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.9'
 }
