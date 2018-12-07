@@ -1,6 +1,11 @@
 package com.team2073.robot;
 
 public abstract class AppConstants {
+	public abstract class Subsystems{
+		public static final double DEFAULT_TIMESTEP = .01;
+		public static final double MINIMUM_TIMESTEP = .005;
+
+	}
 	public abstract class Ports {
 		public static final int EXAMPLE_ARM_SUBSYSTEM_TALON = 0;
 		public static final int EXAMPLE_ARM_SUBSYSTEM_VICTOR = 0;

@@ -3,7 +3,6 @@ package com.team2073.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
@@ -13,6 +12,8 @@ import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.position.zeroer.Zeroer;
 import com.team2073.common.util.TalonUtil;
+import com.team2073.robot.AppConstants.Subsystems;
+import com.team2073.robot.ctx.RobotMapModule.DeviceNames;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import javax.annotation.PostConstruct;
@@ -20,27 +21,28 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 public class ExampleArmSubsystem implements PeriodicRunnable {
-	@Inject
-	@Named("armMaster")
-	private IMotorControllerEnhanced armMaster;
-
-	@Inject
-	@Named("armSlave")
-	private IMotorController armSlave;
-
-	@Inject
-	@Named("armMagnetSensor")
-	private DigitalInput armMagnetSensor;
-
-	private Double setpoint;
-
 	// in degrees per second and degrees per second^2 respectively
 	private static final double MAX_VELOCITY = 90;
 	private static final double PERCENT_FOR_MAX_VELOCITY = .8;
 	private static final double MAX_ACCELERATION = 180;
-	private static final double dt = .01;
-	private static final double ticsPerDegree = 2048/360d;
+	private static final double TIME_STEP = Subsystems.DEFAULT_TIMESTEP;
+	private static final double TICS_PER_DEGREE = 2048 / 360d;
 
+	@Inject
+	@Named(DeviceNames.ARM_MASTER)
+	private IMotorControllerEnhanced armMaster;
+
+	@Inject
+	@Named(DeviceNames.ARM_SLAVE)
+	private IMotorController armSlave;
+
+	@Inject
+	@Named(DeviceNames.ARM_MAGNET_SENSOR)
+	private DigitalInput armMagnetSensor;
+
+	private Double setpoint;
+
+	private PositionConverter converter = new ArmPositionConverter();
 	private PidfControlLoop holdingPID = new PidfControlLoop(.05, 0.0001, 0, 0, 1);
 	private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, .01);
 	private MotionProfileControlloop controller = new MotionProfileControlloop(.001, 0,
@@ -48,7 +50,7 @@ public class ExampleArmSubsystem implements PeriodicRunnable {
 	private TrapezoidalProfileManager profileManager = new TrapezoidalProfileManager(controller, profileConfig,
 			this::position, holdingPID);
 
-	private Zeroer zeroer = new Zeroer(armMagnetSensor,  armMaster, converter, "armZeroer");
+	private Zeroer zeroer = new Zeroer(armMagnetSensor, armMaster, converter, "armZeroer");
 
 	public ExampleArmSubsystem() {
 		RobotContext.getInstance().getPeriodicRunner().register(this);
@@ -56,14 +58,14 @@ public class ExampleArmSubsystem implements PeriodicRunnable {
 	}
 
 	@PostConstruct
-	public void initArmSubsystem(){
+	public void initArmSubsystem() {
 		TalonUtil.resetTalon(armMaster, TalonUtil.ConfigurationType.SENSOR);
 		TalonUtil.resetVictor(armSlave, TalonUtil.ConfigurationType.SLAVE);
 
 		armSlave.follow(armMaster);
 	}
 
-	public void set(double angle){
+	public void set(double angle) {
 		this.setpoint = angle;
 	}
 
@@ -71,7 +73,7 @@ public class ExampleArmSubsystem implements PeriodicRunnable {
 	@Override
 	public void onPeriodic() {
 		zeroer.onPeriodic();
-		if(setpoint == null){
+		if (setpoint == null) {
 			return;
 		}
 		profileManager.setPoint(setpoint);
@@ -81,25 +83,26 @@ public class ExampleArmSubsystem implements PeriodicRunnable {
 
 	}
 
-	private double position(){
+	private double position() {
 		return converter.asPosition(armMaster.getSelectedSensorPosition(0));
 	}
 
-	private static PositionConverter converter = new PositionConverter() {
+	private static class ArmPositionConverter implements PositionConverter {
 		@Override
 		public double asPosition(int tics) {
-			return tics / ticsPerDegree;
+			return tics / TICS_PER_DEGREE;
 		}
 
 		@Override
 		public int asTics(double position) {
-			return (int) (position * ticsPerDegree);
+			return (int) (position * TICS_PER_DEGREE);
 		}
 
 		@Override
 		public String positionalUnit() {
 			return Units.DEGREES;
 		}
-	};
+	}
+
 
 }
