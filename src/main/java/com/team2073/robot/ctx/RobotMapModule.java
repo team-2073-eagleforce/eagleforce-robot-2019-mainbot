@@ -7,6 +7,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.binder.LinkedBindingBuilder;
 import com.google.inject.name.Names;
 import com.team2073.common.mediator.EagleSolenoid;
+import com.team2073.common.periodic.PeriodicRunner;
 import com.team2073.common.speedcontroller.EagleSPX;
 import com.team2073.common.speedcontroller.EagleSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -27,6 +28,9 @@ public class RobotMapModule extends AbstractModule {
 		bindNamed(IMotorControllerEnhanced.class, "rightDrivetrainMotor").toInstance(new EagleSRX(DRIVE_RIGHT_TALON, "rightDrivetrainMotor", .5));
 		bindNamed(IMotorController.class, "slaveRightDrivetrainMotor").toInstance(new EagleSPX(DRIVE_RIGHT_VICTOR, "slaveRightDrivetrainMotor", .5));
 		bind(PigeonIMU.class).toInstance(new PigeonIMU(PIGEON_GYRO));
+
+
+		bind(PeriodicRunner.class).asEagerSingleton();
 	}
 
 	private <T> LinkedBindingBuilder<T> bindNamed(Class<T> clazz, String name) {
