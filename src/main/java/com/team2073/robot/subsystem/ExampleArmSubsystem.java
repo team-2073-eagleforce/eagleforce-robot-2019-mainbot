@@ -9,7 +9,7 @@ import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
-import com.team2073.common.periodic.PeriodicAware;
+import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.position.zeroer.Zeroer;
 import com.team2073.common.util.TalonUtil;
@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class ExampleArmSubsystem implements PeriodicAware {
+public class ExampleArmSubsystem implements PeriodicRunnable {
 	@Inject
 	@Named("armMaster")
 	private IMotorControllerEnhanced armMaster;
@@ -51,7 +51,7 @@ public class ExampleArmSubsystem implements PeriodicAware {
 	private Zeroer zeroer = new Zeroer(armMagnetSensor,  armMaster, converter, "armZeroer");
 
 	public ExampleArmSubsystem() {
-		RobotContext.getInstance().getPeriodicRunner().registerAsync(this, (int)(dt * 1000));
+		RobotContext.getInstance().getPeriodicRunner().register(this);
 
 	}
 
