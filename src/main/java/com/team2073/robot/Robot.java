@@ -7,6 +7,7 @@ import com.mycila.guice.ext.closeable.CloseableModule;
 import com.mycila.guice.ext.jsr250.Jsr250Module;
 import com.team2073.common.periodic.PeriodicRunner;
 import com.team2073.common.robot.AbstractRobotDelegator;
+import com.team2073.robot.ctx.OperatorInterfaceModule;
 import com.team2073.robot.ctx.RobotMapModule;
 
 public class Robot extends AbstractRobotDelegator {
@@ -21,7 +22,7 @@ public class Robot extends AbstractRobotDelegator {
 
     @Override
     public void robotInit() {
-        Injector injector = Guice.createInjector(new RobotMapModule(), new CloseableModule(), new Jsr250Module());
+        Injector injector = Guice.createInjector(new RobotMapModule(),new OperatorInterfaceModule(), new CloseableModule(), new Jsr250Module());
         injector.getInstance(OperatorInterface.class);
         injector.injectMembers(this);
     }

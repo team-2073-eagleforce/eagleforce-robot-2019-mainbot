@@ -11,21 +11,11 @@ import com.team2073.common.speedcontroller.EagleSPX;
 import com.team2073.common.speedcontroller.EagleSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import static com.team2073.robot.AppConstants.Context.RobotMap.*;
 import static com.team2073.robot.AppConstants.Ports.*;
-import static com.team2073.robot.ctx.RobotMapModule.DeviceNames.*;
 
 public class RobotMapModule extends AbstractModule {
-	public abstract class DeviceNames{
-		public static final String ARM_MASTER = "armMaster";
-		public static final String ARM_SLAVE = "armSlave";
-		public static final String ARM_MAGNET_SENSOR = "armMagnetSensor";
 
-		public static final String LEFT_DRIVETRAIN_MOTOR = "leftDrivetrainMotor";
-		public static final String LEFT_DRIVETRAIN_SLAVE = "slaveLeftDrivetrainMotor";
-		public static final String RIGHT_DRIVETRAIN_MOTOR = "rightDrivetrainMotor";
-		public static final String RIGHT_DRIVETRAIN_SLAVE = "slaveRightDrivetrainMotor";
-
-	}
 
 	@Override
 	protected void configure() {
