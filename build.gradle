@@ -15,7 +15,7 @@ repositories {
 }
 
 def COMMON_VERSION = '0.4.0-SNAPSHOT'
-def ROBOT_MAIN_CLASS = "com.team2073.robot.Robot"
+def ROBOT_MAIN_CLASS = "com.team2073.robot.Main"
 def TEAM_NUMBER = 2073
 def DEBUG_MODE = false
 def IP_ADDRESS = "10.20.73.2"
