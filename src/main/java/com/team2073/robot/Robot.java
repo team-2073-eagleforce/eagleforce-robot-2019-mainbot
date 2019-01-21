@@ -16,8 +16,7 @@ public class Robot extends AbstractRobotDelegator {
     private PeriodicRunner periodicRunner;
 
 	public Robot() {
-		super(new RobotDelegate());
-//		setPeriod(AppConstants.Subsystems.DEFAULT_TIMESTEP);
+		super(new RobotDelegate(), AppConstants.Subsystems.DEFAULT_TIMESTEP);
 	}
 
     @Override

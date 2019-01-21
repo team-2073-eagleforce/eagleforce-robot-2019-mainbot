@@ -25,10 +25,10 @@ public class RobotMapModule extends AbstractModule {
 		bindNamed(DigitalInput.class,             ARM_MAGNET_SENSOR).toInstance(new DigitalInput(EXAMPLE_ARM_HALL_EFFECT_SENSOR));
 
 		//Drivetrain
-		bindNamed(IMotorControllerEnhanced.class, LEFT_DRIVETRAIN_MOTOR).toInstance(new EagleSRX(DRIVE_LEFT_TALON, "leftDrivetrainMotor", .5));
-		bindNamed(IMotorController.class,         LEFT_DRIVETRAIN_SLAVE).toInstance(new EagleSPX(DRIVE_LEFT_VICTOR, "slaveLeftDrivetrainMotor", .5));
-		bindNamed(IMotorControllerEnhanced.class, RIGHT_DRIVETRAIN_MOTOR).toInstance(new EagleSRX(DRIVE_RIGHT_TALON, "rightDrivetrainMotor", .5));
-		bindNamed(IMotorController.class,         RIGHT_DRIVETRAIN_SLAVE).toInstance(new EagleSPX(DRIVE_RIGHT_VICTOR, "slaveRightDrivetrainMotor", .5));
+		bindNamed(IMotorControllerEnhanced.class, LEFT_DRIVETRAIN_MOTOR_NAME).toInstance(new EagleSRX(DRIVE_LEFT_TALON_PORT, "leftDrivetrainMotor", .5));
+		bindNamed(IMotorController.class, LEFT_DRIVETRAIN_SLAVE_NAME).toInstance(new EagleSPX(LEFT_DRIVE_VICTOR_PORT, "slaveLeftDrivetrainMotor", .5));
+		bindNamed(IMotorControllerEnhanced.class, RIGHT_DRIVETRAIN_MOTOR_NAME).toInstance(new EagleSRX(DRIVE_RIGHT_TALON_PORT, "rightDrivetrainMotor", .5));
+		bindNamed(IMotorController.class, RIGHT_DRIVETRAIN_SLAVE_NAME).toInstance(new EagleSPX(RIGHT_DRIVE_VICTOR_PORT, "slaveRightDrivetrainMotor", .5));
 		bind(PigeonIMU.class).toInstance(new PigeonIMU(PIGEON_GYRO));
 
 
