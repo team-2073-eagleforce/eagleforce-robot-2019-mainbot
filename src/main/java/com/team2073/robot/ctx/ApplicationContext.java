@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.team2073.robot.mediator.Mediator;
+import com.team2073.common.mediator.Mediator;
 import com.team2073.robot.subsystem.DrivetrainSubsystem;
 import com.team2073.robot.subsystem.ElevatorSubsystem;
 import com.team2073.robot.subsystem.ExampleArmSubsystem;
@@ -12,6 +12,7 @@ import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
 import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
 import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
 import com.team2073.robot.subsystem.climber.WheelieBarSubsystem;
+import com.team2073.robot.subsystem.driveprofile.DriveProfileManager;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 import edu.wpi.first.wpilibj.*;
@@ -25,6 +26,9 @@ public class ApplicationContext {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 
+	/*UTIL */
+	private DriveProfileManager driveProfileManager;
+//	====================================================================================================================
 	private Mediator mediator = new Mediator();
 	/* TALONS */
 	private IMotorControllerEnhanced leftDriveMaster;
