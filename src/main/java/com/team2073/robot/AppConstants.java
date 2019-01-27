@@ -2,14 +2,14 @@ package com.team2073.robot;
 
 public abstract class AppConstants {
 
-	public abstract class Context{
-		public abstract class OperatorInterface{
+	public abstract class Context {
+		public abstract class OperatorInterface {
 			public static final String CONTROLLER = "controller";
 			public static final String DRIVE_WHEEL = "wheel";
 			public static final String DRIVE_STICK = "joystick";
 		}
 
-		public abstract class RobotMap{
+		public abstract class RobotMap {
 			public static final String ARM_MASTER = "armMaster";
 			public static final String ARM_SLAVE = "armSlave";
 			public static final String ARM_MAGNET_SENSOR = "armMagnetSensor";
@@ -35,19 +35,19 @@ public abstract class AppConstants {
 			public static final String RIGHT_SHOOTER_NAME = "rightShooterMotor";
 
 
-
-
 		}
 	}
-	public abstract class Subsystems{
+
+	public abstract class Subsystems {
 		public static final double DEFAULT_TIMESTEP = .01;
 		public static final double MINIMUM_TIMESTEP = .005;
 
 	}
 
-	public abstract class Defaults{
+	public abstract class Defaults {
 		public static final double SAFE_PERCENT = .25;
 	}
+
 	public abstract class Ports {
 		public static final int PIGEON_GYRO = 0;
 		public static final int PDB = 0;
@@ -85,8 +85,6 @@ public abstract class AppConstants {
 		public static final int HATCH_GRAB_SOLENOID_PORT = 3;
 		public static final int CLIMBER_RELEASE_SOLENIOD_PORT = 4;
 		public static final int ROBOT_GRAB_SOLENOID_PORT = 5;
-
-
 
 
 	}
