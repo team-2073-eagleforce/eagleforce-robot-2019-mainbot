@@ -6,7 +6,7 @@ public class DriveProfileManager {
 
     private ArrayList<DriveProfile> driveProfiles = new ArrayList<>();
 
-    void registerProfile(DriveProfile driveProfile) {
+   public void registerProfile(DriveProfile driveProfile) {
         System.out.println("Registering profile " + driveProfile.toString());
         driveProfiles.add(driveProfile);
     }

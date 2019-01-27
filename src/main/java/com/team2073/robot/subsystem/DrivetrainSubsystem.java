@@ -8,8 +8,6 @@ import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.subsystem.driveprofile.*;
 import edu.wpi.first.wpilibj.Joystick;
-import com.team2073.robot.subsystem.driveprofile.*;
-import edu.wpi.first.wpilibj.Joystick;
 
 public class DrivetrainSubsystem implements PeriodicRunnable {
 	private final RobotContext robotCtx = RobotContext.getInstance();
@@ -23,9 +21,9 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 	private IMotorController rightSlave2 = appCtx.getRightDriveSlave2();
     private Joystick controller = ApplicationContext.getInstance().getController();
 
-    CheesyDriveProfile cheesyDriveProfile = new CheesyDriveProfile();
-    TankDriveProfile tankDriveProfile = new TankDriveProfile();
-    EagleDriveProfile eagleDriveProfile = new EagleDriveProfile();
+    private CheesyDriveProfile cheesyDriveProfile = new CheesyDriveProfile();
+    private TankDriveProfile tankDriveProfile = new TankDriveProfile();
+    private EagleDriveProfile eagleDriveProfile = new EagleDriveProfile();
     private DriveProfile currentDriveProfile = tankDriveProfile;
 
 	public DrivetrainSubsystem() {
@@ -38,6 +36,10 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 		TalonUtil.resetVictor(rightSlave2, TalonUtil.ConfigurationType.SLAVE);
 
 		configMotors();
+
+		driveProfileManager.registerProfile(cheesyDriveProfile);
+		driveProfileManager.registerProfile(tankDriveProfile);
+		driveProfileManager.registerProfile(eagleDriveProfile);
     }
 
 	private void configMotors() {
