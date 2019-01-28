@@ -4,8 +4,16 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.team2073.robot.mediator.Mediator;
 import com.team2073.robot.subsystem.DrivetrainSubsystem;
+import com.team2073.robot.subsystem.ElevatorSubsystem;
 import com.team2073.robot.subsystem.ExampleArmSubsystem;
+import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
+import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
+import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
+import com.team2073.robot.subsystem.climber.WheelieBarSubsystem;
+import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
+import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 import edu.wpi.first.wpilibj.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +25,7 @@ public class ApplicationContext {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 
+	private Mediator mediator = new Mediator();
 	/* TALONS */
 	private IMotorControllerEnhanced leftDriveMaster;
 	private IMotorControllerEnhanced rightDriveMaster;
@@ -54,6 +63,13 @@ public class ApplicationContext {
 	/*SUBSYSTEMS*/
 	private DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
 	private ExampleArmSubsystem exampleArmSubsystem = new ExampleArmSubsystem();
+	private IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
+	private IntakePivotSubsystem intakePivotSubsystem = new IntakePivotSubsystem();
+	private HatchManipulatorSubsystem hatchManipulatorSubsystem = new HatchManipulatorSubsystem();
+	private ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+	private RobotIntakeSubsystem robotIntakeSubsystem = new RobotIntakeSubsystem();
+	private WheelieBarSubsystem wheelieBarSubsystem = new WheelieBarSubsystem();
+	private ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 	//	====================================================================================================================
 	/*SENSORS*/
 	private DigitalInput cargoSensor;
@@ -61,7 +77,6 @@ public class ApplicationContext {
 	private DigitalInput elevatorBottomLimit;
 	private AnalogPotentiometer intakePot;
 	private Ultrasonic hatchSensor;
-
 	//	====================================================================================================================
 	/*GETTERS*/
 
@@ -72,12 +87,44 @@ public class ApplicationContext {
 		return instance;
 	}
 
+	public Mediator getMediator() {
+		return mediator;
+	}
+
 	public DrivetrainSubsystem getDrivetrainSubsystem() {
 		return drivetrainSubsystem;
 	}
 
 	public ExampleArmSubsystem getExampleArmSubsystem() {
 		return exampleArmSubsystem;
+	}
+
+	public IntakeRollerSubsystem getIntakeRollerSubsystem() {
+		return intakeRollerSubsystem;
+	}
+
+	public IntakePivotSubsystem getIntakePivotSubsystem() {
+		return intakePivotSubsystem;
+	}
+
+	public HatchManipulatorSubsystem getHatchManipulatorSubsystem() {
+		return hatchManipulatorSubsystem;
+	}
+
+	public ShooterSubsystem getShooterSubsystem() {
+		return shooterSubsystem;
+	}
+
+	public RobotIntakeSubsystem getRobotIntakeSubsystem() {
+		return robotIntakeSubsystem;
+	}
+
+	public WheelieBarSubsystem getWheelieBarSubsystem() {
+		return wheelieBarSubsystem;
+	}
+
+	public ElevatorSubsystem getElevatorSubsystem() {
+		return elevatorSubsystem;
 	}
 
 	public Joystick getController() {

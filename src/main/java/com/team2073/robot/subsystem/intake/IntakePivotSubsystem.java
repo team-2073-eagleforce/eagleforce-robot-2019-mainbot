@@ -12,9 +12,10 @@ import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.ctx.ApplicationContext;
+import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
-public class IntakePivotSubsystem implements PeriodicRunnable {
+public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem {
 	private static final double POT_MIN_VALUE = 0;
 	private static final double POT_MAX_VALUE = 1;
 	private static final double MIN_POSITION = 0;
@@ -31,7 +32,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable {
 	private IMotorControllerEnhanced intakeMaster = appCtx.getIntakePivotMaster();
 	private AnalogPotentiometer pot = appCtx.getIntakePot();
 
-	private Double setpoint;
+	private Double setpoint = null;
 
 	private PositionConverter converter = new IntakePositionConverter();
 	private PidfControlLoop holdingPID = new PidfControlLoop(.05, 0.0001, 0, 0, 1);
@@ -48,14 +49,19 @@ public class IntakePivotSubsystem implements PeriodicRunnable {
 		zeroFromPot();
 	}
 
+	@Override
 	public void set(Double setPoint) {
 		this.setpoint = setPoint;
+	}
 
-		profileManager.setPoint(setpoint);
-		profileManager.newOutput();
+	@Override
+	public double position() {
+		return converter.asPosition(intakeMaster.getSelectedSensorPosition(0));
+	}
 
-		intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
-
+	@Override
+	public double velocity() {
+		return converter.asPosition(intakeMaster.getSelectedSensorVelocity(0) * 10);
 	}
 
 
@@ -79,14 +85,6 @@ public class IntakePivotSubsystem implements PeriodicRunnable {
 
 	private double potPosition() {
 		return (pot.get() - POT_MIN_VALUE) * (MAX_POSITION - MIN_POSITION) / (POT_MAX_VALUE - POT_MIN_VALUE) + MIN_POSITION;
-	}
-
-	private double position() {
-		return converter.asPosition(intakeMaster.getSelectedSensorPosition(0));
-	}
-
-	private double velocity() {
-		return converter.asPosition(intakeMaster.getSelectedSensorVelocity(0) * 10);
 	}
 
 	private static class IntakePositionConverter implements PositionConverter {

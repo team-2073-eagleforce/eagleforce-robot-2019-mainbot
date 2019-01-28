@@ -6,9 +6,10 @@ import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.ctx.ApplicationContext;
+import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class ElevatorSubsystem implements PeriodicRunnable {
+public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem {
 	private final RobotContext robotCtx = RobotContext.getInstance();
 	private final ApplicationContext appCtx = ApplicationContext.getInstance();
 
@@ -29,6 +30,21 @@ public class ElevatorSubsystem implements PeriodicRunnable {
 
 	@Override
 	public void onPeriodic() {
+
+	}
+
+	@Override
+	public double position() {
+		return 0;
+	}
+
+	@Override
+	public double velocity() {
+		return 0;
+	}
+
+	@Override
+	public void set(Double setpoint) {
 
 	}
 }
