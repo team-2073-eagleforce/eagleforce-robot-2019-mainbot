@@ -56,9 +56,9 @@ public abstract class AppConstants {
 		public static final int JOYSTICK_PORT = 1;
 		public static final int CONTROLLER_PORT = 2;
 
-		public static final int EXAMPLE_ARM_SUBSYSTEM_TALON = 0;
-		public static final int EXAMPLE_ARM_SUBSYSTEM_VICTOR = 0;
-		public static final int EXAMPLE_ARM_HALL_EFFECT_SENSOR = 0;
+		public static final int EXAMPLE_ARM_SUBSYSTEM_TALON = -1;
+		public static final int EXAMPLE_ARM_SUBSYSTEM_VICTOR = -1;
+		public static final int EXAMPLE_ARM_HALL_EFFECT_SENSOR = -1;
 
 		public static final int DRIVE_LEFT_TALON_PORT = 1;
 		public static final int DRIVE_RIGHT_TALON_PORT = 2;
@@ -79,12 +79,34 @@ public abstract class AppConstants {
 		public static final int ELEVATOR_VICTOR_PORT = 10;
 		public static final int ELEVATOR_VICTOR_2_PORT = 11;
 
-		public static final int DRIVE_SHIFT_PORT = 0;
-		public static final int ELEVATOR_SHIFT_PORT = 1;
-		public static final int HATCH_POSITION_SOLENOID_PORT = 2;
-		public static final int HATCH_GRAB_SOLENOID_PORT = 3;
-		public static final int CLIMBER_RELEASE_SOLENIOD_PORT = 4;
-		public static final int ROBOT_GRAB_SOLENOID_PORT = 5;
+
+		// PCM 1
+		public static final int PCM_1_CAN_ID = 0;
+		public static final int DRIVE_SHIFT_LOW_PORT = 0;
+		public static final int DRIVE_SHIFT_HIGH_PORT = 1;
+		public static final int ELEVATOR_SHIFT_LOW_PORT = 2;
+		public static final int ELEVATOR_SHIFT_HIGH_PORT = 3;
+		public static final int HATCH_UP_SOLENOID_PORT = 4;
+		public static final int HATCH_DOWN_SOLENOID_PORT = 5;
+		public static final int HATCH_HOLD_SOLENOID_PORT = 6;
+		public static final int HATCH_RELEASE_SOLENOID_PORT = 7;
+
+		// PCM 2
+		public static final int PCM_2_CAN_ID = 1;
+		public static final int FORK_RELEASE_SOLENOID_PORT = 0;
+		public static final int FORK_HOLD_SOLENOID_PORT = 1;
+		public static final int ROBOT_INTAKE_GRAB_SOLENOID_PORT = 2;
+		public static final int ROBOT_INTAKE_OPEN_SOLENOID_PORT = 3;
+
+		//DIO
+		public static final int CARGO_BANNER_DIO_PORT = 0;
+		public static final int HATCH_ULTRASONIC_TRIGGER_DIO_PORT = 1;
+		public static final int HATCH_ULTRASONIC_ECHO_DIO_PORT = 2;
+		public static final int ELEVATOR_BOTTOM_LIMIT_DIO_PORT = 3;
+		public static final int ELEVATOR_TOP_LIMIT_DIO_PORT = 4;
+
+		//ANALOG
+		public static final int INTAKE_PIVOT_POTENTIOMETER_PORT = 0;
 
 
 	}
