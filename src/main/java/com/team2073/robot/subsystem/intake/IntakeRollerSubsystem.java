@@ -7,6 +7,7 @@ import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import static com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRollerState;
+import static com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRollerState.DISABLED;
 
 public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<IntakeRollerState> {
     private final RobotContext robotCtx = RobotContext.getInstance();
@@ -24,29 +25,30 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
 
     @Override
     public void onPeriodic() {
-        switch (state) {
-            case INTAKE_SPEED:
-                intakeRoller.set(IntakeRollerState.INTAKE_SPEED.getPercent());
-                intakeRoller2.set(IntakeRollerState.INTAKE_SPEED.getPercent());
-                break;
-            case OUTTAKE_SPEED:
-                intakeRoller.set(IntakeRollerState.OUTTAKE_SPEED.getPercent());
-                intakeRoller2.set(IntakeRollerState.OUTTAKE_SPEED.getPercent());
-                break;
-            case STOP:
-                intakeRoller.set(IntakeRollerState.STOP.getPercent());
-                intakeRoller2.set(IntakeRollerState.STOP.getPercent());
-                break;
-            case DISABLED:
-                intakeRoller.set(0);
-                intakeRoller2.set(0);
-                break;
+        if (state == DISABLED){
+            return;
         }
+            switch (state) {
+                case INTAKE_SPEED:
+                    intakeRoller.set(IntakeRollerState.INTAKE_SPEED.getPercent());
+                    break;
+                case OUTTAKE_SPEED:
+                    intakeRoller.set(IntakeRollerState.OUTTAKE_SPEED.getPercent());
+                    break;
+                case STOP:
+                    intakeRoller.set(IntakeRollerState.STOP.getPercent());
+                    break;
+            }
+        setPower();
     }
 
     @Override
     public IntakeRollerState currentState() {
         return state;
+    }
+
+    public void setPower() {
+        intakeRoller = intakeRoller2;
     }
 
     @Override
