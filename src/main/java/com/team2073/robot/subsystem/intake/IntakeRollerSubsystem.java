@@ -32,12 +32,15 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
             case OUTTAKE_SPEED:
                 intakeRoller.set(IntakeRollerState.OUTTAKE_SPEED.getPercent());
                 intakeRoller2.set(IntakeRollerState.OUTTAKE_SPEED.getPercent());
+                break;
             case STOP:
                 intakeRoller.set(IntakeRollerState.STOP.getPercent());
                 intakeRoller2.set(IntakeRollerState.STOP.getPercent());
+                break;
             case DISABLED:
                 intakeRoller.set(0);
                 intakeRoller2.set(0);
+                break;
         }
     }
 
