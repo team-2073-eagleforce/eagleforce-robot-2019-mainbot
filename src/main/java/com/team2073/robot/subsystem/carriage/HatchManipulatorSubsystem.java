@@ -54,12 +54,30 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
 
     public HatchManipulatorSubsystem() {
         autoRegisterWithPeriodicRunner();
+        ultraSensor.setAutomaticMode(true);
     }
 
     @Override
     public void onPeriodic() {
+       if(ultrasonicSample() >= 3 && ultrasonicSample() <= 36) {
+            set(HatchState.READY_TO_INTAKE);
+            hatchPosition.set(HatchState.READY_TO_INTAKE.isVerticalPistonActive());
+            hatchPlace.set(HatchState.READY_TO_INTAKE.isFingerPistonActive());
 
-        hatchPosition.set(DoubleSolenoid.Value.kForward);
+        }else if (ultrasonicSample() == 0 && ultrasonicSample() < 3) {
+            set(HatchState.GRABED_HATCH);
+           hatchPosition.set(HatchState.GRABED_HATCH.isVerticalPistonActive());
+           hatchPlace.set(HatchState.GRABED_HATCH.isFingerPistonActive());
+       } else {
+
+       }
 
     }
+
+    public double ultrasonicSample() {
+        return ultraSensor.getRangeInches(); // reads the range on the ultrasonic sensor
+    }
+
+
+
 }
