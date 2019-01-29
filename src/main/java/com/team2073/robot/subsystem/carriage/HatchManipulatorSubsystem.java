@@ -10,38 +10,56 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import static com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.*;
 
 public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsystem<HatchState> {
-	private final RobotContext robotCtx = RobotContext.getInstance();
-	private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private final RobotContext robotCtx = RobotContext.getInstance();
+    private final ApplicationContext appCtx = ApplicationContext.getInstance();
 
-	private DoubleSolenoid hatchPosition = appCtx.getHatchPositionSolenoid();
-	private DoubleSolenoid hatchPlace = appCtx.getHatchPlaceSolenoid();
-	private Ultrasonic ultraSensor = appCtx.getHatchSensor();
+    private DoubleSolenoid hatchPosition = appCtx.getHatchPositionSolenoid();
+    private DoubleSolenoid hatchPlace = appCtx.getHatchPlaceSolenoid();
+    private Ultrasonic ultraSensor = appCtx.getHatchSensor();
 
-	private HatchState state = HatchState.STARTING_CONFIG;
+    private HatchState state = HatchState.STARTING_CONFIG;
 
-	@Override
-	public HatchState currentState() {
-		return state;
-	}
+    @Override
+    public HatchState currentState() {
+        return state;
+    }
 
-	@Override
-	public void set(HatchState goalState) {
-		this.state = goalState;
-	}
+    @Override
+    public void set(HatchState goalState) {
+        this.state = goalState;
+    }
 
-	public enum HatchState{
-		STARTING_CONFIG,
-		READY_TO_INTAKE,
-		GRAB_HATCH;
-	}
+    public enum HatchState {
+        STARTING_CONFIG(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kReverse),
+        READY_TO_INTAKE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward),
+        GRABED_HATCH(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kOff),
+        RELEASE_HATCH(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
 
+        private DoubleSolenoid.Value verticalPistonActive;
+        private DoubleSolenoid.Value fingerPistonActive;
 
-	public HatchManipulatorSubsystem() {
-		autoRegisterWithPeriodicRunner();
-	}
+        public DoubleSolenoid.Value isVerticalPistonActive() {
+            return verticalPistonActive;
+        }
 
-	@Override
-	public void onPeriodic() {
+        public DoubleSolenoid.Value isFingerPistonActive() {
+            return fingerPistonActive;
+        }
 
-	}
+        HatchState(DoubleSolenoid.Value fingerPiston, DoubleSolenoid.Value vertPiston) {
+            this.fingerPistonActive = fingerPiston;
+            this.verticalPistonActive = vertPiston;
+        }
+    }
+
+    public HatchManipulatorSubsystem() {
+        autoRegisterWithPeriodicRunner();
+    }
+
+    @Override
+    public void onPeriodic() {
+
+        hatchPosition.set(DoubleSolenoid.Value.kForward);
+
+    }
 }
