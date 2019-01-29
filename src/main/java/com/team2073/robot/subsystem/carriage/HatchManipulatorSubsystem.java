@@ -18,6 +18,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     private Ultrasonic ultraSensor = appCtx.getHatchSensor();
 
     private HatchState state = HatchState.STARTING_CONFIG;
+    private boolean haveHatch;
 
     @Override
     public HatchState currentState() {
@@ -59,24 +60,23 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
 
     @Override
     public void onPeriodic() {
-       if(ultrasonicSample() >= 3 && ultrasonicSample() <= 36) {
-            set(HatchState.READY_TO_INTAKE);
-            hatchPosition.set(HatchState.READY_TO_INTAKE.isVerticalPistonActive());
-            hatchPlace.set(HatchState.READY_TO_INTAKE.isFingerPistonActive());
-
-        }else if (ultrasonicSample() == 0 && ultrasonicSample() < 3) {
-            set(HatchState.GRABED_HATCH);
-           hatchPosition.set(HatchState.GRABED_HATCH.isVerticalPistonActive());
-           hatchPlace.set(HatchState.GRABED_HATCH.isFingerPistonActive());
-       } else {
-
-       }
+            checkForHatch();
 
     }
 
     public double ultrasonicSample() {
         return ultraSensor.getRangeInches(); // reads the range on the ultrasonic sensor
     }
+    public boolean hatchDetected(){
+        return haveHatch;
+    }
+    public void checkForHatch() {
+        if(ultrasonicSample() == 0 && ultrasonicSample() <= 3) {
+            haveHatch = true;
+        }
+
+    }
+
 
 
 
