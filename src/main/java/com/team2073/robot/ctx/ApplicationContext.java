@@ -27,7 +27,7 @@ public class ApplicationContext {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	/*UTIL */
-	private DriveProfileManager driveProfileManager;
+	private DriveProfileManager driveProfileManager = new DriveProfileManager();
 //	====================================================================================================================
 	private Mediator mediator = new Mediator();
 	/* TALONS */
@@ -93,6 +93,10 @@ public class ApplicationContext {
 
 	public Mediator getMediator() {
 		return mediator;
+	}
+
+	public DriveProfileManager getDriveProfileManager() {
+		return driveProfileManager;
 	}
 
 	public DrivetrainSubsystem getDrivetrainSubsystem() {
