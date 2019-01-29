@@ -4,10 +4,17 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.team2073.robot.mediator.Mediator;
 import com.team2073.robot.subsystem.DrivetrainSubsystem;
+import com.team2073.robot.subsystem.ElevatorSubsystem;
 import com.team2073.robot.subsystem.ExampleArmSubsystem;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Solenoid;
+import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
+import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
+import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
+import com.team2073.robot.subsystem.climber.WheelieBarSubsystem;
+import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
+import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
+import edu.wpi.first.wpilibj.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +25,7 @@ public class ApplicationContext {
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 
+	private Mediator mediator = new Mediator();
 	/* TALONS */
 	private IMotorControllerEnhanced leftDriveMaster;
 	private IMotorControllerEnhanced rightDriveMaster;
@@ -33,16 +41,19 @@ public class ApplicationContext {
 	private IMotorController elevatorSlave2;
 	private IMotorController leftShooter;
 	private IMotorController rightShooter;
-	private IMotorController intakeRoller;
-	private IMotorController intakeRoller2;
+	//	====================================================================================================================
+	/* VICTOR SPs */
+	private SpeedController intakeRoller;
+	private SpeedController intakeRoller2;
+
 	//	====================================================================================================================
 	/*SOLENOIDS*/
-	private Solenoid driveShiftSolenoid;
-	private Solenoid elevatorShiftSolenoid;
-	private Solenoid hatchPositionSolenoid;
-	private Solenoid hatchPlaceSolenoid;
-	private Solenoid climbDeploySolenoid;
-	private Solenoid robotGrabSolenoid;
+	private DoubleSolenoid driveShiftSolenoid;
+	private DoubleSolenoid elevatorShiftSolenoid;
+	private DoubleSolenoid hatchPositionSolenoid;
+	private DoubleSolenoid hatchPlaceSolenoid;
+	private DoubleSolenoid forkDeploySolenoid;
+	private DoubleSolenoid robotGrabSolenoid;
 	//	====================================================================================================================
 	/*JOYSTICKS*/
 	private Joystick controller;
@@ -52,6 +63,20 @@ public class ApplicationContext {
 	/*SUBSYSTEMS*/
 	private DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
 	private ExampleArmSubsystem exampleArmSubsystem = new ExampleArmSubsystem();
+	private IntakeRollerSubsystem intakeRollerSubsystem = new IntakeRollerSubsystem();
+	private IntakePivotSubsystem intakePivotSubsystem = new IntakePivotSubsystem();
+	private HatchManipulatorSubsystem hatchManipulatorSubsystem = new HatchManipulatorSubsystem();
+	private ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+	private RobotIntakeSubsystem robotIntakeSubsystem = new RobotIntakeSubsystem();
+	private WheelieBarSubsystem wheelieBarSubsystem = new WheelieBarSubsystem();
+	private ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+	//	====================================================================================================================
+	/*SENSORS*/
+	private DigitalInput cargoSensor;
+	private DigitalInput elevatorTopLimit;
+	private DigitalInput elevatorBottomLimit;
+	private AnalogPotentiometer intakePot;
+	private Ultrasonic hatchSensor;
 	//	====================================================================================================================
 	/*GETTERS*/
 
@@ -62,12 +87,44 @@ public class ApplicationContext {
 		return instance;
 	}
 
+	public Mediator getMediator() {
+		return mediator;
+	}
+
 	public DrivetrainSubsystem getDrivetrainSubsystem() {
 		return drivetrainSubsystem;
 	}
 
 	public ExampleArmSubsystem getExampleArmSubsystem() {
 		return exampleArmSubsystem;
+	}
+
+	public IntakeRollerSubsystem getIntakeRollerSubsystem() {
+		return intakeRollerSubsystem;
+	}
+
+	public IntakePivotSubsystem getIntakePivotSubsystem() {
+		return intakePivotSubsystem;
+	}
+
+	public HatchManipulatorSubsystem getHatchManipulatorSubsystem() {
+		return hatchManipulatorSubsystem;
+	}
+
+	public ShooterSubsystem getShooterSubsystem() {
+		return shooterSubsystem;
+	}
+
+	public RobotIntakeSubsystem getRobotIntakeSubsystem() {
+		return robotIntakeSubsystem;
+	}
+
+	public WheelieBarSubsystem getWheelieBarSubsystem() {
+		return wheelieBarSubsystem;
+	}
+
+	public ElevatorSubsystem getElevatorSubsystem() {
+		return elevatorSubsystem;
 	}
 
 	public Joystick getController() {
@@ -175,59 +232,94 @@ public class ApplicationContext {
 		return rightShooter;
 	}
 
-	public IMotorController getIntakeRoller() {
+	public SpeedController getIntakeRoller() {
 		if (intakeRoller == null) {
-			intakeRoller = new VictorSPX(INTAKE_ROLLER_VICTOR_PORT/*, INTAKE_ROLLER_NAME, SAFE_PERCENT*/);
+			intakeRoller = new VictorSP(INTAKE_ROLLER_VICTOR_PORT/*, INTAKE_ROLLER_NAME, SAFE_PERCENT*/);
 		}
 		return intakeRoller;
 	}
 
-	public IMotorController getIntakeRoller2() {
+	public SpeedController getIntakeRoller2() {
 		if (intakeRoller2 == null) {
-			intakeRoller2 = new VictorSPX(INTAKE_ROLLER_VICTOR_2_PORT/*, INTAKE_ROLLER_2_NAME, SAFE_PERCENT*/);
+			intakeRoller2 = new VictorSP(INTAKE_ROLLER_VICTOR_2_PORT/*, INTAKE_ROLLER_2_NAME, SAFE_PERCENT*/);
 		}
 		return intakeRoller2;
 	}
 
-	public Solenoid getDriveShiftSolenoid() {
+	public DoubleSolenoid getDriveShiftSolenoid() {
 		if (driveShiftSolenoid == null) {
-			driveShiftSolenoid = new Solenoid(DRIVE_SHIFT_PORT);
+			driveShiftSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, DRIVE_SHIFT_LOW_PORT, DRIVE_SHIFT_HIGH_PORT);
 		}
 		return driveShiftSolenoid;
 	}
 
-	public Solenoid getElevatorShiftSolenoid() {
+	public DoubleSolenoid getElevatorShiftSolenoid() {
 		if (elevatorShiftSolenoid == null) {
-			elevatorShiftSolenoid = new Solenoid(ELEVATOR_SHIFT_PORT);
+			elevatorShiftSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, ELEVATOR_SHIFT_LOW_PORT, ELEVATOR_SHIFT_HIGH_PORT);
 		}
 		return elevatorShiftSolenoid;
 	}
 
-	public Solenoid getHatchPositionSolenoid() {
+	public DoubleSolenoid getHatchPositionSolenoid() {
 		if (hatchPositionSolenoid == null) {
-			hatchPositionSolenoid = new Solenoid(HATCH_POSITION_SOLENOID_PORT);
+			hatchPositionSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, HATCH_UP_SOLENOID_PORT, HATCH_DOWN_SOLENOID_PORT);
 		}
 		return hatchPositionSolenoid;
 	}
 
-	public Solenoid getHatchPlaceSolenoid() {
+	public DoubleSolenoid getHatchPlaceSolenoid() {
 		if (hatchPlaceSolenoid == null) {
-			hatchPlaceSolenoid = new Solenoid(HATCH_GRAB_SOLENOID_PORT);
+			hatchPlaceSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, HATCH_HOLD_SOLENOID_PORT, HATCH_RELEASE_SOLENOID_PORT);
 		}
 		return hatchPlaceSolenoid;
 	}
 
-	public Solenoid getClimbDeploySolenoid() {
-		if (climbDeploySolenoid == null) {
-			climbDeploySolenoid = new Solenoid(CLIMBER_RELEASE_SOLENIOD_PORT);
+	public DoubleSolenoid getForkDeploySolenoid() {
+		if (forkDeploySolenoid == null) {
+			forkDeploySolenoid = new DoubleSolenoid(PCM_2_CAN_ID, FORK_HOLD_SOLENOID_PORT, FORK_RELEASE_SOLENOID_PORT);
 		}
-		return climbDeploySolenoid;
+		return forkDeploySolenoid;
 	}
 
-	public Solenoid getRobotGrabSolenoid() {
+	public DoubleSolenoid getRobotGrabSolenoid() {
 		if (robotGrabSolenoid == null) {
-			robotGrabSolenoid = new Solenoid(ROBOT_GRAB_SOLENOID_PORT);
+			robotGrabSolenoid = new DoubleSolenoid(PCM_2_CAN_ID, ROBOT_INTAKE_GRAB_SOLENOID_PORT, ROBOT_INTAKE_OPEN_SOLENOID_PORT);
 		}
 		return robotGrabSolenoid;
+	}
+
+	public DigitalInput getCargoSensor() {
+		if (cargoSensor == null) {
+			cargoSensor = new DigitalInput(CARGO_BANNER_DIO_PORT);
+		}
+		return cargoSensor;
+	}
+
+	public DigitalInput getElevatorTopLimit() {
+		if (elevatorTopLimit == null) {
+			elevatorTopLimit = new DigitalInput(ELEVATOR_TOP_LIMIT_DIO_PORT);
+		}
+		return elevatorTopLimit;
+	}
+
+	public DigitalInput getElevatorBottomLimit() {
+		if (elevatorBottomLimit == null) {
+			elevatorBottomLimit = new DigitalInput(ELEVATOR_BOTTOM_LIMIT_DIO_PORT);
+		}
+		return elevatorBottomLimit;
+	}
+
+	public AnalogPotentiometer getIntakePot() {
+		if (intakePot == null) {
+			intakePot = new AnalogPotentiometer(INTAKE_PIVOT_POTENTIOMETER_PORT);
+		}
+		return intakePot;
+	}
+
+	public Ultrasonic getHatchSensor() {
+		if (hatchSensor == null) {
+			hatchSensor = new Ultrasonic(HATCH_ULTRASONIC_TRIGGER_DIO_PORT, HATCH_ULTRASONIC_ECHO_DIO_PORT, Ultrasonic.Unit.kInches);
+		}
+		return hatchSensor;
 	}
 }
