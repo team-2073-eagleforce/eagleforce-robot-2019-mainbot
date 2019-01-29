@@ -1,5 +1,6 @@
 package com.team2073.robot.subsystem.carriage;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
@@ -25,6 +26,32 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
 	@Override
 	public void onPeriodic() {
+		if(cargoSensor.get()){set(ShooterState.STALL);}
+
+		switch (currentState()){
+			case INTAKE:
+				shooterLeft.set(ControlMode.PercentOutput, ShooterState.INTAKE.getPercent());
+				shooterRight.set(ControlMode.PercentOutput, ShooterState.INTAKE.getPercent());
+				break;
+			case HIGH_SHOOT:
+				shooterLeft.set(ControlMode.PercentOutput, ShooterState.HIGH_SHOOT.getPercent());
+				shooterRight.set(ControlMode.PercentOutput, ShooterState.HIGH_SHOOT.getPercent());
+				break;
+			case STALL:
+				shooterLeft.set(ControlMode.PercentOutput, ShooterState.STALL.getPercent());
+				shooterRight.set(ControlMode.PercentOutput, ShooterState.STALL.getPercent());
+				break;
+			case STOP:
+				shooterLeft.set(ControlMode.PercentOutput, ShooterState.STOP.getPercent());
+				shooterRight.set(ControlMode.PercentOutput, ShooterState.STOP.getPercent());
+				break;
+			case DISABLED:
+				shooterLeft.set(ControlMode.PercentOutput, 0d);
+				shooterRight.set(ControlMode.PercentOutput, 0d);
+				break;
+			default:
+				break;
+		}
 
 	}
 
@@ -39,10 +66,16 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 	}
 
 	public enum ShooterState {
-		HIGH_SHOOT,
-		INTAKE,
-		STOP,
-		STALL,
-		DISABLED;
+		HIGH_SHOOT(0.9),
+		INTAKE(-0.9),
+		STOP(0d),
+		STALL(-0.09),
+		DISABLED(null);
+
+		private Double percent;
+
+		ShooterState(Double percent){this.percent = percent;}
+
+		public Double getPercent(){return percent;}
 	}
 }
