@@ -7,7 +7,9 @@ import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
+
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState;
+import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DISABLED;
 
 public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<RobotIntakeState> {
     private final RobotContext robotCtx = RobotContext.getInstance();
@@ -35,11 +37,16 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     @Override
     public void onPeriodic() {
+        if (state == DISABLED){
+            return;
+        }
         switch (state) {
+            // Forks up, clamp down
             case STORE:
                 forkSolenoid.set(DoubleSolenoid.Value.kReverse);
                 robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
                 break;
+            // Forks down, clamps up
             case DEPLOY_FORKS:
                 forkSolenoid.set(DoubleSolenoid.Value.kForward);
                 timer.start();
@@ -48,9 +55,11 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
                 }
                 timer.stop();
                 break;
+            // Clamps up
             case OPEN_INTAKE:
                 robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
                 break;
+            // Clamps down
             case CLAMP:
                 robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
                 break;
@@ -64,7 +73,8 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
         STORE,
         DEPLOY_FORKS,
         OPEN_INTAKE,
-        CLAMP
+        CLAMP,
+        DISABLED
     }
 }
 
