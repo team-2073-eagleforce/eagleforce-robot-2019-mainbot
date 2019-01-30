@@ -4,8 +4,6 @@ import com.team2073.robot.ctx.ApplicationContext;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
-import javax.annotation.PostConstruct;
-
 public class OperatorInterface {
 
 	private static ApplicationContext appCtx = ApplicationContext.getInstance();
