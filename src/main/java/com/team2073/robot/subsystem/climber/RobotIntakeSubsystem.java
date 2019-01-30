@@ -7,7 +7,6 @@ import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState;
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DISABLED;
 
@@ -15,9 +14,11 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
 
-    private Timer timer = new Timer();
     private DoubleSolenoid forkSolenoid = appCtx.getForkDeploySolenoid();
     private DoubleSolenoid robotGrabSolenoid = appCtx.getRobotGrabSolenoid();
+
+    private Timer timer = new Timer();
+
 
     private RobotIntakeState state = RobotIntakeState.STORE;
 
@@ -37,7 +38,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     @Override
     public void onPeriodic() {
-        if (state == DISABLED){
+        if (state == DISABLED) {
             return;
         }
         switch (state) {
