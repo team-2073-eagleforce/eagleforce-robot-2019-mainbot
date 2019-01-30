@@ -7,6 +7,7 @@ import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
 
+
 import static com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.*;
 
 public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsystem<HatchState> {
@@ -18,8 +19,11 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     private Ultrasonic ultraSensor = appCtx.getHatchSensor();
 
     private HatchState state = HatchState.STARTING_CONFIG;
+
     private boolean haveHatch;
+
     private double prevDistance;
+
 
     @Override
     public HatchState currentState() {
@@ -63,10 +67,11 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
         }
     }
 
+
     public HatchManipulatorSubsystem() {
         autoRegisterWithPeriodicRunner();
         ultraSensor.setAutomaticMode(true);
-        System.out.println(ultrasonicSample());
+
     }
 
     @Override
@@ -87,15 +92,17 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
 
     }
 
-    public boolean hatchDetected() {
-        return haveHatch;
-    }
 
     public void checkForHatch() {
         if (ultrasonicSample() <= 3) {
             haveHatch = true;
+        } else {
+            haveHatch = false;
         }
 
+    }
+       public boolean hatchDetected() {
+        return haveHatch;
     }
 
 
