@@ -30,16 +30,15 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
         }
             switch (state) {
                 case INTAKE_SPEED:
-                    intakeRoller.set(IntakeRollerState.INTAKE_SPEED.getPercent());
+                    setPower(IntakeRollerState.INTAKE_SPEED.getPercent());
                     break;
                 case OUTTAKE_SPEED:
-                    intakeRoller.set(IntakeRollerState.OUTTAKE_SPEED.getPercent());
+                    setPower(IntakeRollerState.OUTTAKE_SPEED.getPercent());
                     break;
                 case STOP:
-                    intakeRoller.set(IntakeRollerState.STOP.getPercent());
+                    setPower(IntakeRollerState.STOP.getPercent());
                     break;
             }
-        setPower();
     }
 
     @Override
@@ -47,8 +46,9 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
         return state;
     }
 
-    public void setPower() {
-        intakeRoller = intakeRoller2;
+    public void setPower(Double percent) {
+        intakeRoller2.set(percent);
+        intakeRoller.set(percent);
     }
 
     @Override
