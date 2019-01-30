@@ -2,7 +2,6 @@ package com.team2073.robot.subsystem.climber;
 
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
-import com.team2073.common.util.ExceptionUtil;
 import com.team2073.common.util.Timer;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
@@ -36,17 +35,18 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     @Override
     public void onPeriodic() {
-        switch(state){
+        switch (state) {
             case STORE:
                 forkSolenoid.set(DoubleSolenoid.Value.kReverse);
-                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
                 break;
             case DEPLOY_FORKS:
                 forkSolenoid.set(DoubleSolenoid.Value.kForward);
                 timer.start();
-                if(timer.getElapsedTime() > 1){
+                if (timer.getElapsedTime() > 0.25) {
                     robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
                 }
+                timer.stop();
                 break;
             case OPEN_INTAKE:
                 robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
@@ -55,7 +55,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
                 robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
                 break;
             default:
-                throw new IllegalStateException();
+                throw new IllegalStateException("Unknown state: " + state);
         }
 
     }
@@ -65,6 +65,6 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
         DEPLOY_FORKS,
         OPEN_INTAKE,
         CLAMP
-        }
     }
+}
 
