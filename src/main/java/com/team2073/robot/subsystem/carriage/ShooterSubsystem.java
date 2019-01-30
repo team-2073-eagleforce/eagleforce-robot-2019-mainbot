@@ -9,6 +9,7 @@ import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterState;
+import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterState.DISABLED;
 
 public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<ShooterState> {
 	private final RobotContext robotCtx = RobotContext.getInstance();
@@ -24,30 +25,33 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 		autoRegisterWithPeriodicRunner();
 	}
 
+	private void setPower(Double percent){
+		shooterLeft.set(ControlMode.PercentOutput, percent);
+		shooterRight.set(ControlMode.PercentOutput, percent);
+	}
+
+
 	@Override
 	public void onPeriodic() {
+
+		if(state == DISABLED){
+			return;
+		}
+
 		if(cargoSensor.get()){set(ShooterState.STALL);}
 
 		switch (currentState()){
 			case INTAKE:
-				shooterLeft.set(ControlMode.PercentOutput, ShooterState.INTAKE.getPercent());
-				shooterRight.set(ControlMode.PercentOutput, ShooterState.INTAKE.getPercent());
+				setPower(ShooterState.INTAKE.getPercent());
 				break;
 			case HIGH_SHOOT:
-				shooterLeft.set(ControlMode.PercentOutput, ShooterState.HIGH_SHOOT.getPercent());
-				shooterRight.set(ControlMode.PercentOutput, ShooterState.HIGH_SHOOT.getPercent());
+				setPower(ShooterState.HIGH_SHOOT.getPercent());
 				break;
 			case STALL:
-				shooterLeft.set(ControlMode.PercentOutput, ShooterState.STALL.getPercent());
-				shooterRight.set(ControlMode.PercentOutput, ShooterState.STALL.getPercent());
+				setPower(ShooterState.STALL.getPercent());
 				break;
 			case STOP:
-				shooterLeft.set(ControlMode.PercentOutput, ShooterState.STOP.getPercent());
-				shooterRight.set(ControlMode.PercentOutput, ShooterState.STOP.getPercent());
-				break;
-			case DISABLED:
-				shooterLeft.set(ControlMode.PercentOutput, 0d);
-				shooterRight.set(ControlMode.PercentOutput, 0d);
+				setPower(ShooterState.STOP.getPercent());
 				break;
 			default:
 				break;
