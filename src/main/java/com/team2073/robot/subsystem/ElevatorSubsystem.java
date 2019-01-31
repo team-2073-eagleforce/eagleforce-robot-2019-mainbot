@@ -61,6 +61,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         TalonUtil.resetTalon(elevatorMaster, TalonUtil.ConfigurationType.SENSOR);
         TalonUtil.resetVictor(elevatorSlave1, TalonUtil.ConfigurationType.SLAVE);
         TalonUtil.resetVictor(elevatorSlave2, TalonUtil.ConfigurationType.SLAVE);
+
+        elevatorSlave1.follow(elevatorMaster);
+        elevatorSlave2.follow(elevatorMaster);
     }
 
     @Override
