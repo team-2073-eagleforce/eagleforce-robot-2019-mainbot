@@ -22,8 +22,8 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
 
     private boolean haveHatch;
     private double prevDistance;
-    static final double acceptableOscilation = 10;
-    static final double marginOfError = 3;
+    static final double ACCEPTABLE_OSCILATION = 10;
+    static final double MARGIN_OF_ERROR = 3;
 
     @Override
     public HatchState currentState() {
@@ -86,7 +86,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     public Double ultrasonicSample() {
         double distance = ultraSensor.getRangeInches(); // reads the range on the ultrasonic sensor
         //if the distance suddently jumped too much, it reverts to using the previous distance
-        if (distance - prevDistance >= acceptableOscilation) {
+        if (distance - prevDistance >= ACCEPTABLE_OSCILATION) {
             return prevDistance;
         } else {
             prevDistance = distance;
@@ -95,7 +95,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     }
     public void checkForHatch() {
         //if distance between hatch and sensor is less than 3, it is acceptable as a margin of error
-        if (ultrasonicSample() <= marginOfError) {
+        if (ultrasonicSample() <= MARGIN_OF_ERROR) {
             haveHatch = true;
         } else {
             haveHatch = false;
