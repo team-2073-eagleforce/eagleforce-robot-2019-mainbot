@@ -21,9 +21,9 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     private HatchState state = HatchState.STARTING_CONFIG;
 
     private boolean haveHatch;
-
     private double prevDistance;
-
+    static final double acceptableOscilation = 10;
+    static final double marginOfError = 3;
 
     @Override
     public HatchState currentState() {
@@ -56,6 +56,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
         public DoubleSolenoid.Value isVerticalPistonActive() {
             return verticalPistonActive;
         }
+
         //when you set states in mediator (?) Ex:
         // state = HatchState.Grabbed Hatch
         //  hatchPosition.set(HatchState.GRABED_HATCH.isVerticalPistonActive());
@@ -64,16 +65,18 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
         public DoubleSolenoid.Value isFingerPistonActive() {
             return fingerPistonActive;
         }
+
         HatchState(DoubleSolenoid.Value fingerPiston, DoubleSolenoid.Value vertPiston) {
             this.fingerPistonActive = fingerPiston;
             this.verticalPistonActive = vertPiston;
         }
     }
+
     public HatchManipulatorSubsystem() {
         autoRegisterWithPeriodicRunner();
         ultraSensor.setAutomaticMode(true);
-
     }
+
     //left changing states up to mediator as Jason said
     @Override
     public void onPeriodic() {
@@ -83,29 +86,24 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     public Double ultrasonicSample() {
         double distance = ultraSensor.getRangeInches(); // reads the range on the ultrasonic sensor
         //if the distance suddently jumped too much, it reverts to using the previous distance
-        if (distance - prevDistance >= 10) {
+        if (distance - prevDistance >= acceptableOscilation) {
             return prevDistance;
-        }else {
+        } else {
             prevDistance = distance;
             return distance;
         }
-
     }
-
-
     public void checkForHatch() {
         //if distance between hatch and sensor is less than 3, it is acceptable as a margin of error
-        if (ultrasonicSample() <= 3) {
+        if (ultrasonicSample() <= marginOfError) {
             haveHatch = true;
         } else {
             haveHatch = false;
         }
-
     }
+
     //for Mediator to see hatch state
-       public boolean hatchDetected() {
+    public boolean hatchDetected() {
         return haveHatch;
     }
-
-
 }
