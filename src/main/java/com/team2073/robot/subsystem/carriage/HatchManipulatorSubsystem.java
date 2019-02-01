@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
 
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import static com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.*;
 
 public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsystem<HatchState> {
@@ -21,9 +24,9 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     private HatchState state = HatchState.STARTING_CONFIG;
 
     private boolean haveHatch;
-    private double prevDistance;
-    static final double ACCEPTABLE_OSCILATION = 10;
-    static final double MARGIN_OF_ERROR = 3;
+    private static final double MARGIN_OF_ERROR = 6;
+    private static final double DEQUE_SIZE = 3;
+    private Deque<Boolean> prevSensorReadings = new ArrayDeque<>(3);
 
     @Override
     public HatchState currentState() {
@@ -71,37 +74,30 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
             this.verticalPistonActive = vertPiston;
         }
     }
-
     public HatchManipulatorSubsystem() {
         autoRegisterWithPeriodicRunner();
         ultraSensor.setAutomaticMode(true);
     }
-
     //left changing states up to mediator as Jason said
     @Override
     public void onPeriodic() {
-        checkForHatch();
+        queue();
     }
 
-    public Double ultrasonicSample() {
-        double distance = ultraSensor.getRangeInches(); // reads the range on the ultrasonic sensor
-        //if the distance suddently jumped too much, it reverts to using the previous distance
-        if (distance - prevDistance >= ACCEPTABLE_OSCILATION) {
-            return prevDistance;
-        } else {
-            prevDistance = distance;
-            return distance;
-        }
+    private boolean checkForHatch() {
+        return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
     }
-    public void checkForHatch() {
-        //if distance between hatch and sensor is less than 3, it is acceptable as a margin of error
-        if (ultrasonicSample() <= MARGIN_OF_ERROR) {
-            haveHatch = true;
+    private boolean queue() {
+        boolean check = checkForHatch();
+        if (prevSensorReadings.size() < DEQUE_SIZE) {
+            prevSensorReadings.offer(check);
         } else {
-            haveHatch = false;
+            prevSensorReadings.removeFirst();
+            prevSensorReadings.addLast(check);
+            haveHatch =  !prevSensorReadings.contains(false);
         }
+        return  haveHatch;
     }
-
     //for Mediator to see hatch state
     public boolean hatchDetected() {
         return haveHatch;
