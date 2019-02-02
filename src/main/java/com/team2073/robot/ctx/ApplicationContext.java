@@ -227,7 +227,7 @@ public class ApplicationContext {
 
 	public IMotorController getRightShooter() {
 		if (rightShooter == null) {
-			rightShooter = new VictorSPX(RIGHT_SHOOTER_VICTOR_PORT/*, RIGHT_SHOOTER_NAME, SAFE_PERCENT*/);
+			rightShooter = new TalonSRX(RIGHT_SHOOTER_VICTOR_PORT/*, RIGHT_SHOOTER_NAME, SAFE_PERCENT*/);
 		}
 		return rightShooter;
 	}
