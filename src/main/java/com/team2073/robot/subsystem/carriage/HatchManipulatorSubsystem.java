@@ -81,22 +81,22 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     //left changing states up to mediator as Jason said
     @Override
     public void onPeriodic() {
-        queue();
+        filterHatchReadings();
     }
 
     private boolean checkForHatch() {
         return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
     }
-    private boolean queue() {
+    private boolean filterHatchReadings() {
         boolean check = checkForHatch();
         if (prevSensorReadings.size() < DEQUE_SIZE) {
             prevSensorReadings.offer(check);
         } else {
             prevSensorReadings.removeFirst();
             prevSensorReadings.addLast(check);
-            haveHatch =  !prevSensorReadings.contains(false);
+            haveHatch = !prevSensorReadings.contains(false);
         }
-        return  haveHatch;
+        return haveHatch;
     }
     //for Mediator to see hatch state
     public boolean hatchDetected() {
