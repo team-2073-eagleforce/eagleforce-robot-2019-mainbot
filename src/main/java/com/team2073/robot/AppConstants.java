@@ -100,9 +100,9 @@ public abstract class AppConstants {
 		public static final int ROBOT_INTAKE_OPEN_SOLENOID_PORT = 3;
 
 		//DIO
-		public static final int CARGO_BANNER_DIO_PORT = 0;
-		public static final int HATCH_ULTRASONIC_TRIGGER_DIO_PORT = 1;
-		public static final int HATCH_ULTRASONIC_ECHO_DIO_PORT = 2;
+		public static final int CARGO_BANNER_DIO_PORT = 5;
+		public static final int HATCH_ULTRASONIC_TRIGGER_DIO_PORT = 0;
+		public static final int HATCH_ULTRASONIC_ECHO_DIO_PORT = 1;
 		public static final int ELEVATOR_BOTTOM_LIMIT_DIO_PORT = 3;
 		public static final int ELEVATOR_TOP_LIMIT_DIO_PORT = 4;
 
