@@ -42,6 +42,11 @@ public abstract class AppConstants {
 		public static final double DEFAULT_TIMESTEP = .01;
 		public static final double MINIMUM_TIMESTEP = .005;
 
+		public abstract class Hatch{
+			public static final double HATCH_MARGIN_OF_ERROR = 6;
+		}
+
+
 	}
 
 	public abstract class Defaults {

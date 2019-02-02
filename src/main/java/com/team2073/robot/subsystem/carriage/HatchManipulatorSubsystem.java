@@ -2,18 +2,16 @@ package com.team2073.robot.subsystem.carriage;
 
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
+import com.team2073.robot.AppConstants;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
 
-
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import static com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.*;
 
 public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsystem<HatchState> {
+
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
 
@@ -21,12 +19,14 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     private DoubleSolenoid hatchPlace = appCtx.getHatchPlaceSolenoid();
     private Ultrasonic ultraSensor = appCtx.getHatchSensor();
 
+    private static final double MARGIN_OF_ERROR = AppConstants.Subsystems.Hatch.HATCH_MARGIN_OF_ERROR;
     private HatchState state = HatchState.STARTING_CONFIG;
 
-    private boolean haveHatch;
-    private static final double MARGIN_OF_ERROR = 6;
-    private static final double DEQUE_SIZE = 3;
-    private Deque<Boolean> prevSensorReadings = new ArrayDeque<>(3);
+    private static final int FILTER_LENGTH = 3;
+    private int hatchActiveCount;
+    private int hatchInactiveCount;
+
+    private boolean hatchDetected;
 
     @Override
     public HatchState currentState() {
@@ -74,32 +74,41 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
             this.verticalPistonActive = vertPiston;
         }
     }
+
     public HatchManipulatorSubsystem() {
         autoRegisterWithPeriodicRunner();
         ultraSensor.setAutomaticMode(true);
     }
+
     //left changing states up to mediator as Jason said
     @Override
     public void onPeriodic() {
         filterHatchReadings();
     }
 
-    private boolean checkForHatch() {
+    private boolean hatchActive() {
         return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
     }
+
     private boolean filterHatchReadings() {
-        boolean check = checkForHatch();
-        if (prevSensorReadings.size() < DEQUE_SIZE) {
-            prevSensorReadings.offer(check);
+        boolean hatchActive = hatchActive();
+        if (hatchActive) {
+            hatchActiveCount++;
+            hatchInactiveCount = 0;
         } else {
-            prevSensorReadings.removeFirst();
-            prevSensorReadings.addLast(check);
-            haveHatch = !prevSensorReadings.contains(false);
+            hatchInactiveCount++;
+            hatchActiveCount = 0;
         }
-        return haveHatch;
+        if (hatchActiveCount > FILTER_LENGTH) {
+            hatchDetected = true;
+        } else if (hatchInactiveCount > FILTER_LENGTH) {
+            hatchDetected = false;
+        }
+        return hatchDetected;
     }
+
     //for Mediator to see hatch state
     public boolean hatchDetected() {
-        return haveHatch;
+        return hatchDetected;
     }
 }
