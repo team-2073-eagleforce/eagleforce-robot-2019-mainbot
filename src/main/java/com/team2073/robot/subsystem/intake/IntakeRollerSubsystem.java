@@ -28,19 +28,8 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
         if (state == DISABLED) {
             return;
         }
-        switch (state) {
-            case INTAKE_SPEED:
-                setPower(IntakeRollerState.INTAKE_SPEED.getPercent());
-                break;
-            case OUTTAKE_SPEED:
-                setPower(IntakeRollerState.OUTTAKE_SPEED.getPercent());
-                break;
-            case STOP:
-                setPower(IntakeRollerState.STOP.getPercent());
-                break;
-            default:
-                throw new IllegalStateException("Unknown State:" + state);
-        }
+        
+        setPower(state.getPercent());
     }
 
     @Override
