@@ -4,7 +4,6 @@ out/
 target/
 
 # IDE #
-.idea/
 
 # MAC #
 .DS_Store
