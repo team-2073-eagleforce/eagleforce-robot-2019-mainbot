@@ -19,10 +19,10 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     private DoubleSolenoid hatchPlace = appCtx.getHatchPlaceSolenoid();
     private Ultrasonic ultraSensor = appCtx.getHatchSensor();
 
-    private static final double MARGIN_OF_ERROR = AppConstants.Subsystems.HATCH_MARGIN_OF_ERROR;
+    private static final double MARGIN_OF_ERROR = AppConstants.Subsystems.Hatch.HATCH_MARGIN_OF_ERROR;
     private HatchState state = HatchState.STARTING_CONFIG;
 
-    private static final int DEQUE_LENGTH = 3;
+    private static final int FILTER_LENGTH = 3;
     private int hatchActiveCount;
     private int hatchInactiveCount;
 
@@ -99,9 +99,9 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
             hatchInactiveCount++;
             hatchActiveCount = 0;
         }
-        if (hatchActiveCount > DEQUE_LENGTH) {
+        if (hatchActiveCount > FILTER_LENGTH) {
             hatchDetected = true;
-        } else if (hatchInactiveCount > DEQUE_LENGTH) {
+        } else if (hatchInactiveCount > FILTER_LENGTH) {
             hatchDetected = false;
         }
         return hatchDetected;
