@@ -25,9 +25,6 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
 
     @Override
     public void onPeriodic() {
-        if (state == DISABLED) {
-            return;
-        }
         
         setPower(state.getPercent());
     }
@@ -51,7 +48,7 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
         INTAKE_SPEED(.9),
         OUTTAKE_SPEED(-.9),
         STOP(0d),
-        DISABLED(null);
+        DISABLED(0d);
 
         private Double percent;
 
