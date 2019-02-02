@@ -41,22 +41,7 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 		if(cargoSensor.get()){set(ShooterState.STALL);}
 
 		state = currentState();
-		switch (state){
-			case INTAKE:
-				setPower(ShooterState.INTAKE.getPercent());
-				break;
-			case HIGH_SHOOT:
-				setPower(ShooterState.HIGH_SHOOT.getPercent());
-				break;
-			case STALL:
-				setPower(ShooterState.STALL.getPercent());
-				break;
-			case STOP:
-				setPower(ShooterState.STOP.getPercent());
-				break;
-			default:
-			    throw new IllegalStateException("Unknown Value: " + state);
-		}
+		setPower(state.getPercent());
 
 	}
 
