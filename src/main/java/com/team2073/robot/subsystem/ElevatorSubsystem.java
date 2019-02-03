@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
-import com.team2073.common.motionprofiling.MotionProfileConfiguration;
 import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
 import com.team2073.common.periodic.PeriodicRunnable;
@@ -25,6 +24,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private static final double MAX_VELOCITY = 0d;
     private static final double PERCENT_FOR_MAX_VELOCITY = 0d;
     private static final double MAX_ACCELERATION = 0d;
+    private static final double KA = .2;
     private static final double TIME_STEP = 0d;
 
     //PID
@@ -47,7 +47,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     private PidfControlLoop holdingPID = new PidfControlLoop(0, 0, 0 ,0, 1);
     private MotionProfileControlloop controller = new MotionProfileControlloop(P, D,
-            PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, .2 / MAX_ACCELERATION, 1);
+            PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA / MAX_ACCELERATION, 1);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
     private TrapezoidalProfileManager trapezoidalProfileManager = new TrapezoidalProfileManager(controller,
             profileConfig, this::position, holdingPID);
@@ -72,6 +72,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
             return;
         }
 
+        bottomZero.onPeriodic();
+        topZero.onPeriodic();
+
         if(!isPositionSafe(setpoint)){
             setpoint = findClosestBound(MIN_HEIGHT, setpoint, MAX_HEIGHT);
         }
@@ -79,9 +82,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         trapezoidalProfileManager.setPoint(setpoint);
         trapezoidalProfileManager.newOutput();
         elevatorMaster.set(ControlMode.PercentOutput, trapezoidalProfileManager.getOutput());
-
-        bottomZero.onPeriodic();
-        topZero.onPeriodic();
     }
 
     private boolean isPositionSafe(double position) {
@@ -103,7 +103,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public double velocity() {
-        return converter.asPosition(elevatorMaster.getSelectedSensorVelocity(0));
+        return converter.asPosition(elevatorMaster.getSelectedSensorVelocity(0))*10;
     }
 
     @Override
