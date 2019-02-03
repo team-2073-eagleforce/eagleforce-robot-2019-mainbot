@@ -12,60 +12,63 @@ import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterStat
 import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterState.DISABLED;
 
 public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<ShooterState> {
-	private final RobotContext robotCtx = RobotContext.getInstance();
-	private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private final RobotContext robotCtx = RobotContext.getInstance();
+    private final ApplicationContext appCtx = ApplicationContext.getInstance();
 
-	private IMotorController shooterLeft = appCtx.getLeftShooter();
-	private IMotorController shooterRight = appCtx.getRightShooter();
-	private DigitalInput cargoSensor = appCtx.getCargoSensor();
+    private IMotorController shooterLeft = appCtx.getLeftShooter();
+    private IMotorController shooterRight = appCtx.getRightShooter();
+    private DigitalInput cargoSensor = appCtx.getCargoSensor();
 
-	private ShooterState state = ShooterState.STOP;
+    private ShooterState state = ShooterState.STOP;
 
-	public ShooterSubsystem() {
-		autoRegisterWithPeriodicRunner();
-	}
+    public ShooterSubsystem() {
+        autoRegisterWithPeriodicRunner();
+    }
 
-	private void setPower(Double percent){
-		shooterLeft.set(ControlMode.PercentOutput, percent);
-		shooterRight.set(ControlMode.PercentOutput, percent);
-	}
+    private void setPower(Double percent) {
+        shooterLeft.set(ControlMode.PercentOutput, percent);
+        shooterRight.set(ControlMode.PercentOutput, percent);
+    }
 
 
-	@Override
-	public void onPeriodic() {
+    @Override
+    public void onPeriodic() {
 
-		if(state == DISABLED){
-			return;
-		}
+        if (cargoSensor.get()) {
+            set(ShooterState.STALL);
+        }
 
-		if(cargoSensor.get()){set(ShooterState.STALL);}
+        state = currentState();
 
-		state = currentState();
-		setPower(state.getPercent());
+        setPower(state.getPercent());
 
-	}
+    }
 
-	@Override
-	public ShooterState currentState() {
-		return state;
-	}
+    @Override
+    public ShooterState currentState() {
+        return state;
+    }
 
-	@Override
-	public void set(ShooterState goalState) {
-		state = goalState;
-	}
+    @Override
+    public void set(ShooterState goalState) {
+        state = goalState;
+    }
 
-	public enum ShooterState {
-		HIGH_SHOOT(0.9),
-		INTAKE(-0.9),
-		STOP(0d),
-		STALL(-0.09),
-		DISABLED(null);
+    public enum ShooterState {
+        HIGH_SHOOT(0.9),
+        INTAKE(-0.9),
+        STOP(0d),
+        STALL(-0.09),
+        DISABLED(0d);
 
-		private Double percent;
+        private Double percent;
 
-		ShooterState(Double percent){this.percent = percent;}
+        ShooterState(Double percent) {
+            this.percent = percent;
+        }
 
-		public Double getPercent(){return percent;}
-	}
+        public Double getPercent() {
+            return percent;
+        }
+    }
 }
