@@ -46,7 +46,10 @@ public abstract class AppConstants {
 			public static final double HATCH_MARGIN_OF_ERROR = 6;
 		}
 
-
+		public abstract class Drivetrain{
+			public static final double SENSE = .2;
+			public static final double INVERSE = .3;
+		}
 	}
 
 	public abstract class Defaults {

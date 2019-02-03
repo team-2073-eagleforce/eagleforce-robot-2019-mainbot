@@ -3,6 +3,7 @@ package com.team2073.robot.subsystem.driveprofile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team2073.robot.AppConstants;
+import com.team2073.robot.AppConstants.Subsystems.Drivetrain;
 import com.team2073.robot.ctx.ApplicationContext;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -23,11 +24,11 @@ public class EagleDriveProfile implements DriveProfile {
     }
 
     private double turnSense(double ptart) {
-        return AppConstants.Drivetrain.SENSE * Math.pow(ptart, 3) + ptart * (1 - AppConstants.Drivetrain.SENSE);
+        return Drivetrain.SENSE * Math.pow(ptart, 3) + ptart * (1 - Drivetrain.SENSE);
     }
 
     private double inverse(double start) {
-        return (start) * AppConstants.Drivetrain.INVERSE + start;
+        return (start) * Drivetrain.INVERSE + start;
     }
 
     private void move(double speed, double turn) {
