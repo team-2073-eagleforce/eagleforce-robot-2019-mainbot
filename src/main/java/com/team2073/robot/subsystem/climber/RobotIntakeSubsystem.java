@@ -17,10 +17,11 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
     private DoubleSolenoid forkSolenoid = appCtx.getForkDeploySolenoid();
     private DoubleSolenoid robotGrabSolenoid = appCtx.getRobotGrabSolenoid();
 
-    private Timer timer = new Timer();
-
     private boolean timeStart;
 
+    private static final double DEPLOY_FORKS_WAIT_TIME = 0.25;
+
+    private Timer timer = new Timer();
 
     private RobotIntakeState state = RobotIntakeState.STORE;
 
@@ -53,7 +54,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
                     timer.start();
                     timeStart = true;
                 }
-                if (timer.getElapsedTime() > 0.25) {
+                if (timer.getElapsedTime() > DEPLOY_FORKS_WAIT_TIME) {
                     robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
                     timer.stop();
                     timeStart = false;
@@ -69,7 +70,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
                 robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
                 break;
             case DISABLED:
-                return;
+                break;
             default:
                 throw new IllegalStateException("Unknown state: " + state);
         }
