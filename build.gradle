@@ -21,6 +21,45 @@ def DEBUG_MODE = false
 def IP_ADDRESS = "10.20.73.2"
 def ROBOT_CLASS = "com.team2073.robot.Robot"
 
+// Property keys
+def PROP_KEY_SIM_MODE = "sim"
+def PROP_KEY_TEST_BOARD_MODE = "testBoard"
+def PROP_KEY_REMOTE_DEBUG_MODE = "remoteDebug"
+def PROP_KEY_TEAM_NUMBER = "teamNumber"
+
+def DEFAULT_ROBOT_CLASS = "org.usfirst.frc.team2073.robot.RobotDelegate"
+def SIMULATION_ROBOT_CLASS = "com.team2073.common.dev.simulation.RobotDelegatorSimulationImpl"
+def TEST_BOARD_ROBOT_CLASS = "com.team2073.common.dev.testboard.DevRobot"
+
+ext {
+    // Allow overriding this property from the command line/run config using -PROBOT_CLASS=com.something.SomeRobotClass
+    if (project.hasProperty(PROP_KEY_SIM_MODE)) {
+        ROBOT_CLASS = SIMULATION_ROBOT_CLASS
+        println "============================================================================"
+        println "Simulation mode enabled. Overriding default ROBOT_CLASS of [" + DEFAULT_ROBOT_CLASS + "] with [" + ROBOT_CLASS + "]."
+        println "============================================================================"
+    } else if(project.hasProperty(PROP_KEY_TEST_BOARD_MODE)) {
+        ROBOT_CLASS = TEST_BOARD_ROBOT_CLASS
+        println "============================================================================"
+        println "Test board mode enabled. Overriding default ROBOT_CLASS of [" + DEFAULT_ROBOT_CLASS + "] with [" + ROBOT_CLASS + "]."
+        println "============================================================================"
+    }
+
+    if (project.hasProperty(PROP_KEY_REMOTE_DEBUG_MODE)) {
+        DEBUG_MODE = true
+    }
+
+    if (project.hasProperty(PROP_KEY_TEAM_NUMBER)) {
+        println "============================================================================"
+        println "Overriding default team # of [" + TEAM + "] with [" + teamNumber + "]."
+        println "============================================================================"
+        TEAM = TEAM_NUMBER
+    }
+    // println Integer.toString(teamNumber).substring(0, 2) + "." + teamNumber.substring(2, 4)
+    IP_ADDRESS = "10." + TEAM_NUMBER.toString().substring(0, 2) + "." + TEAM_NUMBER.toString().substring(2, 4) + ".2"
+    println IP_ADDRESS
+}
+
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
 deploy {
