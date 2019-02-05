@@ -39,7 +39,6 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
         }
 
         state = currentState();
-
         setPower(state.getPercent());
 
     }
