@@ -17,8 +17,11 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
     private DoubleSolenoid forkSolenoid = appCtx.getForkDeploySolenoid();
     private DoubleSolenoid robotGrabSolenoid = appCtx.getRobotGrabSolenoid();
 
-    private Timer timer = new Timer();
+    private boolean timeStart;
 
+    private static final double DEPLOY_FORKS_WAIT_TIME = 0.25;
+
+    private Timer timer = new Timer();
 
     private RobotIntakeState state = RobotIntakeState.STORE;
 
@@ -38,9 +41,6 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     @Override
     public void onPeriodic() {
-        if (state == DISABLED) {
-            return;
-        }
         switch (state) {
             // Forks up, clamp down
             case STORE:
@@ -50,11 +50,16 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
             // Forks down, clamps up
             case DEPLOY_FORKS:
                 forkSolenoid.set(DoubleSolenoid.Value.kForward);
-                timer.start();
-                if (timer.getElapsedTime() > 0.25) {
-                    robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+                if (!timeStart){
+                    timer.start();
+                    timeStart = true;
                 }
-                timer.stop();
+                if (timer.getElapsedTime() > DEPLOY_FORKS_WAIT_TIME) {
+                    robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+                    timer.stop();
+                    timeStart = false;
+                }
+
                 break;
             // Clamps up
             case OPEN_INTAKE:
@@ -63,6 +68,8 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
             // Clamps down
             case CLAMP:
                 robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
+                break;
+            case DISABLED:
                 break;
             default:
                 throw new IllegalStateException("Unknown state: " + state);
