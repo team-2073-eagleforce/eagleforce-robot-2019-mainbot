@@ -19,6 +19,8 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     private Timer timer = new Timer();
 
+    private boolean timeStart;
+
 
     private RobotIntakeState state = RobotIntakeState.STORE;
 
@@ -38,9 +40,6 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     @Override
     public void onPeriodic() {
-        if (state == DISABLED) {
-            return;
-        }
         switch (state) {
             // Forks up, clamp down
             case STORE:
@@ -50,11 +49,16 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
             // Forks down, clamps up
             case DEPLOY_FORKS:
                 forkSolenoid.set(DoubleSolenoid.Value.kForward);
-                timer.start();
+                if (!timeStart){
+                    timer.start();
+                    timeStart = true;
+                }
                 if (timer.getElapsedTime() > 0.25) {
                     robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+                    timer.stop();
+                    timeStart = false;
                 }
-                timer.stop();
+
                 break;
             // Clamps up
             case OPEN_INTAKE:
@@ -64,6 +68,8 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
             case CLAMP:
                 robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
                 break;
+            case DISABLED:
+                return;
             default:
                 throw new IllegalStateException("Unknown state: " + state);
         }
