@@ -19,12 +19,12 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem {
 
     private static final double ENCODER_TICS_PER_INCH = 1000d;
-    private static final double MAX_HEIGHT = 100d;
+    private static final double MAX_HEIGHT = 85d;
     private static final double MIN_HEIGHT = 0d;
-    private static final double MAX_VELOCITY = 0d;
+    private static final double MAX_VELOCITY = 20d;
     private static final double PERCENT_FOR_MAX_VELOCITY = 0d;
-    private static final double MAX_ACCELERATION = 0d;
-    private static final double KA = .2;
+    private static final double MAX_ACCELERATION = 10d;
+    private static final double KA = .2 / MAX_ACCELERATION;
     private static final double TIME_STEP = 0d;
 
     //PID
@@ -47,7 +47,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     private PidfControlLoop holdingPID = new PidfControlLoop(0, 0, 0 ,0, 1);
     private MotionProfileControlloop controller = new MotionProfileControlloop(P, D,
-            PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA / MAX_ACCELERATION, 1);
+            PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
     private TrapezoidalProfileManager trapezoidalProfileManager = new TrapezoidalProfileManager(controller,
             profileConfig, this::position, holdingPID);
