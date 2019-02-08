@@ -4,17 +4,19 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
+import com.team2073.common.proploader.PropertyLoader;
+import com.team2073.common.proploader.model.PropertyContainer;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
-import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterState;
-import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterState.DISABLED;
 
 public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<ShooterState> {
-    private final RobotContext robotCtx = RobotContext.getInstance();
+    private static final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private static PropertyLoader loader = robotCtx.getPropertyLoader();
+    private static ShooterProperties shooterProperties = loader.registerPropContainer(ShooterProperties.class);
 
     private IMotorController shooterLeft = appCtx.getLeftShooter();
     private IMotorController shooterRight = appCtx.getRightShooter();
@@ -62,10 +64,10 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
     }
 
     public enum ShooterState {
-        HIGH_SHOOT(0.9),
-        INTAKE(-0.5),
+        HIGH_SHOOT(shooterProperties.highShootPercent),
+        INTAKE(shooterProperties.intakePercent),
         STOP(0d),
-        STALL(-0.09),
+        STALL(shooterProperties.stallPercent),
         DISABLED(0d);
 
         private Double percent;
@@ -76,6 +78,37 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
         public Double getPercent() {
             return percent;
+        }
+    }
+
+    @PropertyContainer
+    public static class ShooterProperties {
+        private double highShootPercent;
+        private double intakePercent;
+        private double stallPercent;
+
+        public double getHighShootPercent() {
+            return highShootPercent;
+        }
+
+        public void setHighShootPercent(double highShootPercent) {
+            this.highShootPercent = highShootPercent;
+        }
+
+        public double getIntakePercent() {
+            return intakePercent;
+        }
+
+        public void setIntakePercent(double intakePercent) {
+            this.intakePercent = intakePercent;
+        }
+
+        public double getStallPercent() {
+            return stallPercent;
+        }
+
+        public void setStallPercent(double stallPercent) {
+            this.stallPercent = stallPercent;
         }
     }
 }

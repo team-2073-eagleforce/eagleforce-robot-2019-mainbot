@@ -10,10 +10,12 @@ import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
+import com.team2073.common.proploader.PropertyLoader;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.PositionalSubsystem;
+import com.team2073.robot.subsystem.ElevatorSubsystem;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.RobotState;
 
@@ -29,8 +31,10 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     private static final double TICS_PER_DEGREE = 4096d / 360d;
     private static final double KA = .2 / MAX_ACCELERATION;
 
-    private final RobotContext robotCtx = RobotContext.getInstance();
-    private final ApplicationContext appCtx = ApplicationContext.getInstance();
+	private final RobotContext robotCtx = RobotContext.getInstance();
+	private final ApplicationContext appCtx = ApplicationContext.getInstance();
+	private PropertyLoader loader = robotCtx.getPropertyLoader();
+	private IntakePivotProperties intakePivotProperties = loader.registerPropContainer(IntakePivotProperties.class);
 
     private IMotorControllerEnhanced intakeMaster = appCtx.getIntakePivotMaster();
     private AnalogPotentiometer pot = appCtx.getIntakePot();
@@ -57,20 +61,20 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         intakeMaster.configPeakOutputReverse(-.6, 10);
     }
 
-    @Override
-    public void set(Double setPoint) {
-        this.setpoint = setPoint;
-    }
+	@Override
+	public void set(Double setPoint) {
+		this.setpoint = setPoint;
+	}
 
-    @Override
-    public double position() {
-        return converter.asPosition(intakeMaster.getSelectedSensorPosition(0));
-    }
+	@Override
+	public double position() {
+		return converter.asPosition(intakeMaster.getSelectedSensorPosition(0));
+	}
 
-    @Override
-    public double velocity() {
-        return converter.asPosition(intakeMaster.getSelectedSensorVelocity(0) * 10);
-    }
+	@Override
+	public double velocity() {
+		return converter.asPosition(intakeMaster.getSelectedSensorVelocity(0) * 10);
+	}
 
 
     @Override
@@ -133,5 +137,9 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
             return Units.DEGREES;
         }
     }
+
+	public static class IntakePivotProperties {
+
+	}
 
 }
