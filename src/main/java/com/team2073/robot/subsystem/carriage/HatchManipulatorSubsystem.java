@@ -60,7 +60,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
             return verticalPistonActive;
         }
 
-        //when you set states in mediator (?) Ex:
+
         // state = HatchState.Grabbed Hatch
         //  hatchPosition.set(HatchState.GRABED_HATCH.isVerticalPistonActive());
         //hatchPlace.set(HatchState.GRABED_HATCH.isFingerPistonActive());
