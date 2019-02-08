@@ -3,15 +3,15 @@ package com.team2073.robot.command.HatchManipulator;
 import com.team2073.common.command.AbstractLoggingCommand;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.Mediator;
-import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
+import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.HatchState;
 
-public class StartingConfigCommand extends AbstractLoggingCommand {
+public class HatchIntakeCommand extends AbstractLoggingCommand {
     private ApplicationContext appCtx = ApplicationContext.getInstance();
     private Mediator mediator = appCtx.getMediator();
 
     @Override
     protected void initializeDelegate() {
-        mediator.hatchManipulator(HatchManipulatorSubsystem.HatchState.STARTING_CONFIG);
+        mediator.hatchManipulator(HatchState.READY_TO_INTAKE);
     }
 
     @Override

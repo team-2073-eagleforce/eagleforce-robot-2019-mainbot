@@ -3,7 +3,7 @@ package com.team2073.robot.command.HatchManipulator;
 import com.team2073.common.command.AbstractLoggingCommand;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.Mediator;
-import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
+import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.HatchState;
 
 public class ReleaseHatchCommand extends AbstractLoggingCommand {
     private ApplicationContext appCtx = ApplicationContext.getInstance();
@@ -11,7 +11,7 @@ public class ReleaseHatchCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        mediator.hatchManipulator(HatchManipulatorSubsystem.HatchState.RELEASE_HATCH);
+        mediator.hatchManipulator(HatchState.RELEASE_HATCH);
     }
 
     @Override
