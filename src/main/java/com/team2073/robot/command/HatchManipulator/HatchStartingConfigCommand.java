@@ -16,6 +16,6 @@ public class HatchStartingConfigCommand extends AbstractLoggingCommand {
 
     @Override
     protected boolean isFinishedDelegate() {
-        return true;
+        return false;
     }
 }
