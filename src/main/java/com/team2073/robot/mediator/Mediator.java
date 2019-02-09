@@ -32,40 +32,40 @@ public class Mediator implements PeriodicRunnable {
 	public Mediator() {
 		autoRegisterWithPeriodicRunner();
 	}
-//
-//	// INTAKE ROLLERS
-//	public void intakeRollers(IntakeRollerState state) {
-//
+
+	// INTAKE ROLLERS
+	public void intakeRollers(IntakeRollerState state) {
+
 //		intakeRoller.set(state);
-//		checkIntakeRollersPeriodic();
-//	}
-//
-//	private void checkIntakeRollersPeriodic() {
+		checkIntakeRollersPeriodic();
+	}
+
+	private void checkIntakeRollersPeriodic() {
 //		if (intakePivot.position() < 70) {
 //			intakeRoller.set(IntakeRollerState.STOP);
 //		}
-//
-//	}
-//
-//	// HATCH
-//	public void hatchManipulator(HatchState state) {
+
+	}
+
+	// HATCH
+	public void hatchManipulator(HatchState state) {
 //		hatch.set(state);
-//	}
-//
-//	//SHOOTER
-//	public void shooterSubsystem(ShooterState state) {
+	}
+
+	//SHOOTER
+	public void shooterSubsystem(ShooterState state) {
 //		shooter.set(state);
-//	}
-//
-//	//	ROBOT INTAKE
-//	public void robotIntake(RobotIntakeState state) {
+	}
+
+	//	ROBOT INTAKE
+	public void robotIntake(RobotIntakeState state) {
 //		robotIntake.set(state);
-//	}
-//
-//	//ELEVATOR
-//	public void elevator(double setpoint) {
+	}
+
+	//ELEVATOR
+	public void elevator(double setpoint) {
 //		elevator.set(setpoint);
-//	}
+	}
 
 
 	@Override

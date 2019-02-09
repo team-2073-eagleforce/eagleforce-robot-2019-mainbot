@@ -17,13 +17,13 @@ public class TankDriveProfile implements DriveProfile {
     private Joystick controller = ApplicationContext.getInstance().getController();
 
     void move(double leftSide, double rightSide) {
-        rightMaster.set(ControlMode.PercentOutput, -rightSide);
+        rightMaster.set(ControlMode.PercentOutput, rightSide);
         leftMaster.set(ControlMode.PercentOutput, leftSide);
     }
 
     @Override
     public void setMotors() {
-        move(controller.getRawAxis(1), controller.getRawAxis(5));
+        move(-controller.getRawAxis(1), -controller.getRawAxis(5));
 
     }
 }

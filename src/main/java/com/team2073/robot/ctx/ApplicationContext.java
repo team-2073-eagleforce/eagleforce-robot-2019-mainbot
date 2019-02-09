@@ -219,42 +219,42 @@ public class ApplicationContext {
 
     public IMotorController getLeftDriveSlave() {
         if (leftDriveSlave == null) {
-            leftDriveSlave = new TalonSRX(LEFT_DRIVE_VICTOR_PORT/*, LEFT_DRIVETRAIN_SLAVE_NAME, SAFE_PERCENT*/);
+            leftDriveSlave = new VictorSPX(LEFT_DRIVE_VICTOR_PORT/*, LEFT_DRIVETRAIN_SLAVE_NAME, SAFE_PERCENT*/);
         }
         return leftDriveSlave;
     }
 
     public IMotorController getLeftDriveSlave2() {
         if (leftDriveSlave2 == null) {
-            leftDriveSlave2 = new TalonSRX(LEFT_DRIVE_VICTOR_2_PORT/*, LEFT_DRIVETRAIN_SLAVE_2_NAME, SAFE_PERCENT*/);
+            leftDriveSlave2 = new VictorSPX(LEFT_DRIVE_VICTOR_2_PORT/*, LEFT_DRIVETRAIN_SLAVE_2_NAME, SAFE_PERCENT*/);
         }
         return leftDriveSlave2;
     }
 
     public IMotorController getRightDriveSlave() {
         if (rightDriveSlave == null) {
-            rightDriveSlave = new TalonSRX(RIGHT_DRIVE_VICTOR_PORT/*, RIGHT_DRIVETRAIN_SLAVE_NAME, SAFE_PERCENT*/);
+            rightDriveSlave = new VictorSPX(RIGHT_DRIVE_VICTOR_PORT/*, RIGHT_DRIVETRAIN_SLAVE_NAME, SAFE_PERCENT*/);
         }
         return rightDriveSlave;
     }
 
     public IMotorController getRightDriveSlave2() {
         if (rightDriveSlave2 == null) {
-            rightDriveSlave2 = new TalonSRX(RIGHT_DRIVE_VICTOR_2_PORT/*, RIGHT_DRIVETRAIN_SLAVE_2_NAME, SAFE_PERCENT*/);
+            rightDriveSlave2 = new VictorSPX(RIGHT_DRIVE_VICTOR_2_PORT/*, RIGHT_DRIVETRAIN_SLAVE_2_NAME, SAFE_PERCENT*/);
         }
         return rightDriveSlave2;
     }
 
     public IMotorController getElevatorSlave() {
         if (elevatorSlave == null) {
-            elevatorSlave = new TalonSRX(ELEVATOR_VICTOR_PORT/*, ELEVATOR_SLAVE_NAME, SAFE_PERCENT*/);
+            elevatorSlave = new VictorSPX(ELEVATOR_VICTOR_PORT/*, ELEVATOR_SLAVE_NAME, SAFE_PERCENT*/);
         }
         return elevatorSlave;
     }
 
     public IMotorController getElevatorSlave2() {
         if (elevatorSlave2 == null) {
-            elevatorSlave2 = new TalonSRX(ELEVATOR_VICTOR_2_PORT/*, ELEVATOR_SLAVE_2_NAME, SAFE_PERCENT*/);
+            elevatorSlave2 = new VictorSPX(ELEVATOR_VICTOR_2_PORT/*, ELEVATOR_SLAVE_2_NAME, SAFE_PERCENT*/);
         }
         return elevatorSlave2;
     }
@@ -289,42 +289,42 @@ public class ApplicationContext {
 
     public DoubleSolenoid getDriveShiftSolenoid() {
         if (driveShiftSolenoid == null) {
-            driveShiftSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, DRIVE_SHIFT_LOW_PORT, DRIVE_SHIFT_HIGH_PORT);
+            driveShiftSolenoid = new DoubleSolenoid(PCM_2_CAN_ID, DRIVE_SHIFT_LOW_PORT, DRIVE_SHIFT_HIGH_PORT);
         }
         return driveShiftSolenoid;
     }
 
     public DoubleSolenoid getElevatorShiftSolenoid() {
         if (elevatorShiftSolenoid == null) {
-            elevatorShiftSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, ELEVATOR_SHIFT_LOW_PORT, ELEVATOR_SHIFT_HIGH_PORT);
+            elevatorShiftSolenoid = new DoubleSolenoid(PCM_2_CAN_ID, ELEVATOR_SHIFT_LOW_PORT, ELEVATOR_SHIFT_HIGH_PORT);
         }
         return elevatorShiftSolenoid;
     }
 
     public DoubleSolenoid getHatchPositionSolenoid() {
         if (hatchPositionSolenoid == null) {
-            hatchPositionSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, HATCH_UP_SOLENOID_PORT, HATCH_DOWN_SOLENOID_PORT);
+            hatchPositionSolenoid = new DoubleSolenoid(PCM_2_CAN_ID, HATCH_UP_SOLENOID_PORT, HATCH_DOWN_SOLENOID_PORT);
         }
         return hatchPositionSolenoid;
     }
 
     public DoubleSolenoid getHatchPlaceSolenoid() {
         if (hatchPlaceSolenoid == null) {
-            hatchPlaceSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, HATCH_HOLD_SOLENOID_PORT, HATCH_RELEASE_SOLENOID_PORT);
+            hatchPlaceSolenoid = new DoubleSolenoid(PCM_2_CAN_ID, HATCH_HOLD_SOLENOID_PORT, HATCH_RELEASE_SOLENOID_PORT);
         }
         return hatchPlaceSolenoid;
     }
 
     public DoubleSolenoid getForkDeploySolenoid() {
         if (forkDeploySolenoid == null) {
-            forkDeploySolenoid = new DoubleSolenoid(PCM_2_CAN_ID, FORK_HOLD_SOLENOID_PORT, FORK_RELEASE_SOLENOID_PORT);
+            forkDeploySolenoid = new DoubleSolenoid(PCM_1_CAN_ID, FORK_HOLD_SOLENOID_PORT, FORK_RELEASE_SOLENOID_PORT);
         }
         return forkDeploySolenoid;
     }
 
     public DoubleSolenoid getRobotGrabSolenoid() {
         if (robotGrabSolenoid == null) {
-            robotGrabSolenoid = new DoubleSolenoid(PCM_2_CAN_ID, ROBOT_INTAKE_GRAB_SOLENOID_PORT, ROBOT_INTAKE_OPEN_SOLENOID_PORT);
+            robotGrabSolenoid = new DoubleSolenoid(PCM_1_CAN_ID, ROBOT_INTAKE_GRAB_SOLENOID_PORT, ROBOT_INTAKE_OPEN_SOLENOID_PORT);
         }
         return robotGrabSolenoid;
     }

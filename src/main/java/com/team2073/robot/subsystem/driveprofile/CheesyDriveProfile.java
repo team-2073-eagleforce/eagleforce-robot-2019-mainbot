@@ -23,10 +23,10 @@ public class CheesyDriveProfile implements DriveProfile {
 
     @Override
     public void setMotors() {
-        DriveSignal driveSignal = cheesyDriveHelper.cheesyDrive(joystick.getRawAxis(1), wheel.getRawAxis(0), wheel.getRawButton(1), joystick.getRawButton(3));
+        DriveSignal driveSignal = cheesyDriveHelper.cheesyDrive(-joystick.getRawAxis(1), wheel.getRawAxis(0), wheel.getRawButton(1), joystick.getRawButton(3));
 
         leftMaster.set(ControlMode.PercentOutput, driveSignal.getLeft());
-        rightMaster.set(ControlMode.PercentOutput, -driveSignal.getRight());
+        rightMaster.set(ControlMode.PercentOutput, driveSignal.getRight());
     }
 }
 
