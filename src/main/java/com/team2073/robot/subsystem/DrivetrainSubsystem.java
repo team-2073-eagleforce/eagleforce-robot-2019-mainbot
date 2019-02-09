@@ -7,6 +7,7 @@ import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.subsystem.driveprofile.*;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class DrivetrainSubsystem implements PeriodicRunnable {
@@ -19,6 +20,9 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 	private IMotorControllerEnhanced rightMaster = appCtx.getRightDriveMaster();
 	private IMotorController rightSlave = appCtx.getRightDriveSlave();
 	private IMotorController rightSlave2 = appCtx.getRightDriveSlave2();
+
+	private DoubleSolenoid shifter = appCtx.getDriveShiftSolenoid();
+
     private Joystick controller = ApplicationContext.getInstance().getController();
 
     private CheesyDriveProfile cheesyDriveProfile = new CheesyDriveProfile();
@@ -44,9 +48,13 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 
 	private void configMotors() {
 		leftMaster.setInverted(false);
+        leftSlave.follow(leftMaster);
+        leftSlave2.follow(leftMaster);
+
 		rightMaster.setInverted(true);
-//        rightSlave.follow(rightMaster);
-//        leftSlave.follow(leftMaster);
+        rightSlave.follow(rightMaster);
+        rightSlave2.follow(rightMaster);
+
 		leftMaster.configPeakOutputForward(.5, 10);
 		leftMaster.configPeakOutputReverse(-.5, 10);
 		rightMaster.configPeakOutputForward(.5, 10);
@@ -64,5 +72,12 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
             }
         }
         currentDriveProfile.setMotors();
+
+        if(controller.getRawButton(5)){
+        	shifter.set(DoubleSolenoid.Value.kForward);
+		}else{
+        	shifter.set(DoubleSolenoid.Value.kReverse);
+		}
     }
+
 }
