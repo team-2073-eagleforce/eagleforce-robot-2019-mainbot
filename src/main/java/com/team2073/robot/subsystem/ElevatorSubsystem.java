@@ -55,8 +55,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
         elevatorSlave1.follow(elevatorMaster);
         elevatorSlave2.follow(elevatorMaster);
-
-        loader.loadProperties();
     }
 
     //PID
@@ -140,7 +138,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         }
     }
 
-    @PropertyContainer
     public static class ElevatorProperties{
         private double elevator_P;
         private double elevator_I;
