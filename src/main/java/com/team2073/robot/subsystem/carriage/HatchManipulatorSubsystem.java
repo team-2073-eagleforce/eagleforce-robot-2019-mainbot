@@ -17,7 +17,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
 
     private DoubleSolenoid hatchPosition = appCtx.getHatchPositionSolenoid();
     private DoubleSolenoid hatchPlace = appCtx.getHatchPlaceSolenoid();
-    private Ultrasonic ultraSensor = appCtx.getHatchSensor();
+//    private Ultrasonic ultraSensor = appCtx.getHatchSensor();
 
     private static final double MARGIN_OF_ERROR = AppConstants.Subsystems.Hatch.HATCH_MARGIN_OF_ERROR;
     private HatchState state = HatchState.STARTING_CONFIG;
@@ -45,7 +45,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
         //vertical piston if set to kReverse, meaning that it is in its default position (vertical)
         READY_TO_INTAKE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward),
         //Intake: (fingers are contracted to allow hatch, the vertical piston is now horizontal
-        GRABED_HATCH(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kOff),
+        GRABED_HATCH(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward),
         //Hatch is Grabbed: the fingers return to default position to secure hatch
         //the vertical piston is in its previous state AKA kOff
         RELEASE_HATCH(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);
@@ -77,17 +77,28 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
 
     public HatchManipulatorSubsystem() {
         autoRegisterWithPeriodicRunner();
-        ultraSensor.setAutomaticMode(true);
+//        ultraSensor.setAutomaticMode(true);
     }
 
     //left changing states up to mediator as Jason said
     @Override
     public void onPeriodic() {
-        filterHatchReadings();
+//        filterHatchReadings();
+        if(appCtx.getController().getRawButton(1)){
+            set(HatchState.READY_TO_INTAKE);
+        }else if (appCtx.getController().getRawButton(2)){
+            set(HatchState.GRABED_HATCH);
+        }else if (appCtx.getController().getRawButton(3)){
+            set(HatchState.STARTING_CONFIG);
+        }
+
+        hatchPosition.set(currentState().isVerticalPistonActive());
+        hatchPlace.set(currentState().isFingerPistonActive());
     }
 
     private boolean hatchActive() {
-        return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
+//        return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
+        return false;
     }
 
     private boolean filterHatchReadings() {

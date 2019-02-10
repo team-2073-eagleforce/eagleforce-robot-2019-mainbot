@@ -115,7 +115,7 @@ public abstract class AppConstants {
 		public static final int ELEVATOR_TOP_LIMIT_DIO_PORT = 4;
 
 		//ANALOG
-		public static final int INTAKE_PIVOT_POTENTIOMETER_PORT = 0;
+		public static final int INTAKE_PIVOT_POTENTIOMETER_PORT = 3;
 
 
 	}

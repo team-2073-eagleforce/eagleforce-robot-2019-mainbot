@@ -4,6 +4,7 @@ import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
+import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import static com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRollerState;
@@ -25,7 +26,13 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
 
     @Override
     public void onPeriodic() {
-        
+        if(appCtx.getController().getRawButton(1)){
+            set(IntakeRollerState.INTAKE_SPEED);
+        }else if (appCtx.getController().getRawButton(2)){
+            set(IntakeRollerState.OUTTAKE_SPEED);
+        }else{
+            set(IntakeRollerState.STOP);
+        }
         setPower(state.getPercent());
     }
 
@@ -45,7 +52,7 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
     }
 
     public enum IntakeRollerState {
-        INTAKE_SPEED(.9),
+        INTAKE_SPEED(1.),
         OUTTAKE_SPEED(-.9),
         STOP(0d),
         DISABLED(0d);

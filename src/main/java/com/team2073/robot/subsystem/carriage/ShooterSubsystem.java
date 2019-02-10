@@ -6,6 +6,7 @@ import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
+import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterState;
@@ -23,6 +24,7 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
     public ShooterSubsystem() {
         autoRegisterWithPeriodicRunner();
+        shooterLeft.setInverted(true);
     }
 
     private void setPower(Double percent) {
@@ -33,10 +35,16 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
     @Override
     public void onPeriodic() {
-
-        if (cargoSensor.get()) {
-            set(ShooterState.STALL);
+        if(appCtx.getController().getRawButton(1)){
+            set(ShooterState.INTAKE);
+        }else if (appCtx.getController().getRawButton(2)){
+            set(ShooterState.HIGH_SHOOT);
+        }else{
+            set(ShooterState.STOP);
         }
+//        if (cargoSensor.get()) {
+//            set(ShooterState.STALL);
+//        }
 
         state = currentState();
         setPower(state.getPercent());
@@ -55,7 +63,7 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
     public enum ShooterState {
         HIGH_SHOOT(0.9),
-        INTAKE(-0.9),
+        INTAKE(-0.5),
         STOP(0d),
         STALL(-0.09),
         DISABLED(0d);

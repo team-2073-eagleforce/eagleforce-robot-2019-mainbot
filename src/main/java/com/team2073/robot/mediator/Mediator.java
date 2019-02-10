@@ -23,11 +23,11 @@ public class Mediator implements PeriodicRunnable {
 
 //	private IntakeRollerSubsystem intakeRoller = appCtx.getIntakeRollerSubsystem();
 //	private IntakePivotSubsystem intakePivot = appCtx.getIntakePivotSubsystem();
-//	private HatchManipulatorSubsystem hatch = appCtx.getHatchManipulatorSubsystem();
+	private HatchManipulatorSubsystem hatch = appCtx.getHatchManipulatorSubsystem();
 //	private ShooterSubsystem shooter = appCtx.getShooterSubsystem();
 //	private RobotIntakeSubsystem robotIntake = appCtx.getRobotIntakeSubsystem();
 //	private ElevatorSubsystem elevator = appCtx.getElevatorSubsystem();
-	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
+//	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
 
 	public Mediator() {
 		autoRegisterWithPeriodicRunner();
@@ -67,9 +67,13 @@ public class Mediator implements PeriodicRunnable {
 //		elevator.set(setpoint);
 	}
 
-
+	boolean set = false;
 	@Override
 	public void onPeriodic() {
 //		checkIntakeRollersPeriodic();
+		if(!set){
+//			intakePivot.set(147.);
+			set = true;
+		}
 	}
 }
