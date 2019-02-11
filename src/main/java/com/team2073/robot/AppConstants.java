@@ -90,7 +90,7 @@ public abstract class AppConstants {
 
 
 		// PCM 2
-		public static final int PCM_1_CAN_ID = 1;
+		public static final int PCM_2_CAN_ID = 2;
 		public static final int DRIVE_SHIFT_LOW_PORT = 0;
 		public static final int DRIVE_SHIFT_HIGH_PORT = 1;
 		public static final int ELEVATOR_SHIFT_LOW_PORT = 2;
@@ -101,7 +101,7 @@ public abstract class AppConstants {
 		public static final int HATCH_RELEASE_SOLENOID_PORT = 7;
 
 		// PCM 1
-		public static final int PCM_2_CAN_ID = 0;
+		public static final int PCM_1_CAN_ID = 1;
 		public static final int FORK_RELEASE_SOLENOID_PORT = 0;
 		public static final int FORK_HOLD_SOLENOID_PORT = 1;
 		public static final int ROBOT_INTAKE_GRAB_SOLENOID_PORT = 2;
@@ -115,7 +115,7 @@ public abstract class AppConstants {
 		public static final int ELEVATOR_TOP_LIMIT_DIO_PORT = 4;
 
 		//ANALOG
-		public static final int INTAKE_PIVOT_POTENTIOMETER_PORT = 0;
+		public static final int INTAKE_PIVOT_POTENTIOMETER_PORT = 3;
 
 
 	}

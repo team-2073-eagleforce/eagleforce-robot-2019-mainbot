@@ -35,12 +35,12 @@ public class EagleDriveProfile implements DriveProfile {
         double leftSide = -(inverse(speed) - (inverse(speed) * turnSense(-turn)));
         double rightSide = inverse(speed) + inverse(speed) * turnSense(-turn);
 
-        rightMaster.set(ControlMode.PercentOutput, -rightSide);
+        rightMaster.set(ControlMode.PercentOutput, rightSide);
         leftMaster.set(ControlMode.PercentOutput, -leftSide);
     }
 
     private void pointTurn(double turn) {
-        rightMaster.set(ControlMode.PercentOutput, turn);
+        rightMaster.set(ControlMode.PercentOutput, -turn);
         leftMaster.set(ControlMode.PercentOutput, turn);
     }
 
@@ -49,7 +49,7 @@ public class EagleDriveProfile implements DriveProfile {
         if (wheel.getRawButton(1)) {
             pointTurn(adjustTurn(wheel.getRawAxis(0)));
         } else {
-            move(joystick.getRawAxis(1), adjustTurn(wheel.getRawAxis(0)));
+            move(-joystick.getRawAxis(1), adjustTurn(wheel.getRawAxis(0)));
         }
 
     }

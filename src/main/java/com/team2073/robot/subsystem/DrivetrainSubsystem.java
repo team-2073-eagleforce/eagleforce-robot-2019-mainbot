@@ -1,5 +1,6 @@
 package com.team2073.robot.subsystem;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team2073.common.ctx.RobotContext;
@@ -7,18 +8,22 @@ import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.subsystem.driveprofile.*;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class DrivetrainSubsystem implements PeriodicRunnable {
-	private final RobotContext robotCtx = RobotContext.getInstance();
-	private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private final RobotContext robotCtx = RobotContext.getInstance();
+    private final ApplicationContext appCtx = ApplicationContext.getInstance();
 
-	private IMotorControllerEnhanced leftMaster = appCtx.getLeftDriveMaster();
-	private IMotorController leftSlave = appCtx.getLeftDriveSlave();
-	private IMotorController leftSlave2 = appCtx.getLeftDriveSlave2();
-	private IMotorControllerEnhanced rightMaster = appCtx.getRightDriveMaster();
-	private IMotorController rightSlave = appCtx.getRightDriveSlave();
-	private IMotorController rightSlave2 = appCtx.getRightDriveSlave2();
+    private IMotorControllerEnhanced leftMaster = appCtx.getLeftDriveMaster();
+    private IMotorController leftSlave = appCtx.getLeftDriveSlave();
+    private IMotorController leftSlave2 = appCtx.getLeftDriveSlave2();
+    private IMotorControllerEnhanced rightMaster = appCtx.getRightDriveMaster();
+    private IMotorController rightSlave = appCtx.getRightDriveSlave();
+    private IMotorController rightSlave2 = appCtx.getRightDriveSlave2();
+
+    private DoubleSolenoid shifter = appCtx.getDriveShiftSolenoid();
+
     private Joystick controller = ApplicationContext.getInstance().getController();
 
     private CheesyDriveProfile cheesyDriveProfile = new CheesyDriveProfile();
@@ -26,32 +31,40 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
     private EagleDriveProfile eagleDriveProfile = new EagleDriveProfile();
     private DriveProfile currentDriveProfile = tankDriveProfile;
 
-	public DrivetrainSubsystem() {
-		autoRegisterWithPeriodicRunner();
-		TalonUtil.resetTalon(leftMaster, TalonUtil.ConfigurationType.SENSOR);
-		TalonUtil.resetTalon(rightMaster, TalonUtil.ConfigurationType.SENSOR);
-		TalonUtil.resetVictor(leftSlave, TalonUtil.ConfigurationType.SLAVE);
-		TalonUtil.resetVictor(leftSlave2, TalonUtil.ConfigurationType.SLAVE);
-		TalonUtil.resetVictor(rightSlave, TalonUtil.ConfigurationType.SLAVE);
-		TalonUtil.resetVictor(rightSlave2, TalonUtil.ConfigurationType.SLAVE);
+    public DrivetrainSubsystem() {
+        autoRegisterWithPeriodicRunner();
+        TalonUtil.resetTalon(leftMaster, TalonUtil.ConfigurationType.SENSOR);
+        TalonUtil.resetTalon(rightMaster, TalonUtil.ConfigurationType.SENSOR);
+        TalonUtil.resetVictor(leftSlave, TalonUtil.ConfigurationType.SLAVE);
+        TalonUtil.resetVictor(leftSlave2, TalonUtil.ConfigurationType.SLAVE);
+        TalonUtil.resetVictor(rightSlave, TalonUtil.ConfigurationType.SLAVE);
+        TalonUtil.resetVictor(rightSlave2, TalonUtil.ConfigurationType.SLAVE);
 
-		configMotors();
+        configMotors();
 
-		driveProfileManager.registerProfile(cheesyDriveProfile);
-		driveProfileManager.registerProfile(tankDriveProfile);
-		driveProfileManager.registerProfile(eagleDriveProfile);
+        driveProfileManager.registerProfile(cheesyDriveProfile);
+        driveProfileManager.registerProfile(tankDriveProfile);
+        driveProfileManager.registerProfile(eagleDriveProfile);
     }
 
-	private void configMotors() {
-		leftMaster.setInverted(false);
-		rightMaster.setInverted(true);
-//        rightSlave.follow(rightMaster);
-//        leftSlave.follow(leftMaster);
-		leftMaster.configPeakOutputForward(.5, 10);
-		leftMaster.configPeakOutputReverse(-.5, 10);
-		rightMaster.configPeakOutputForward(.5, 10);
-		rightMaster.configPeakOutputReverse(-.5, 10);
-	}
+    private void configMotors() {
+        leftMaster.setInverted(true);
+        leftSlave.setInverted(true);
+        leftSlave.follow(leftMaster);
+        leftSlave2.setInverted(true);
+        leftSlave2.follow(leftMaster);
+
+        rightMaster.setInverted(false);
+        rightSlave.setInverted(false);
+        rightSlave.follow(rightMaster);
+        rightSlave2.setInverted(false);
+        rightSlave2.follow(rightMaster);
+
+        leftMaster.configPeakOutputForward(1, 10);
+        leftMaster.configPeakOutputReverse(-1, 10);
+        rightMaster.configPeakOutputForward(1, 10);
+        rightMaster.configPeakOutputReverse(-1, 10);
+    }
 
     private DriveProfileManager driveProfileManager = ApplicationContext.getInstance().getDriveProfileManager();
 
@@ -64,5 +77,12 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
             }
         }
         currentDriveProfile.setMotors();
+
+        if(controller.getRawButton(5)){
+        	shifter.set(DoubleSolenoid.Value.kReverse);
+		}else{
+        	shifter.set(DoubleSolenoid.Value.kForward);
+		}
     }
+
 }
