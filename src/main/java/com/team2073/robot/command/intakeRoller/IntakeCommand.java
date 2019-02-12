@@ -11,7 +11,7 @@ public class IntakeCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        mediator.intakeRollers(IntakeRollerSubsystem.IntakeRollerState.INTAKE_SPEED);
+        appCtx.getIntakeRollerSubsystem().set(IntakeRollerSubsystem.IntakeRollerState.INTAKE_SPEED);
     }
 
     @Override

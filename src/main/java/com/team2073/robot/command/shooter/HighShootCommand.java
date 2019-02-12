@@ -11,7 +11,7 @@ public class HighShootCommand extends AbstractLoggingCommand{
 
     @Override
     protected void initializeDelegate() {
-        mediator.shooterSubsystem(ShooterSubsystem.ShooterState.HIGH_SHOOT);
+        appCtx.getShooterSubsystem().set(ShooterSubsystem.ShooterState.HIGH_SHOOT);
     }
 
     @Override

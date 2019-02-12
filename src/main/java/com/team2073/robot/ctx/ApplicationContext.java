@@ -184,7 +184,7 @@ public class ApplicationContext {
 
     public ElevatorSubsystem getElevatorSubsystem() {
         if (elevatorSubsystem == null) {
-            intakePivotSubsystem = new IntakePivotSubsystem();
+            elevatorSubsystem = new ElevatorSubsystem();
         }
         return elevatorSubsystem;
     }

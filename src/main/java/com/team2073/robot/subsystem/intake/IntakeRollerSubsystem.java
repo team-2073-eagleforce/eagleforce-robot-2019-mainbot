@@ -26,13 +26,13 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
 
     @Override
     public void onPeriodic() {
-        if(appCtx.getController().getRawButton(1)){
-            set(IntakeRollerState.INTAKE_SPEED);
-        }else if (appCtx.getController().getRawButton(2)){
-            set(IntakeRollerState.OUTTAKE_SPEED);
-        }else{
-            set(IntakeRollerState.STOP);
-        }
+//        if(appCtx.getController().getRawButton(1)){
+//            set(IntakeRollerState.INTAKE_SPEED);
+//        }else if (appCtx.getController().getRawButton(2)){
+//            set(IntakeRollerState.OUTTAKE_SPEED);
+//        }else{
+//            set(IntakeRollerState.STOP);
+//        }
         setPower(state.getPercent());
     }
 
