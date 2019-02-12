@@ -22,12 +22,12 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     private static final double POT_MAX_VALUE = .364;
     private static final double MIN_POSITION = 0;
     private static final double MAX_POSITION = 150;
-    private static final double MAX_VELOCITY = 320;
-    private static final double PERCENT_FOR_MAX_VELOCITY = .4;
-    private static final double MAX_ACCELERATION = 500;
+    private static final double MAX_VELOCITY = 500;
+    private static final double PERCENT_FOR_MAX_VELOCITY = .625;
+    private static final double MAX_ACCELERATION = 800d;
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
     private static final double TICS_PER_DEGREE = 4096d / 360d;
-    private static final double KA = .2 / MAX_ACCELERATION;
+    private static final double KA = .3 / MAX_ACCELERATION;
 
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
@@ -39,7 +39,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     private boolean hasZeroed = false;
 
     private PositionConverter converter = new IntakePositionConverter();
-    private PidfControlLoop holdingPID = new PidfControlLoop(0.012, 0.01, 0, 0, .5);
+    private PidfControlLoop holdingPID = new PidfControlLoop(0.008, 0.002, 0, 0, .5);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
     private MotionProfileControlloop controller = new MotionProfileControlloop(.005, 0,
             PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
@@ -53,8 +53,8 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         intakeMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
         zeroFromPot();
         holdingPID.setPositionSupplier(this::position);
-        intakeMaster.configPeakOutputForward(.6, 10);
-        intakeMaster.configPeakOutputReverse(-.6, 10);
+        intakeMaster.configPeakOutputForward(.625, 10);
+        intakeMaster.configPeakOutputReverse(-.625, 10);
     }
 
     @Override

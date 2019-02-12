@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem {
 
-    private static final double ENCODER_TICS_PER_INCH = 4096 / ((1.75 + .125) * Math.PI);
-    private static final double MAX_HEIGHT = 65d;
+    private static final double ENCODER_TICS_PER_INCH = 697d;
+    private static final double MAX_HEIGHT = 70.5d;
     private static final double MIN_HEIGHT = 0d;
     private static final double MAX_VELOCITY = 30d;
     private static final double PERCENT_FOR_MAX_VELOCITY = .3d;
@@ -46,8 +46,8 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private IMotorController elevatorSlave2 = appCtx.getElevatorSlave2();
     private DoubleSolenoid elevatorShifter = appCtx.getElevatorShiftSolenoid();
 
-    private DigitalInput topLimit = appCtx.getElevatorTopLimit();
-    private DigitalInput bottomLimit = appCtx.getElevatorBottomLimit();
+//    private DigitalInput topLimit = appCtx.getElevatorTopLimit();
+//    private DigitalInput bottomLimit = appCtx.getElevatorBottomLimit();
 
     private ElevatorPositionConverter converter = new ElevatorPositionConverter();
 
@@ -80,12 +80,12 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         elevatorSlave1.setInverted(true);
         elevatorSlave2.setInverted(true);
 
-        elevatorMaster.configPeakOutputForward(.5, 10);
-        elevatorSlave1.configPeakOutputForward(.5, 10);
-        elevatorSlave2.configPeakOutputForward(.5, 10);
-        elevatorMaster.configPeakOutputReverse(-.5, 10);
-        elevatorSlave1.configPeakOutputReverse(-.5, 10);
-        elevatorSlave2.configPeakOutputReverse(-.5, 10);
+        elevatorMaster.configPeakOutputForward(1, 10);
+        elevatorSlave1.configPeakOutputForward(1, 10);
+        elevatorSlave2.configPeakOutputForward(1, 10);
+        elevatorMaster.configPeakOutputReverse(-1, 10);
+        elevatorSlave1.configPeakOutputReverse(-1, 10);
+        elevatorSlave2.configPeakOutputReverse(-1, 10);
 
         elevatorSlave1.follow(elevatorMaster);
         elevatorSlave2.follow(elevatorMaster);
@@ -108,20 +108,24 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 //            climbingOperation();
 //        }
 
-        if (appCtx.getController().getRawButton(2)) {
+        if (appCtx.getController().getRawButton(6)) {
             elevatorMaster.setSelectedSensorPosition(0, 0, 10);
         }
 //        if (appCtx.getController().getRawButton(1)) {
 //            runInElevator();
 //        } else {
-//        if (position() < MIN_HEIGHT + 3) {
-//            elevatorMaster.set(ControlMode.PercentOutput, .3);
-//        } else if (position() > MAX_HEIGHT - 3) {
-//            elevatorMaster.set(ControlMode.PercentOutput, -.3);
-//        } else {
+        if (!appCtx.getController().getRawButton(4)) {
+            if (((position() > MAX_HEIGHT - 2) && -appCtx.getController().getRawAxis(1) < 0) || ((position() < MIN_HEIGHT + 5) && -appCtx.getController().getRawAxis(1) > 0)) {
+                elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
+            } else if (position() < MAX_HEIGHT - 2 && position() > MIN_HEIGHT + 5) {
+                elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
+            } else {
+                elevatorMaster.set(ControlMode.PercentOutput, 0);
+            }
+        } else {
             elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
-//        }
-        System.out.println("limit switch: " + topLimit.get() + "Elevator position: " + position());
+        }
+//        System.out.println("Elevator position (tics): " + elevatorMaster.getSelectedSensorPosition(0) + "\t Position: " + position() + "\t voltage: " + elevatorMaster.getMotorOutputVoltage() + "\t amperage: " + elevatorMaster.getOutputCurrent());
     }
 
     private boolean isGoingUp = true;

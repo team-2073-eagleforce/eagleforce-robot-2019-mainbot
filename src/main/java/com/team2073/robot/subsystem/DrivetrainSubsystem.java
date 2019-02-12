@@ -69,7 +69,7 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 
     @Override
     public void onPeriodic() {
-        System.out.println(currentDriveProfile);
+//        System.out.println(currentDriveProfile);
         for (int i = 0; i < driveProfileManager.getDriveProfiles().size(); i++) {
             if (wheel.getRawButton(i + 2)) {
                 currentDriveProfile = driveProfileManager.getDriveProfile(i);

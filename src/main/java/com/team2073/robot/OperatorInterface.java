@@ -25,17 +25,21 @@ public class OperatorInterface {
 		JoystickButton a = new JoystickButton(controller, 1);
 		JoystickButton b = new JoystickButton(controller, 2);
 		JoystickButton lb = new JoystickButton(controller, 5);
-		a.whenPressed(new IntakeCommand());
-		a.whenPressed(new ShooterIntakeCommand());
-		a.whenReleased(new IntakeStopCommand());
-		a.whenReleased(new ShooterStopCommand());
+		JoystickButton x = new JoystickButton(controller, 3);
+		x.whenPressed(new IntakeCommand());
+		x.whenPressed(new ShooterIntakeCommand());
+		x.whenReleased(new IntakeStopCommand());
+		x.whenReleased(new ShooterStopCommand());
+//
+//		b.whenPressed(new HighShootCommand());
+//		b.whenReleased(new ShooterStopCommand());
+//		b.whenPressed(new OutakeCommand());
+//		b.whenReleased(new IntakeStopCommand());
 
-		b.whenPressed(new HighShootCommand());
-		b.whenReleased(new ShooterStopCommand());
-		b.whenPressed(new OutakeCommand());
-		b.whenReleased(new IntakeStopCommand());
+		a.whenPressed(new IntakePivotCommand(95d));
+		b.whenPressed(new IntakePivotCommand(5d));
+		lb.whenPressed(new IntakePivotCommand(125d));
 
-		lb.whenPressed(new IntakePivotCommand(135d));
 
 
 
