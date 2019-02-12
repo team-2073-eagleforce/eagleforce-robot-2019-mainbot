@@ -20,7 +20,7 @@ public class RobotDelegate extends AbstractRobotDelegate {
 	
 	@Override
 	public void robotInit() {
-		loader.autoRegisterAllPropContainers("com.team.2073.robot");
+		loader.autoRegisterAllPropContainers(getClass().getPackage().getName());
 		robotCtx.getDataRecorder().disable();
 	}
 

@@ -13,6 +13,7 @@ import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.proploader.PropertyLoader;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
+import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -30,32 +31,33 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     private static final double TICS_PER_DEGREE = 4096d / 360d;
     private static final double KA = .2 / MAX_ACCELERATION;
 
-	private final RobotContext robotCtx = RobotContext.getInstance();
-	private final ApplicationContext appCtx = ApplicationContext.getInstance();
-	private PropertyLoader loader = robotCtx.getPropertyLoader();
-	private IntakePivotProperties intakePivotProperties = loader.registerPropContainer(IntakePivotProperties.class);
+    private final RobotContext robotCtx = RobotContext.getInstance();
+    private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private PropertyLoader loader = robotCtx.getPropertyLoader();
+    private ApplicationProperties applicationProperties = loader.registerPropContainer(ApplicationProperties.class);
+    private IntakePivotProperties intakePivotProperties = applicationProperties.getIntakePivotProperties();
 
     private IMotorControllerEnhanced intakeMaster = appCtx.getIntakePivotMaster();
     private AnalogPotentiometer pot = appCtx.getIntakePot();
-	//PID
-	private final double P = intakePivotProperties.intake_P;
-	private final double I = intakePivotProperties.intake_I;
-	private final double D = intakePivotProperties.intake_D;
-	private final double F = intakePivotProperties.intake_F;
+    //PID
+    private final double P = intakePivotProperties.getIntakeP();
+    private final double I = intakePivotProperties.getIntakeI();
+    private final double D = intakePivotProperties.getIntakeD();
+    private final double F = intakePivotProperties.getIntakeF();
 
-	private final double holding_P = intakePivotProperties.intake_Holding_P;
-	private final double holding_I = intakePivotProperties.intake_Holding_I;
-	private final double holding_D = intakePivotProperties.intake_Holding_D;
-	private final double holding_F = intakePivotProperties.intake_Holding_F;
+    private final double HOLDING_P = intakePivotProperties.getIntakeHoldingP();
+    private final double HOLDING_I = intakePivotProperties.getIntakeHoldingI();
+    private final double HOLDING_D = intakePivotProperties.getIntakeHoldingD();
+    private final double HOLDING_F = intakePivotProperties.getIntakeHoldingF();
 
     private Double setpoint = null;
     private boolean hasZeroed = false;
 
-	private PositionConverter converter = new IntakePositionConverter();
-	private PidfControlLoop holdingPID = new PidfControlLoop(holding_P, holding_I, holding_D, holding_F, 1);
-	private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
-	private MotionProfileControlloop controller = new MotionProfileControlloop(P, D,
-			PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, .2 / MAX_ACCELERATION, 1);
+    private PositionConverter converter = new IntakePositionConverter();
+    private PidfControlLoop holdingPID = new PidfControlLoop(HOLDING_P, HOLDING_I, HOLDING_D, HOLDING_F, 1);
+    private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
+    private MotionProfileControlloop controller = new MotionProfileControlloop(P, D,
+            PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, .2 / MAX_ACCELERATION, 1);
 
     private TrapezoidalProfileManager profileManager = new TrapezoidalProfileManager(controller, profileConfig,
             this::position, holdingPID);
@@ -70,25 +72,25 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         intakeMaster.configPeakOutputReverse(-.6, 10);
     }
 
-	@Override
-	public void set(Double setPoint) {
-		this.setpoint = setPoint;
-	}
+    @Override
+    public void set(Double setPoint) {
+        this.setpoint = setPoint;
+    }
 
-	@Override
-	public double position() {
-		return converter.asPosition(intakeMaster.getSelectedSensorPosition(0));
-	}
+    @Override
+    public double position() {
+        return converter.asPosition(intakeMaster.getSelectedSensorPosition(0));
+    }
 
-	@Override
-	public double velocity() {
-		return converter.asPosition(intakeMaster.getSelectedSensorVelocity(0) * 10);
-	}
+    @Override
+    public double velocity() {
+        return converter.asPosition(intakeMaster.getSelectedSensorVelocity(0) * 10);
+    }
 
 
     @Override
     public void onPeriodic() {
-        if(!hasZeroed)
+        if (!hasZeroed)
             zeroFromPot();
 
         if (setpoint == null) {
@@ -103,16 +105,16 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 
 //		intakeMaster.set(ControlMode.PercentOutput, .3);
 
-		if(RobotState.isEnabled()){
-			profileManager.setPoint(setpoint);
-			profileManager.newOutput();
-			intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
+        if (RobotState.isEnabled()) {
+            profileManager.setPoint(setpoint);
+            profileManager.newOutput();
+            intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
 //            if(position() < 140){
 //                intakeMaster.set(ControlMode.PercentOutput, .4);
 //            }else{
 //                intakeMaster.set(ControlMode.PercentOutput, 0);
 //            }
-		}
+        }
         System.out.println("Output: " + intakeMaster.getMotorOutputVoltage() + " \t Position: " + position() + " \t Holding Err: "
                 + holdingPID.getError());
 //        System.out.println("Potentiometer: " + pot.get() + " \t Encoder Position: " + position());
@@ -147,80 +149,80 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         }
     }
 
-	public static class IntakePivotProperties {
-		private double intake_P = .005;
-		private double intake_I;
-		private double intake_D = 0;
-		private double intake_F;
+    public static class IntakePivotProperties {
+        private double intakeP = .005;
+        private double intakeI;
+        private double intakeD = 0;
+        private double intakeF;
 
-		public double getIntake_P() {
-			return intake_P;
-		}
+        private double intakeHoldingP = .012;
+        private double intakeHoldingI = .01;
+        private double intakeHoldingD = 0;
+        private double intakeHoldingF = 0;
 
-		public void setIntake_P(double intake_P) {
-			this.intake_P = intake_P;
-		}
+        public double getIntakeP() {
+            return intakeP;
+        }
 
-		public double getIntake_I() {
-			return intake_I;
-		}
+        public void setIntakeP(double intakeP) {
+            this.intakeP = intakeP;
+        }
 
-		public void setIntake_I(double intake_I) {
-			this.intake_I = intake_I;
-		}
+        public double getIntakeI() {
+            return intakeI;
+        }
 
-		public double getIntake_D() {
-			return intake_D;
-		}
+        public void setIntakeI(double intakeI) {
+            this.intakeI = intakeI;
+        }
 
-		public void setIntake_D(double intake_D) {
-			this.intake_D = intake_D;
-		}
+        public double getIntakeD() {
+            return intakeD;
+        }
 
-		public double getIntake_F() {
-			return intake_F;
-		}
+        public void setIntakeD(double intakeD) {
+            this.intakeD = intakeD;
+        }
 
-		public void setIntake_F(double intake_F) {
-			this.intake_F = intake_F;
-		}
+        public double getIntakeF() {
+            return intakeF;
+        }
 
-		public double getIntake_Holding_P() {
-			return intake_Holding_P;
-		}
+        public void setIntakeF(double intakeF) {
+            this.intakeF = intakeF;
+        }
 
-		public void setIntake_Holding_P(double intake_Holding_P) {
-			this.intake_Holding_P = intake_Holding_P;
-		}
+        public double getIntakeHoldingP() {
+            return intakeHoldingP;
+        }
 
-		public double getIntake_Holding_I() {
-			return intake_Holding_I;
-		}
+        public void setIntakeHoldingP(double intakeHoldingP) {
+            this.intakeHoldingP = intakeHoldingP;
+        }
 
-		public void setIntake_Holding_I(double intake_Holding_I) {
-			this.intake_Holding_I = intake_Holding_I;
-		}
+        public double getIntakeHoldingI() {
+            return intakeHoldingI;
+        }
 
-		public double getIntake_Holding_D() {
-			return intake_Holding_D;
-		}
+        public void setIntakeHoldingI(double intakeHoldingI) {
+            this.intakeHoldingI = intakeHoldingI;
+        }
 
-		public void setIntake_Holding_D(double intake_Holding_D) {
-			this.intake_Holding_D = intake_Holding_D;
-		}
+        public double getIntakeHoldingD() {
+            return intakeHoldingD;
+        }
 
-		public double getIntake_Holding_F() {
-			return intake_Holding_F;
-		}
+        public void setIntakeHoldingD(double intakeHoldingD) {
+            this.intakeHoldingD = intakeHoldingD;
+        }
 
-		public void setIntake_Holding_F(double intake_Holding_F) {
-			this.intake_Holding_F = intake_Holding_F;
-		}
+        public double getIntakeHoldingF() {
+            return intakeHoldingF;
+        }
 
-		private double intake_Holding_P = .012;
-		private double intake_Holding_I = .01;
-		private double intake_Holding_D = 0;
-		private double intake_Holding_F = 0;
-	}
+        public void setIntakeHoldingF(double intakeHoldingF) {
+            this.intakeHoldingF = intakeHoldingF;
+        }
+    }
 
 }

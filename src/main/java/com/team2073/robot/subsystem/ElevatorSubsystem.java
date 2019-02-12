@@ -12,8 +12,8 @@ import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.position.zeroer.Zeroer;
 import com.team2073.common.proploader.PropertyLoader;
-import com.team2073.common.proploader.model.PropertyContainer;
 import com.team2073.common.util.TalonUtil;
+import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -23,7 +23,8 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
     private PropertyLoader loader = robotCtx.getPropertyLoader();
-    private ElevatorProperties elevatorProperties = loader.registerPropContainer(ElevatorProperties.class);
+    private ApplicationProperties applicationProperties = loader.registerPropContainer(ApplicationProperties.class);
+    private ElevatorProperties elevatorProperties = applicationProperties.getElevatorProperties();
 
     private static final double ENCODER_TICS_PER_INCH = 1000d;
     private static final double MAX_HEIGHT = 85d;
@@ -58,17 +59,17 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     }
 
     //PID
-    private final double P = elevatorProperties.elevator_P;
-    private final double I = elevatorProperties.elevator_I;
-    private final double D = elevatorProperties.elevator_D;
-    private final double F = elevatorProperties.elevator_Holding_F;
+    private final double P = elevatorProperties.getElevatorP();
+    private final double I = elevatorProperties.getElevatorI();
+    private final double D = elevatorProperties.getElevatorD();
+    private final double F = elevatorProperties.getElevatorF();
 
-    private final double holding_P = elevatorProperties.elevator_Holding_P;
-    private final double holding_I = elevatorProperties.elevator_Holding_I;
-    private final double holding_D = elevatorProperties.elevator_Holding_D;
-    private final double holding_F = elevatorProperties.elevator_Holding_F;
+    private final double holding_P = elevatorProperties.getElevatorHoldingP();
+    private final double holding_I = elevatorProperties.getElevatorHoldingI();
+    private final double holding_D = elevatorProperties.getElevatorHoldingD();
+    private final double holding_F = elevatorProperties.getElevatorHoldingF();
 
-    private PidfControlLoop holdingPID = new PidfControlLoop(holding_P, holding_I, holding_D ,holding_F, 1);
+    private PidfControlLoop holdingPID = new PidfControlLoop(holding_P, holding_I, holding_D, holding_F, 1);
     private MotionProfileControlloop controller = new MotionProfileControlloop(P, D,
             PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
@@ -84,7 +85,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         bottomZero.onPeriodic();
         topZero.onPeriodic();
 
-        if(!isPositionSafe(setpoint)){
+        if (!isPositionSafe(setpoint)) {
             setpoint = findClosestBound(MIN_HEIGHT, setpoint, MAX_HEIGHT);
         }
 
@@ -112,7 +113,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public double velocity() {
-        return converter.asPosition(elevatorMaster.getSelectedSensorVelocity(0))*10;
+        return converter.asPosition(elevatorMaster.getSelectedSensorVelocity(0)) * 10;
     }
 
     @Override
@@ -138,79 +139,79 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         }
     }
 
-    public static class ElevatorProperties{
-        private double elevator_P;
-        private double elevator_I;
-        private double elevator_D;
-        private double elevator_F;
+    public static class ElevatorProperties {
+        private double elevatorP;
+        private double elevatorI;
+        private double elevatorD;
+        private double elevatorF;
 
-        private double elevator_Holding_P;
-        private double elevator_Holding_I;
-        private double elevator_Holding_D;
-        private double elevator_Holding_F;
+        private double elevatorHoldingP;
+        private double elevatorHoldingI;
+        private double elevatorHoldingD;
+        private double elevatorHoldingF;
 
-        public double getElevator_P() {
-            return elevator_P;
+        public double getElevatorP() {
+            return elevatorP;
         }
 
-        public void setElevator_P(double elevator_P) {
-            this.elevator_P = elevator_P;
+        public void setElevatorP(double elevatorP) {
+            this.elevatorP = elevatorP;
         }
 
-        public double getElevator_I() {
-            return elevator_I;
+        public double getElevatorI() {
+            return elevatorI;
         }
 
-        public void setElevator_I(double elevator_I) {
-            this.elevator_I = elevator_I;
+        public void setElevatorI(double elevatorI) {
+            this.elevatorI = elevatorI;
         }
 
-        public double getElevator_D() {
-            return elevator_D;
+        public double getElevatorD() {
+            return elevatorD;
         }
 
-        public void setElevator_D(double elevator_D) {
-            this.elevator_D = elevator_D;
+        public void setElevatorD(double elevatorD) {
+            this.elevatorD = elevatorD;
         }
 
-        public double getElevator_F() {
-            return elevator_F;
+        public double getElevatorF() {
+            return elevatorF;
         }
 
-        public void setElevator_F(double elevator_F) {
-            this.elevator_F = elevator_F;
+        public void setElevatorF(double elevatorF) {
+            this.elevatorF = elevatorF;
         }
 
-        public double getElevator_Holding_P() {
-            return elevator_Holding_P;
+        public double getElevatorHoldingP() {
+            return elevatorHoldingP;
         }
 
-        public void setElevator_Holding_P(double elevator_Holding_P) {
-            this.elevator_Holding_P = elevator_Holding_P;
+        public void setElevatorHoldingP(double elevatorHoldingP) {
+            this.elevatorHoldingP = elevatorHoldingP;
         }
 
-        public double getElevator_Holding_I() {
-            return elevator_Holding_I;
+        public double getElevatorHoldingI() {
+            return elevatorHoldingI;
         }
 
-        public void setElevator_Holding_I(double elevator_Holding_I) {
-            this.elevator_Holding_I = elevator_Holding_I;
+        public void setElevatorHoldingI(double elevatorHoldingI) {
+            this.elevatorHoldingI = elevatorHoldingI;
         }
 
-        public double getElevator_Holding_D() {
-            return elevator_Holding_D;
+        public double getElevatorHoldingD() {
+            return elevatorHoldingD;
         }
 
-        public void setElevator_Holding_D(double elevator_Holding_D) {
-            this.elevator_Holding_D = elevator_Holding_D;
+        public void setElevatorHoldingD(double elevatorHoldingD) {
+            this.elevatorHoldingD = elevatorHoldingD;
         }
 
-        public double getElevator_Holding_F() {
-            return elevator_Holding_F;
+        public double getElevatorHoldingF() {
+            return elevatorHoldingF;
         }
 
-        public void setElevator_Holding_F(double elevator_Holding_F) {
-            this.elevator_Holding_F = elevator_Holding_F;
+        public void setElevatorHoldingF(double elevatorHoldingF) {
+            this.elevatorHoldingF = elevatorHoldingF;
         }
     }
 }

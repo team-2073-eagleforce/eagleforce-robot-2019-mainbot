@@ -1,6 +1,7 @@
 package com.team2073.robot.conf;
 
 import com.team2073.common.proploader.model.PropertyContainer;
+import com.team2073.common.proploader.model.PropertyContainerField;
 import com.team2073.robot.subsystem.ElevatorSubsystem.ElevatorProperties;
 import com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterProperties;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem.IntakePivotProperties;
@@ -8,8 +9,11 @@ import com.team2073.robot.subsystem.intake.IntakePivotSubsystem.IntakePivotPrope
 @PropertyContainer
 public class ApplicationProperties {
 
+    @PropertyContainerField(name = "elevator")
     private ElevatorProperties elevatorProperties;
+    @PropertyContainerField(name = "shooter")
     private ShooterProperties shooterProperties;
+    @PropertyContainerField(name = "intakePivot")
     private IntakePivotProperties intakePivotProperties;
 
     public ElevatorProperties getElevatorProperties() {
