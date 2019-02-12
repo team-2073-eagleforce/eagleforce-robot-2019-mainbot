@@ -16,10 +16,43 @@ repositories {
 
 def COMMON_VERSION = '0.4.0-SNAPSHOT'
 def ROBOT_MAIN_CLASS = "com.team2073.robot.Main"
+
+// Pass arguments via command line to active different modes
+// Ex: ./gradlew deploy -Psim
+// Sets simulation mode using the simulation robot class defined below
+// Ex: ./gradlew deploy -PtestBoard
+// Sets simulation mode using the test board robot class defined below
+
+// Property keys
+def PROP_KEY_REMOTE_DEBUG_MODE = "remoteDebug"
+def PROP_KEY_TEAM_NUMBER = "teamNumber"
+
+// Configurale properties
 def TEAM_NUMBER = 2073
 def DEBUG_MODE = false
-def IP_ADDRESS = "10.20.73.2"
-def ROBOT_CLASS = "com.team2073.robot.Robot"
+def IP_ADDRESS
+
+println "Team 2073 custom arguments available:"
+println "\t-P" + PROP_KEY_REMOTE_DEBUG_MODE
+println "\t-P" + PROP_KEY_TEAM_NUMBER + "=####"
+
+ext {
+
+    if (project.hasProperty(PROP_KEY_REMOTE_DEBUG_MODE)) {
+        println "Remote debug mode enabled"
+        DEBUG_MODE = true
+    }
+
+    if (project.hasProperty(PROP_KEY_TEAM_NUMBER)) {
+        println "============================================================================"
+        println "Overriding default team # of [" + TEAM_NUMBER + "] with [" + teamNumber + "]."
+        println "============================================================================"
+        TEAM_NUMBER = teamNumber.toInteger()
+    }
+    
+    IP_ADDRESS = "10." + TEAM_NUMBER.toString().substring(0, 2) + "." + TEAM_NUMBER.toString().substring(2, 4) + ".2"
+    println "Setting IP address to: " + IP_ADDRESS
+}
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
