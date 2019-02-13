@@ -37,7 +37,7 @@ public class OperatorInterface {
 //		b.whenReleased(new IntakeStopCommand());
 
 		a.whenPressed(new IntakePivotCommand(95d));
-		b.whenPressed(new IntakePivotCommand(5d));
+		b.whenPressed(new IntakePivotCommand(10d));
 		lb.whenPressed(new IntakePivotCommand(125d));
 
 

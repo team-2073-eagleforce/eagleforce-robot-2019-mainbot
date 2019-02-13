@@ -3,6 +3,7 @@ package com.team2073.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
@@ -18,22 +19,25 @@ import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.RobotState;
+
+import java.sql.SQLOutput;
 
 public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem {
 
     private static final double ENCODER_TICS_PER_INCH = 697d;
     private static final double MAX_HEIGHT = 70.5d;
     private static final double MIN_HEIGHT = 0d;
-    private static final double MAX_VELOCITY = 30d;
-    private static final double PERCENT_FOR_MAX_VELOCITY = .3d;
-    private static final double MAX_ACCELERATION = 10d;
-    private static final double KA = .2 / MAX_ACCELERATION;
+    private static final double MAX_VELOCITY = 60.5d;
+    private static final double PERCENT_FOR_MAX_VELOCITY = .8d;
+    private static final double MAX_ACCELERATION = 100d;
+    private static final double KA = .4 / MAX_ACCELERATION;
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
-    private static final double ACCEPTABLE_VARIATION = .5d;
+    private static final double ACCEPTABLE_VARIATION = .125d;
     private static final double MAX_CLIMBING_HEIGHT = 48d;
 
     //PID
-    private static final double P = 0;
+    private static final double P = 0.05;
     private static final double I = 0;
     private static final double D = 0;
     private static final double F = 0;
@@ -52,9 +56,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private ElevatorPositionConverter converter = new ElevatorPositionConverter();
 
     private PidfControlLoop holdingClimbingPID = new PidfControlLoop(0, 0, 0, 0, 1);
-    private PidfControlLoop holdingPID = new PidfControlLoop(0, 0, 0, 0, 1);
+    private PidfControlLoop holdingPID = new PidfControlLoop(0.06, 0, 0, 0, 1);
     private MotionProfileControlloop motionController = new MotionProfileControlloop(P, D,
-            PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA / MAX_ACCELERATION, 1);
+            PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
     private TrapezoidalProfileManager trapezoidalProfileManager = new TrapezoidalProfileManager(motionController,
             profileConfig, this::position, holdingPID);
@@ -80,6 +84,10 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         elevatorSlave1.setInverted(true);
         elevatorSlave2.setInverted(true);
 
+        elevatorMaster.setNeutralMode(NeutralMode.Brake);
+        elevatorSlave1.setNeutralMode(NeutralMode.Brake);
+        elevatorSlave2.setNeutralMode(NeutralMode.Brake);
+
         elevatorMaster.configPeakOutputForward(1, 10);
         elevatorSlave1.configPeakOutputForward(1, 10);
         elevatorSlave2.configPeakOutputForward(1, 10);
@@ -93,6 +101,12 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 //        holdingClimbingPID.setPositionSupplier(this::position);
     }
 
+    public double holdingStrategy() {
+        elevatorShifter.set(Value.kReverse);
+
+        return 0d;
+    }
+
     @Override
     public void onPeriodic() {
 //        if (setpoint == null) {
@@ -101,31 +115,37 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 //
 //        bottomZero.onPeriodic();
 //        topZero.onPeriodic();
-//
-//        if (!isClimbing) {
-//            normalOperation(setpoint);
-//        } else if (isClimbing) {
-//            climbingOperation();
-//        }
 
         if (appCtx.getController().getRawButton(6)) {
             elevatorMaster.setSelectedSensorPosition(0, 0, 10);
         }
-//        if (appCtx.getController().getRawButton(1)) {
-//            runInElevator();
+
+        if (appCtx.getController().getRawButton(2)) {
+            elevatorShifter.set(Value.kForward);
+        }
+//
+//        if (((position() > MAX_HEIGHT - 2) && -appCtx.getController().getRawAxis(1) < 0) || ((position() < MIN_HEIGHT + 5) && -appCtx.getController().getRawAxis(1) > 0)) {
+//            elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
+//        } else if (position() < MAX_HEIGHT - 2 && position() > MIN_HEIGHT + 5) {
+//            elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
 //        } else {
+//            elevatorMaster.set(ControlMode.PercentOutput, 0);
+//        }
+
         if (!appCtx.getController().getRawButton(4)) {
-            if (((position() > MAX_HEIGHT - 2) && -appCtx.getController().getRawAxis(1) < 0) || ((position() < MIN_HEIGHT + 5) && -appCtx.getController().getRawAxis(1) > 0)) {
-                elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
-            } else if (position() < MAX_HEIGHT - 2 && position() > MIN_HEIGHT + 5) {
-                elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
-            } else {
+            if (position() > MAX_HEIGHT - 15) {
                 elevatorMaster.set(ControlMode.PercentOutput, 0);
+            } else {
+                normalOperation(50d);
             }
         } else {
+            setpoint = null;
             elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
         }
-//        System.out.println("Elevator position (tics): " + elevatorMaster.getSelectedSensorPosition(0) + "\t Position: " + position() + "\t voltage: " + elevatorMaster.getMotorOutputVoltage() + "\t amperage: " + elevatorMaster.getOutputCurrent());
+
+        System.out.println("Elevator position (tics): " + elevatorMaster.getSelectedSensorPosition(0) + "\t Position: " + position() + "\t voltage: " + elevatorMaster.getMotorOutputVoltage()
+                + "\t gear(frwd high) " + elevatorShifter.get());
+//        System.out.println(elevatorMaster.getMotorOutputVoltage() + "\t" + elevatorSlave1.getMotorOutputVoltage() + "\t" + elevatorSlave2.getMotorOutputVoltage());
     }
 
     private boolean isGoingUp = true;
@@ -150,17 +170,15 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         if (!isPositionSafe(setpoint)) {
             setpoint = findClosestBound(MIN_HEIGHT, setpoint, MAX_HEIGHT);
         }
+        if (RobotState.isEnabled()) {
 
-        trapezoidalProfileManager.setPoint(setpoint);
-        trapezoidalProfileManager.newOutput();
-
-        if (!isAtSetpoint()) {
-            if (shifterValue == Value.kReverse) {
-                elevatorShifter.set(Value.kForward);
+            if(isAtSetpoint(setpoint)){
+                holdingStrategy();
             }
+
+            trapezoidalProfileManager.setPoint(setpoint);
+            trapezoidalProfileManager.newOutput();
             elevatorMaster.set(ControlMode.PercentOutput, trapezoidalProfileManager.getOutput());
-        } else {
-            elevatorShifter.set(Value.kReverse);
         }
     }
 
@@ -193,6 +211,10 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         return false;
     }
 
+    public void setElevatorShifter(Value value) {
+        elevatorShifter.set(value);
+    }
+
     private boolean isPositionSafe(double position) {
         return position < MAX_HEIGHT || position > MIN_HEIGHT;
     }
@@ -205,7 +227,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         }
     }
 
-    private boolean isAtSetpoint() {
+    private boolean isAtSetpoint(double setpoint) {
         return setpoint - position() < ACCEPTABLE_VARIATION;
     }
 

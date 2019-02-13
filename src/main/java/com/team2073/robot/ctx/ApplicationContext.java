@@ -46,6 +46,7 @@ public class ApplicationContext {
     private IMotorController elevatorSlave2;
     private IMotorController leftShooter;
     private IMotorController rightShooter;
+    private IMotorController intakePivotSlave;
     //	====================================================================================================================
     /* VICTOR SPs */
     private SpeedController intakeRoller;
@@ -215,6 +216,13 @@ public class ApplicationContext {
             intakePivotMaster = new TalonSRX(INTAKE_PIVOT_TALON_PORT/*, INTAKE_PIVOT_MASTER_NAME, SAFE_PERCENT*/);
         }
         return intakePivotMaster;
+    }
+
+    public IMotorController getIntakePivotSlave(){
+        if(intakePivotSlave == null){
+            intakePivotSlave = new VictorSPX(INTAKE_PIVOT_VICTOR);
+        }
+        return intakePivotSlave;
     }
 
     public IMotorController getLeftDriveSlave() {

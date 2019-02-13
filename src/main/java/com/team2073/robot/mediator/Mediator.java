@@ -18,10 +18,10 @@ public class Mediator implements PeriodicRunnable {
 	private final ApplicationContext appCtx = ApplicationContext.getInstance();
 	private final RobotContext robotCtx = RobotContext.getInstance();
 
-	private IntakeRollerSubsystem intakeRoller = appCtx.getIntakeRollerSubsystem();
-	private IntakePivotSubsystem intakePivot = appCtx.getIntakePivotSubsystem();
+//	private IntakeRollerSubsystem intakeRoller = appCtx.getIntakeRollerSubsystem();
+//	private IntakePivotSubsystem intakePivot = appCtx.getIntakePivotSubsystem();
 //	private HatchManipulatorSubsystem hatch = appCtx.getHatchManipulatorSubsystem();
-	private ShooterSubsystem shooter = appCtx.getShooterSubsystem();
+//	private ShooterSubsystem shooter = appCtx.getShooterSubsystem();
 //	private RobotIntakeSubsystem robotIntake = appCtx.getRobotIntakeSubsystem();
 	private ElevatorSubsystem elevator = appCtx.getElevatorSubsystem();
 	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();

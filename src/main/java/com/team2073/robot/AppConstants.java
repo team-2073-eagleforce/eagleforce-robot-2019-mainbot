@@ -79,7 +79,7 @@ public abstract class AppConstants {
 		public static final int INTAKE_ROLLER_VICTOR_PORT = 0;
 		public static final int INTAKE_ROLLER_VICTOR_2_PORT = 1;
 		public static final int INTAKE_PIVOT_TALON_PORT = 4;
-//		public static final int INTAKE_PIVOT_VICTOR = 7;
+		public static final int INTAKE_PIVOT_VICTOR = 8;
 		//SHOOTER
 		public static final int LEFT_SHOOTER_VICTOR_PORT = 5;
 		public static final int RIGHT_SHOOTER_VICTOR_PORT = 5;
