@@ -105,30 +105,17 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public void onPeriodic() {
-//        if (setpoint == null) {
-//            return;
-//        }
+        if (setpoint == null) {
+            return;
+        }
+
+        normalOperation(setpoint);
 //
 //        bottomZero.onPeriodic();
 //        topZero.onPeriodic();
 
         if (appCtx.getController().getRawButton(6)) {
             elevatorMaster.setSelectedSensorPosition(0, 0, 10);
-        }
-
-        if (appCtx.getController().getRawButton(2)) {
-            elevatorShifter.set(Value.kForward);
-        }
-
-        if (!appCtx.getController().getRawButton(4)) {
-            if (position() > MAX_HEIGHT - 15) {
-                elevatorMaster.set(ControlMode.PercentOutput, 0);
-            } else {
-                normalOperation(50d);
-            }
-        } else {
-            setpoint = null;
-            elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
         }
     }
 

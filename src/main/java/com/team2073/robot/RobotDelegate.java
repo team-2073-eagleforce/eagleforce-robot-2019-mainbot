@@ -23,7 +23,7 @@ public class RobotDelegate extends AbstractRobotDelegate {
     @Override
     public void robotInit() {
         robotCtx.getDataRecorder().disable();
-//        oi = new OperatorInterface();
+        oi = new OperatorInterface();
     }
 
     @Override

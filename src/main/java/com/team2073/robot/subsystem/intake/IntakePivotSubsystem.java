@@ -85,35 +85,15 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         if(!hasZeroed)
             zeroFromPot();
 
-//        intakeSlave.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
-
         if (setpoint == null) {
             return;
         }
-
-//        if (RobotState.isEnabled()) {
-//            holdingPID.updateSetPoint(setpoint);
-//            holdingPID.updatePID(AppConstants.Subsystems.DEFAULT_TIMESTEP);
-//            intakeMaster.set(ControlMode.PercentOutput, holdingPID.getOutput());
-//        }
-
-//		intakeMaster.set(ControlMode.PercentOutput, .3);
 
 		if(RobotState.isEnabled()){
 			profileManager.setPoint(setpoint);
 			profileManager.newOutput();
 			intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
-//			intakeMaster.set(ControlMode.PercentOutput, .4);
-//            if(position() < 130){
-//                intakeMaster.set(ControlMode.PercentOutput, .4);
-//            }else{
-//                intakeMaster.set(ControlMode.PercentOutput, 0);
-//            }
 		}
-        System.out.println("Output: " + intakeMaster.getMotorOutputVoltage() + " \t Position: " + position() + " \t Holding Err: "
-                + (setpoint - position()));
-//        System.out.println("Potentiometer: " + pot.get() + " \t Encoder Position: " + position());
-
     }
 
     private void zeroFromPot() {
