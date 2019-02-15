@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
+import com.team2073.common.util.Timer;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
@@ -35,20 +36,18 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
     @Override
     public void onPeriodic() {
-        if(appCtx.getController().getRawButton(1)){
-            set(ShooterState.INTAKE);
-        }else if (appCtx.getController().getRawButton(2)){
-            set(ShooterState.HIGH_SHOOT);
-        }else{
-            set(ShooterState.STOP);
-        }
-//        if (cargoSensor.get()) {
-//            set(ShooterState.STALL);
+//        if(appCtx.getController().getRawButton(1)){
+//            set(ShooterState.INTAKE);
+//        }else if (appCtx.getController().getRawButton(2)){
+//            set(ShooterState.HIGH_SHOOT);
+//        }else{
+//            set(ShooterState.STOP);
 //        }
+        if (cargoSensor.get() && currentState() != ShooterState.HIGH_SHOOT && currentState() != ShooterState.INTAKE) {
+            set(ShooterState.STALL);
+        }
 
-        state = currentState();
         setPower(state.getPercent());
-
     }
 
     @Override

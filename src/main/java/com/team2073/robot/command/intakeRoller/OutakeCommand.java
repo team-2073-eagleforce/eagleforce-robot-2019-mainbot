@@ -11,7 +11,7 @@ public class OutakeCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        mediator.intakeRollers(IntakeRollerSubsystem.IntakeRollerState.OUTTAKE_SPEED);
+        appCtx.getIntakeRollerSubsystem().set(IntakeRollerSubsystem.IntakeRollerState.OUTTAKE_SPEED);
     }
 
     @Override

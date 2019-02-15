@@ -24,12 +24,11 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 
     private DoubleSolenoid shifter = appCtx.getDriveShiftSolenoid();
 
-    private Joystick controller = ApplicationContext.getInstance().getController();
+    private Joystick wheel = ApplicationContext.getInstance().getWheel();
 
     private CheesyDriveProfile cheesyDriveProfile = new CheesyDriveProfile();
-    private TankDriveProfile tankDriveProfile = new TankDriveProfile();
     private EagleDriveProfile eagleDriveProfile = new EagleDriveProfile();
-    private DriveProfile currentDriveProfile = tankDriveProfile;
+    private DriveProfile currentDriveProfile = cheesyDriveProfile;
 
     public DrivetrainSubsystem() {
         autoRegisterWithPeriodicRunner();
@@ -43,7 +42,7 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
         configMotors();
 
         driveProfileManager.registerProfile(cheesyDriveProfile);
-        driveProfileManager.registerProfile(tankDriveProfile);
+//        driveProfileManager.registerProfile(tankDriveProfile);
         driveProfileManager.registerProfile(eagleDriveProfile);
     }
 
@@ -70,15 +69,15 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 
     @Override
     public void onPeriodic() {
-        System.out.println(currentDriveProfile);
+//        System.out.println(currentDriveProfile);
         for (int i = 0; i < driveProfileManager.getDriveProfiles().size(); i++) {
-            if (controller.getRawButton(i + 1)) {
+            if (wheel.getRawButton(i + 2)) {
                 currentDriveProfile = driveProfileManager.getDriveProfile(i);
             }
         }
         currentDriveProfile.setMotors();
 
-        if(controller.getRawButton(5)){
+        if(appCtx.getJoystick().getRawButton(3)){
         	shifter.set(DoubleSolenoid.Value.kReverse);
 		}else{
         	shifter.set(DoubleSolenoid.Value.kForward);

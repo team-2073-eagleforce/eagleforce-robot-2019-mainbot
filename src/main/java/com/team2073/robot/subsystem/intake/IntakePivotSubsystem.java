@@ -1,8 +1,7 @@
 package com.team2073.robot.subsystem.intake;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
@@ -16,32 +15,34 @@ import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.VictorSP;
 
 public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem {
     private static final double POT_MIN_VALUE = .889;
     private static final double POT_MAX_VALUE = .364;
     private static final double MIN_POSITION = 0;
     private static final double MAX_POSITION = 150;
-    private static final double MAX_VELOCITY = 320;
+    private static final double MAX_VELOCITY = 375;
     private static final double PERCENT_FOR_MAX_VELOCITY = .4;
-    private static final double MAX_ACCELERATION = 500;
+    private static final double MAX_ACCELERATION = 500d;
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
     private static final double TICS_PER_DEGREE = 4096d / 360d;
-    private static final double KA = .2 / MAX_ACCELERATION;
+    private static final double KA = .1 / MAX_ACCELERATION;
 
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
 
     private IMotorControllerEnhanced intakeMaster = appCtx.getIntakePivotMaster();
+    private IMotorController intakeSlave = appCtx.getIntakePivotSlave();
     private AnalogPotentiometer pot = appCtx.getIntakePot();
 
     private Double setpoint = null;
     private boolean hasZeroed = false;
 
     private PositionConverter converter = new IntakePositionConverter();
-    private PidfControlLoop holdingPID = new PidfControlLoop(0.012, 0.01, 0, 0, .5);
+    private PidfControlLoop holdingPID = new PidfControlLoop(0.01, 0.001, 0, 0, .3);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
-    private MotionProfileControlloop controller = new MotionProfileControlloop(.005, 0,
+    private MotionProfileControlloop controller = new MotionProfileControlloop(.001, 0,
             PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
 
     private TrapezoidalProfileManager profileManager = new TrapezoidalProfileManager(controller, profileConfig,
@@ -50,12 +51,18 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     public IntakePivotSubsystem() {
         autoRegisterWithPeriodicRunner();
         TalonUtil.resetTalon(intakeMaster, TalonUtil.ConfigurationType.SENSOR);
+        TalonUtil.resetVictor(intakeSlave, TalonUtil.ConfigurationType.SLAVE);
+
+        intakeSlave.setInverted(true);
+        intakeMaster.setInverted(false);
+        intakeSlave.follow(intakeMaster);
         intakeMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
-        zeroFromPot();
+        intakeMaster.setNeutralMode(NeutralMode.Brake);
+        intakeSlave.setNeutralMode(NeutralMode.Brake);
         holdingPID.setPositionSupplier(this::position);
-        intakeMaster.configPeakOutputForward(.6, 10);
-        intakeMaster.configPeakOutputReverse(-.6, 10);
-    }
+        intakeMaster.configPeakOutputForward(.625, 10);
+        intakeMaster.configPeakOutputReverse(-.625, 10);
+}
 
     @Override
     public void set(Double setPoint) {
@@ -82,28 +89,11 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
             return;
         }
 
-//        if (RobotState.isEnabled()) {
-//            holdingPID.updateSetPoint(setpoint);
-//            holdingPID.updatePID(AppConstants.Subsystems.DEFAULT_TIMESTEP);
-//            intakeMaster.set(ControlMode.PercentOutput, holdingPID.getOutput());
-//        }
-
-//		intakeMaster.set(ControlMode.PercentOutput, .3);
-
 		if(RobotState.isEnabled()){
 			profileManager.setPoint(setpoint);
 			profileManager.newOutput();
 			intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
-//            if(position() < 140){
-//                intakeMaster.set(ControlMode.PercentOutput, .4);
-//            }else{
-//                intakeMaster.set(ControlMode.PercentOutput, 0);
-//            }
 		}
-        System.out.println("Output: " + intakeMaster.getMotorOutputVoltage() + " \t Position: " + position() + " \t Holding Err: "
-                + holdingPID.getError());
-//        System.out.println("Potentiometer: " + pot.get() + " \t Encoder Position: " + position());
-
     }
 
     private void zeroFromPot() {

@@ -3,7 +3,11 @@ package com.team2073.robot.mediator;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.robot.ctx.ApplicationContext;
+import com.team2073.robot.subsystem.DrivetrainSubsystem;
+import com.team2073.robot.subsystem.ElevatorSubsystem;
+import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
+import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRollerState;
 
 import static com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.HatchState;
@@ -15,12 +19,12 @@ public class Mediator implements PeriodicRunnable {
 	private final RobotContext robotCtx = RobotContext.getInstance();
 
 //	private IntakeRollerSubsystem intakeRoller = appCtx.getIntakeRollerSubsystem();
-	private IntakePivotSubsystem intakePivot = appCtx.getIntakePivotSubsystem();
+//	private IntakePivotSubsystem intakePivot = appCtx.getIntakePivotSubsystem();
 //	private HatchManipulatorSubsystem hatch = appCtx.getHatchManipulatorSubsystem();
 //	private ShooterSubsystem shooter = appCtx.getShooterSubsystem();
 //	private RobotIntakeSubsystem robotIntake = appCtx.getRobotIntakeSubsystem();
-//	private ElevatorSubsystem elevator = appCtx.getElevatorSubsystem();
-//	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
+	private ElevatorSubsystem elevator = appCtx.getElevatorSubsystem();
+	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
 
 	public Mediator() {
 		autoRegisterWithPeriodicRunner();
@@ -64,6 +68,5 @@ public class Mediator implements PeriodicRunnable {
 	@Override
 	public void onPeriodic() {
 //		checkIntakeRollersPeriodic();
-			intakePivot.set(130.);
 	}
 }

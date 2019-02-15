@@ -11,7 +11,7 @@ public class ShooterIntakeCommand extends AbstractLoggingCommand{
 
     @Override
     protected void initializeDelegate() {
-        mediator.shooterSubsystem(ShooterSubsystem.ShooterState.INTAKE);
+        appCtx.getShooterSubsystem().set(ShooterSubsystem.ShooterState.INTAKE);
     }
 
     @Override

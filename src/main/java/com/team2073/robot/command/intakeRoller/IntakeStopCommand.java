@@ -13,7 +13,7 @@ public class IntakeStopCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        mediator.intakeRollers(IntakeRollerSubsystem.IntakeRollerState.STOP);
+        appCtx.getIntakeRollerSubsystem().set(IntakeRollerSubsystem.IntakeRollerState.STOP);
     }
 
     @Override
