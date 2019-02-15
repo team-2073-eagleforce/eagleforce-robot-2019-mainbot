@@ -1,19 +1,25 @@
 package com.team2073.robot.subsystem.climber;
 
 import com.team2073.common.ctx.RobotContext;
+import com.team2073.common.mediator.condition.Condition;
+import com.team2073.common.mediator.condition.StateBasedCondition;
+import com.team2073.common.mediator.subsys.ColleagueSubsystem;
+import com.team2073.common.mediator.subsys.StateBasedSubsystem;
+import com.team2073.common.mediator.subsys.SubsystemStateCondition;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.util.ConversionUtil;
 import com.team2073.common.util.Timer;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import org.jetbrains.annotations.NotNull;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState;
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS;
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DISABLED;
 
-public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<RobotIntakeState> {
+public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<RobotIntakeState>, StateBasedSubsystem<RobotIntakeState> {
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
 
@@ -30,6 +36,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     public RobotIntakeSubsystem() {
         autoRegisterWithPeriodicRunner();
+        appCtx.getCommonMediator().registerColleague((ColleagueSubsystem)appCtx.getRobotIntakeSubsystem());
     }
 
     @Override
@@ -82,8 +89,13 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     }
 
+    @NotNull
+    @Override
+    public Condition<RobotIntakeState> getCurrentCondition() {
+        return new StateBasedCondition(state);
+    }
 
-    public enum RobotIntakeState {
+    public enum RobotIntakeState implements SubsystemStateCondition<RobotIntakeState> {
         STORE,
         DEPLOY_FORKS,
         OPEN_INTAKE,

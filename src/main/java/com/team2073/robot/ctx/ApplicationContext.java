@@ -42,6 +42,7 @@ public class ApplicationContext {
     private DriveProfileManager driveProfileManager /*= new DriveProfileManager()*/;
     //	====================================================================================================================
     private Mediator mediator;
+    private com.team2073.common.mediator.Mediator commonMediator;
     /* TALONS */
     private IMotorControllerEnhanced leftDriveMaster;
     private IMotorControllerEnhanced rightDriveMaster;
@@ -107,6 +108,13 @@ public class ApplicationContext {
             mediator = new Mediator();
         }
         return mediator;
+    }
+
+    public com.team2073.common.mediator.Mediator getCommonMediator() {
+        if(commonMediator == null){
+            commonMediator = new com.team2073.common.mediator.Mediator();
+        }
+        return commonMediator;
     }
 
     public CameraOverlayAdapter getCameraOverlayAdapter() {
