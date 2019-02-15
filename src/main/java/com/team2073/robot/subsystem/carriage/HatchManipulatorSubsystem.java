@@ -45,7 +45,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
         //vertical piston if set to kReverse, meaning that it is in its default position (vertical)
         READY_TO_INTAKE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward),
         //Intake: (fingers are contracted to allow hatch, the vertical piston is now horizontal
-        GRABED_HATCH(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward),
+        HAS_HATCH(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward),
         //Hatch is Grabbed: the fingers return to default position to secure hatch
         //the vertical piston is in its previous state AKA kOff
         RELEASE_HATCH(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward);

@@ -1,17 +1,19 @@
-package com.team2073.robot.command.HatchManipulator;
+package com.team2073.robot.command.hatchmanipulator;
 
 import com.team2073.common.command.AbstractLoggingCommand;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.Mediator;
-import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
+import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.HatchState;
 
-public class HaveHatchCommand extends AbstractLoggingCommand {
+
+public class HatchOuttakeCommand extends AbstractLoggingCommand {
     private ApplicationContext appCtx = ApplicationContext.getInstance();
     private Mediator mediator = appCtx.getMediator();
+    //my password is !Programmer
 
     @Override
     protected void initializeDelegate() {
-        mediator.hatchManipulator(HatchManipulatorSubsystem.HatchState.HAVE_HATCH);
+        mediator.hatchManipulator(HatchState.RELEASE_HATCH);
     }
 
     @Override
