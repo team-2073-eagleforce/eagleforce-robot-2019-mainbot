@@ -14,7 +14,6 @@ import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.ctx.ApplicationContext;
-import com.team2073.robot.dev.GraphCSV;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -63,10 +62,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private Double setpoint;
     private Value shifterValue = elevatorShifter.get();
 
-    private GraphCSV graph = new GraphCSV("ElevatorProfile", "time", "Position", "Velocity",
-            "setpoint", "output voltage", "profile position", "profile velocity", "profile acceleration", "integral position");
-    private double time = 0;
-
 //    private Zeroer topZero = new Zeroer(topLimit, elevatorMaster, converter.asTics(MAX_HEIGHT), 0, false);
 //    private Zeroer bottomZero = new Zeroer(bottomLimit, elevatorMaster, converter.asTics(MIN_HEIGHT), 0, false);
 
@@ -110,9 +105,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public void onPeriodic() {
-        if (appCtx.getController().getRawButton(1)) {
-            graph.writeToFile();
-        }
 //        if (setpoint == null) {
 //            return;
 //        }
@@ -127,14 +119,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         if (appCtx.getController().getRawButton(2)) {
             elevatorShifter.set(Value.kForward);
         }
-//
-//        if (((position() > MAX_HEIGHT - 2) && -appCtx.getController().getRawAxis(1) < 0) || ((position() < MIN_HEIGHT + 5) && -appCtx.getController().getRawAxis(1) > 0)) {
-//            elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
-//        } else if (position() < MAX_HEIGHT - 2 && position() > MIN_HEIGHT + 5) {
-//            elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
-//        } else {
-//            elevatorMaster.set(ControlMode.PercentOutput, 0);
-//        }
 
         if (!appCtx.getController().getRawButton(4)) {
             if (position() > MAX_HEIGHT - 15) {
@@ -146,11 +130,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
             setpoint = null;
             elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
         }
-
-
-        System.out.println("Elevator position (tics): " + elevatorMaster.getSelectedSensorPosition(0) + "\t Position: " + position() + "\t voltage: " + elevatorMaster.getMotorOutputVoltage()
-                + "\t gear(frwd high) " + elevatorShifter.get());
-//        System.out.println(elevatorMaster.getMotorOutputVoltage() + "\t" + elevatorSlave1.getMotorOutputVoltage() + "\t" + elevatorSlave2.getMotorOutputVoltage());
     }
 
     private boolean isGoingUp = true;
@@ -170,7 +149,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
             }
         }
     }
+
     private double lastIntegralPosition;
+
     private void normalOperation(double setpoint) {
         if (!isPositionSafe(setpoint)) {
             setpoint = findClosestBound(MIN_HEIGHT, setpoint, MAX_HEIGHT);
@@ -183,15 +164,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
             trapezoidalProfileManager.setPoint(setpoint);
             trapezoidalProfileManager.newOutput();
-
-            lastIntegralPosition += trapezoidalProfileManager.getProfile().getCurrentVelocity() * .01;
-            elevatorMaster.set(ControlMode.PercentOutput, trapezoidalProfileManager.getOutput());
-            graph.updateMainFile(time, position(), velocity(), setpoint, elevatorMaster.getMotorOutputVoltage(),
-                    trapezoidalProfileManager.getProfile().getCurrentPosition(),
-                    trapezoidalProfileManager.getProfile().getCurrentVelocity(),
-                    trapezoidalProfileManager.getProfile().getCurrentAcceleration(),
-                    lastIntegralPosition);
-            time += .01;
         }
     }
 
