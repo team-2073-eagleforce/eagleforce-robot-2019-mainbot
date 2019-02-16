@@ -36,7 +36,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     public RobotIntakeSubsystem() {
         autoRegisterWithPeriodicRunner();
-        appCtx.getCommonMediator().registerColleague((ColleagueSubsystem)appCtx.getRobotIntakeSubsystem());
+        appCtx.getCommonMediator().registerColleague((ColleagueSubsystem)this);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
         return new StateBasedCondition(state);
     }
 
-    public enum RobotIntakeState implements SubsystemStateCondition<RobotIntakeState> {
+    public enum RobotIntakeState implements SubsystemStateCondition {
         STORE,
         DEPLOY_FORKS,
         OPEN_INTAKE,

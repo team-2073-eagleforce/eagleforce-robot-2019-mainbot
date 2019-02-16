@@ -30,6 +30,7 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
 
     public IntakeRollerSubsystem() {
         autoRegisterWithPeriodicRunner();
+        appCtx.getCommonMediator().registerColleague((ColleagueSubsystem)this);
         appCtx.getCommonMediator().registerColleague((ColleagueSubsystem)appCtx.getIntakeRollerSubsystem());
         intakeRoller.setInverted(directionalityProperties.isIntakeRoller());
         intakeRoller2.setInverted(directionalityProperties.isIntakeRoller2());
@@ -62,7 +63,7 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
         return new StateBasedCondition(state);
     }
 
-    public enum IntakeRollerState implements SubsystemStateCondition<IntakeRollerState> {
+    public enum IntakeRollerState implements SubsystemStateCondition {
         INTAKE_SPEED(1.),
         OUTTAKE_SPEED(-.9),
         STOP(0d),
