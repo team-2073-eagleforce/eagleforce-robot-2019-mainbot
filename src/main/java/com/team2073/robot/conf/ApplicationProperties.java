@@ -2,6 +2,7 @@ package com.team2073.robot.conf;
 
 import com.team2073.common.proploader.model.PropertyContainer;
 import com.team2073.common.proploader.model.PropertyContainerField;
+import com.team2073.robot.AppConstants;
 import com.team2073.robot.subsystem.ElevatorSubsystem;
 import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
 
@@ -11,6 +12,8 @@ public class ApplicationProperties {
     private ElevatorSubsystem.ElevatorProperties elevatorProperties;
     @PropertyContainerField(name = "shooter")
     private ShooterSubsystem.ShooterProperties shooterProperties;
+    @PropertyContainerField(name = "ports")
+    private AppConstants.RobotPortsProperties portsProperties;
 
     public ElevatorSubsystem.ElevatorProperties getElevatorProperties() {
         return elevatorProperties;
@@ -26,5 +29,13 @@ public class ApplicationProperties {
 
     public void setShooterProperties(ShooterSubsystem.ShooterProperties shooterProperties) {
         this.shooterProperties = shooterProperties;
+    }
+
+    public AppConstants.RobotPortsProperties getPortsProperties() {
+        return portsProperties;
+    }
+
+    public void setPortsProperties(AppConstants.RobotPortsProperties portsProperties) {
+        this.portsProperties = portsProperties;
     }
 }
