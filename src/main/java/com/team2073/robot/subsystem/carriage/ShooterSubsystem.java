@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.util.Timer;
+import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
@@ -16,6 +17,8 @@ import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterStat
 public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<ShooterState> {
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private ApplicationProperties applicationProperties = robotCtx.getPropertyLoader().registerPropContainer(ApplicationProperties.class);
+    private ShooterProperties shooterProperties = applicationProperties.getShooterProperties();
 
     private IMotorController shooterLeft = appCtx.getLeftShooter();
     private IMotorController shooterRight = appCtx.getRightShooter();
@@ -75,6 +78,36 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
         public Double getPercent() {
             return percent;
+        }
+    }
+
+    public static class ShooterProperties {
+        private double highShootPercent;
+        private double intakePercent;
+        private double stallPercent;
+
+        public double getHighShootPercent() {
+            return highShootPercent;
+        }
+
+        public void setHighShootPercent(double highShootPercent) {
+            this.highShootPercent = highShootPercent;
+        }
+
+        public double getIntakePercent() {
+            return intakePercent;
+        }
+
+        public void setIntakePercent(double intakePercent) {
+            this.intakePercent = intakePercent;
+        }
+
+        public double getStallPercent() {
+            return stallPercent;
+        }
+
+        public void setStallPercent(double stallPercent) {
+            this.stallPercent = stallPercent;
         }
     }
 }
