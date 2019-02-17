@@ -72,6 +72,10 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 
     private DriveProfileManager driveProfileManager = ApplicationContext.getInstance().getDriveProfileManager();
 
+    public void shiftDrivetrain(DoubleSolenoid.Value value){
+        shifter.set(value);
+    }
+
     @Override
     public void onPeriodic() {
 //        System.out.println(currentDriveProfile);
