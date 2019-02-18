@@ -69,54 +69,54 @@ public abstract class AppConstants {
     }
 
     public static class RobotPortsProperties {
-        private int pigeonGyro = 0;
-        public int pdb = 0;
+        private int pigeonGyro;
+        private int pdb;
 
         //DRIVE
-        private int driveLeftTalonPort = 2;
-        private int driveRightTalonPort = 1;
-        private int leftDriveVictorPort = 2;
-        private int leftDriveVictor2Port = 4;
-        private int rightDriveVictorPort = 1;
-        private int rightDriveVictor2Port = 3;
+        private int driveLeftTalonPort;
+        private int driveRightTalonPort;
+        private int leftDriveVictorPort;
+        private int leftDriveVictor2Port;
+        private int rightDriveVictorPort;
+        private int rightDriveVictor2Port;
         //INTAKE
-        private int intakeRollerVictorPort = 0;
-        private int intakeRollerVictor2Port = 1;
-        private int intakePivotTalonPort = 4;
-        private int intakePivotVictor = 8;
+        private int intakeRollerVictorPort;
+        private int intakeRollerVictor2Port;
+        private int intakePivotTalonPort;
+        private int intakePivotVictor;
         //SHOOTER
-        private int leftShooterVictorPort = 5;
-        private int rightShooterVictorPort = 5;
+        private int leftShooterVictorPort;
+        private int rightShooterVictorPort;
         //ELEVATOR
-        private int elevatorTalonPort = 3;
-        private int elevatorVictorPort = 6;
-        private int elevatorVictor2Port = 7;
+        private int elevatorTalonPort;
+        private int elevatorVictorPort;
+        private int elevatorVictor2Port;
 
 
         // PCM 2
-        private int pcm2CanId = 2;
-        private int driveShiftLowPort = 0;
-        private int driveShiftHighPort = 1;
-        private int elevatorShiftLowPort = 2;
-        private int elevatorShiftHighPort = 3;
-        private int hatchUpSolenoidPort = 5;
-        private int hatchDownSolenoidPort = 4;
-        private int hatchHoldSolenoidPort = 6;
-        private int hatchReleaseSolenoidPort = 7;
+        private int pcm2CanId;
+        private int driveShiftLowPort;
+        private int driveShiftHighPort;
+        private int elevatorShiftLowPort;
+        private int elevatorShiftHighPort;
+        private int hatchUpSolenoidPort;
+        private int hatchDownSolenoidPort;
+        private int hatchHoldSolenoidPort;
+        private int hatchReleaseSolenoidPort;
 
         // PCM 1
-        private int pcm1CanId = 1;
-        private int forkReleaseSolenoidPort = 0;
-        private int forkHoldSolenoidPort = 1;
-        private int robotIntakeGrabSolenoidPort = 2;
-        private int robotIntakeOpenSolenoidPort = 3;
+        private int pcm1CanId;
+        private int forkReleaseSolenoidPort;
+        private int forkHoldSolenoidPort;
+        private int robotIntakeGrabSolenoidPort;
+        private int robotIntakeOpenSolenoidPort;
 
         //DIO
-        private int cargoBannerDioPort = 0;
-        private int hatchUltrasonicTriggerDioPort = 2;
-        private int hatchUltrasonicEchoDioPort = 1;
-        private int elevatorBottomLimitDioPort = 5;
-        private int elevatorTopLimitDioPort = 3;
+        private int cargoBannerDioPort;
+        private int hatchUltrasonicTriggerDioPort;
+        private int hatchUltrasonicEchoDioPort;
+        private int elevatorBottomLimitDioPort;
+        private int elevatorTopLimitDioPort;
 
         public int getPigeonGyro() {
             return pigeonGyro;

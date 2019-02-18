@@ -10,11 +10,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class RobotDelegate extends AbstractRobotDelegate {
 
-    private ApplicationContext appCtx = ApplicationContext.getInstance();
     private RobotContext robotCtx = RobotContext.getInstance();
-    private Mediator mediator = appCtx.getMediator();
-    private OperatorInterface oi;
     private PropertyLoader loader = robotCtx.getPropertyLoader();
+    private ApplicationContext appCtx = ApplicationContext.getInstance();
+    private Mediator mediator;
+    private OperatorInterface oi;
 
 
     public RobotDelegate(double period) {
@@ -24,9 +24,11 @@ public class RobotDelegate extends AbstractRobotDelegate {
 
     @Override
     public void robotInit() {
+        loader.autoRegisterAllPropContainers(getClass().getPackage().getName());
+        loader.loadProperties();
         robotCtx.getDataRecorder().disable();
         oi = new OperatorInterface();
-        loader.autoRegisterAllPropContainers(getClass().getPackage().getName());
+        mediator = appCtx.getMediator();
     }
 
     @Override
