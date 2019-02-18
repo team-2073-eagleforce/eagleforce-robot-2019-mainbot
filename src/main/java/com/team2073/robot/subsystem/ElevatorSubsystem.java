@@ -193,6 +193,10 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         elevatorShifter.set(value);
     }
 
+    public void zeroElevator(){
+        elevatorMaster.setSelectedSensorPosition(0, 0, 10);
+    }
+
     private boolean isPositionSafe(double position) {
         return position < MAX_HEIGHT || position > MIN_HEIGHT;
     }
