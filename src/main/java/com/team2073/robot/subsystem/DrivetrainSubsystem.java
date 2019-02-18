@@ -6,6 +6,8 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.util.TalonUtil;
+import com.team2073.robot.conf.ApplicationProperties;
+import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.subsystem.driveprofile.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -14,6 +16,9 @@ import edu.wpi.first.wpilibj.Joystick;
 public class DrivetrainSubsystem implements PeriodicRunnable {
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private ApplicationProperties applicationProperties = robotCtx.getPropertyLoader().registerPropContainer(ApplicationProperties.class);
+    private MotorDirectionalityProperties directionalityProperties = applicationProperties.getMotorDirectionalityProperties();
+
 
     private IMotorControllerEnhanced leftMaster = appCtx.getLeftDriveMaster();
     private IMotorController leftSlave = appCtx.getLeftDriveSlave();
@@ -47,16 +52,16 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
     }
 
     private void configMotors() {
-        leftMaster.setInverted(true);
-        leftSlave.setInverted(true);
+        leftMaster.setInverted(directionalityProperties.isLeftDrivetrainMaster());
+        leftSlave.setInverted(directionalityProperties.isLeftDrivetrainSlave());
         leftSlave.follow(leftMaster);
-        leftSlave2.setInverted(true);
+        leftSlave2.setInverted(directionalityProperties.isLeftDrivetrainSlave2());
         leftSlave2.follow(leftMaster);
 
-        rightMaster.setInverted(false);
-        rightSlave.setInverted(false);
+        rightMaster.setInverted(directionalityProperties.isRightDrivetrainMaster());
+        rightSlave.setInverted(directionalityProperties.isRightDrivetrainSlave());
         rightSlave.follow(rightMaster);
-        rightSlave2.setInverted(false);
+        rightSlave2.setInverted(directionalityProperties.isRightDrivetrainSlave2());
         rightSlave2.follow(rightMaster);
 
         leftMaster.configPeakOutputForward(1, 10);

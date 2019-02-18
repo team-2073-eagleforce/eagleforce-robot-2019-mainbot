@@ -15,6 +15,17 @@ public class ApplicationProperties {
     @PropertyContainerField(name = "ports")
     private AppConstants.RobotPortsProperties portsProperties;
 
+    public MotorDirectionalityProperties getMotorDirectionalityProperties() {
+        return motorDirectionalityProperties;
+    }
+
+    public void setMotorDirectionalityProperties(MotorDirectionalityProperties motorDirectionalityProperties) {
+        this.motorDirectionalityProperties = motorDirectionalityProperties;
+    }
+
+    @PropertyContainerField(name = "directionality")
+    private MotorDirectionalityProperties motorDirectionalityProperties;
+
     public ElevatorSubsystem.ElevatorProperties getElevatorProperties() {
         return elevatorProperties;
     }

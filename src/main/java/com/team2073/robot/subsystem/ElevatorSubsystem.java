@@ -14,6 +14,7 @@ import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.conf.ApplicationProperties;
+import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -26,6 +27,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
     private ApplicationProperties applicationProperties = robotCtx.getPropertyLoader().registerPropContainer(ApplicationProperties.class);
     private ElevatorProperties elevatorProperties = applicationProperties.getElevatorProperties();
+    private MotorDirectionalityProperties directionalityProperties = applicationProperties.getMotorDirectionalityProperties();
 
     private static final double ENCODER_TICS_PER_INCH = 697d;
     private static final double MAX_HEIGHT = 70.5d;
@@ -80,9 +82,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
         elevatorMaster.setSensorPhase(true);
 
-        elevatorMaster.setInverted(true);
-        elevatorSlave1.setInverted(true);
-        elevatorSlave2.setInverted(true);
+        elevatorMaster.setInverted(directionalityProperties.isElevatorMaster());
+        elevatorSlave1.setInverted(directionalityProperties.isElevatorSlave1());
+        elevatorSlave2.setInverted(directionalityProperties.isElevatorSlave2());
         holdingPID.setPositionSupplier(this::position);
 
         elevatorMaster.setNeutralMode(NeutralMode.Brake);

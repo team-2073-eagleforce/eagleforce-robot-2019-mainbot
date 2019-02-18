@@ -6,6 +6,7 @@ import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.util.Timer;
 import com.team2073.robot.conf.ApplicationProperties;
+import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
@@ -19,6 +20,7 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
     private ApplicationProperties applicationProperties = robotCtx.getPropertyLoader().registerPropContainer(ApplicationProperties.class);
     private ShooterProperties shooterProperties = applicationProperties.getShooterProperties();
+    private MotorDirectionalityProperties directionalityProperties = applicationProperties.getMotorDirectionalityProperties();
 
     private IMotorController shooterLeft = appCtx.getLeftShooter();
     private IMotorController shooterRight = appCtx.getRightShooter();
@@ -28,7 +30,8 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
     public ShooterSubsystem() {
         autoRegisterWithPeriodicRunner();
-        shooterLeft.setInverted(true);
+        shooterLeft.setInverted(directionalityProperties.isShooterLeft());
+        shooterRight.setInverted(directionalityProperties.isShooterRight());
     }
 
     private void setPower(Double percent) {

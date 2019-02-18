@@ -11,6 +11,8 @@ import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
+import com.team2073.robot.conf.ApplicationProperties;
+import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -31,6 +33,9 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private ApplicationProperties applicationProperties = robotCtx.getPropertyLoader().registerPropContainer(ApplicationProperties.class);
+    private MotorDirectionalityProperties directionalityProperties = applicationProperties.getMotorDirectionalityProperties();
+
 
     private IMotorControllerEnhanced intakeMaster = appCtx.getIntakePivotMaster();
     private IMotorController intakeSlave = appCtx.getIntakePivotSlave();
@@ -53,8 +58,8 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         TalonUtil.resetTalon(intakeMaster, TalonUtil.ConfigurationType.SENSOR);
         TalonUtil.resetVictor(intakeSlave, TalonUtil.ConfigurationType.SLAVE);
 
-        intakeSlave.setInverted(true);
-        intakeMaster.setInverted(false);
+        intakeSlave.setInverted(directionalityProperties.isIntakePivotSlave());
+        intakeMaster.setInverted(directionalityProperties.isIntakePivotMaster());
         intakeSlave.follow(intakeMaster);
         intakeMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
         intakeMaster.setNeutralMode(NeutralMode.Brake);
