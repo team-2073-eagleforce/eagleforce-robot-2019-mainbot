@@ -2,6 +2,8 @@ package com.team2073.robot.subsystem.intake;
 
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
+import com.team2073.robot.conf.ApplicationProperties;
+import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
@@ -13,6 +15,9 @@ import static com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRo
 public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<IntakeRollerState> {
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
+    private ApplicationProperties applicationProperties = robotCtx.getPropertyLoader().registerPropContainer(ApplicationProperties.class);
+    private MotorDirectionalityProperties directionalityProperties = applicationProperties.getMotorDirectionalityProperties();
+
 
     private SpeedController intakeRoller = appCtx.getIntakeRoller();
     private SpeedController intakeRoller2 = appCtx.getIntakeRoller2();
@@ -21,6 +26,8 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
 
     public IntakeRollerSubsystem() {
         autoRegisterWithPeriodicRunner();
+        intakeRoller.setInverted(directionalityProperties.isIntakeRoller());
+        intakeRoller2.setInverted(directionalityProperties.isIntakeRoller2());
     }
 
 
