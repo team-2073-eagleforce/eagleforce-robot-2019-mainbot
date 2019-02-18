@@ -68,7 +68,7 @@ public abstract class AppConstants {
         public static final int EXAMPLE_ARM_HALL_EFFECT_SENSOR = -1;
     }
 
-    public class RobotPortsProperties {
+    public static class RobotPortsProperties {
         private int pigeonGyro = 0;
         public int pdb = 0;
 

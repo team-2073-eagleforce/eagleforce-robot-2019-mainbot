@@ -111,7 +111,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public void onPeriodic() {
-        System.out.println("Elevator P: " + elevatorProperties.getElevatorP());
         if (setpoint == null) {
             return;
         }

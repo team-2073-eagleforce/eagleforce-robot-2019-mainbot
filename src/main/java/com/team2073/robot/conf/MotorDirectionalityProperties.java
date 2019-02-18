@@ -19,6 +19,7 @@ public class MotorDirectionalityProperties {
     private boolean intakePivotSlave;
 
     private boolean intakeRoller;
+    private boolean intakeRoller2;
 
     public boolean isShooterLeft() {
         return shooterLeft;
@@ -140,6 +141,5 @@ public class MotorDirectionalityProperties {
         this.intakeRoller2 = intakeRoller2;
     }
 
-    private boolean intakeRoller2;
 
 }
