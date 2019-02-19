@@ -84,16 +84,8 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     @Override
     public void onPeriodic() {
 //        filterHatchReadings();
-        if(appCtx.getController().getRawButton(1)){
-            set(HatchState.READY_TO_INTAKE);
-        }else if (appCtx.getController().getRawButton(2)){
-            set(HatchState.GRABED_HATCH);
-        }else if (appCtx.getController().getRawButton(3)){
-            set(HatchState.STARTING_CONFIG);
-        }
-
-        hatchPosition.set(currentState().isVerticalPistonActive());
-        hatchPlace.set(currentState().isFingerPistonActive());
+//        hatchPosition.set(currentState().isVerticalPistonActive());
+//        hatchPlace.set(currentState().isFingerPistonActive());
     }
 
     private boolean hatchActive() {

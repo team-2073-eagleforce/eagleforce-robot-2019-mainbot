@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem {
-    private static final double POT_MIN_VALUE = .889;
-    private static final double POT_MAX_VALUE = .364;
+    private static final double POT_MIN_VALUE = .94;
+    private static final double POT_MAX_VALUE = .44;
     private static final double MIN_POSITION = 0;
     private static final double MAX_POSITION = 150;
     private static final double MAX_VELOCITY = 375;
@@ -99,6 +99,11 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 			profileManager.newOutput();
 			intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
 		}
+
+        if(appCtx.getController().getRawButton(1)){
+            intakeMaster.setSelectedSensorPosition(0, 0, 10);
+        }
+
     }
 
     private void zeroFromPot() {

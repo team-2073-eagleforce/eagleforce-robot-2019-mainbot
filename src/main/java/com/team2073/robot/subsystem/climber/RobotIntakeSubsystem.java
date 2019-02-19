@@ -8,6 +8,7 @@ import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState;
+import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS;
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DISABLED;
 
 public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<RobotIntakeState> {
@@ -41,39 +42,54 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     @Override
     public void onPeriodic() {
-        switch (state) {
-            // Forks up, clamp down
-            case STORE:
-                forkSolenoid.set(DoubleSolenoid.Value.kReverse);
-                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
-                break;
-            // Forks down, clamps up
-            case DEPLOY_FORKS:
-                forkSolenoid.set(DoubleSolenoid.Value.kForward);
-                if (!timeStart){
-                    timer.start();
-                    timeStart = true;
-                }
-                if (timer.getElapsedTime() > DEPLOY_FORKS_WAIT_TIME) {
-                    robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
-                    timer.stop();
-                    timeStart = false;
-                }
-
-                break;
-            // Clamps up
-            case OPEN_INTAKE:
-                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
-                break;
-            // Clamps down
-            case CLAMP:
-                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
-                break;
-            case DISABLED:
-                break;
-            default:
-                throw new IllegalStateException("Unknown state: " + state);
+        if(appCtx.getController().getRawButton(1)){
+            forkSolenoid.set(DoubleSolenoid.Value.kForward);
         }
+
+        if(appCtx.getController().getRawButton(2)){
+            forkSolenoid.set(DoubleSolenoid.Value.kReverse);
+        }
+
+        if(appCtx.getController().getRawButton(3)){
+            robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
+        }
+
+        if(appCtx.getController().getRawButton(4)){
+            robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+        }
+//        switch (state) {
+//            // Forks up, clamp down
+//            case STORE:
+//                forkSolenoid.set(DoubleSolenoid.Value.kReverse);
+//                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
+//                break;
+//            // Forks down, clamps up
+//            case DEPLOY_FORKS:
+//                forkSolenoid.set(DoubleSolenoid.Value.kForward);
+//                if (!timeStart){
+//                    timer.start();
+//                    timeStart = true;
+//                }
+//                if (timer.getElapsedTime() > DEPLOY_FORKS_WAIT_TIME) {
+//                    robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+//                    timer.stop();
+//                    timeStart = false;
+//                }
+//
+//                break;
+//            // Clamps up
+//            case OPEN_INTAKE:
+//                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+//                break;
+//            // Clamps down
+//            case CLAMP:
+//                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
+//                break;
+//            case DISABLED:
+//                break;
+//            default:
+//                throw new IllegalStateException("Unknown state: " + state);
+//        }
 
     }
 

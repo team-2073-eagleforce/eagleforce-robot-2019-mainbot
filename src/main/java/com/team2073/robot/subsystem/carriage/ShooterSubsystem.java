@@ -49,11 +49,12 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 //        }else{
 //            set(ShooterState.STOP);
 //        }
-        if (cargoSensor.get() && currentState() != ShooterState.HIGH_SHOOT && currentState() != ShooterState.INTAKE) {
-            set(ShooterState.STALL);
-        }
+//        if (cargoSensor.get() && currentState() != ShooterState.HIGH_SHOOT && currentState() != ShooterState.INTAKE) {
+//            set(ShooterState.STALL);
+//        }
 
-        setPower(state.getPercent());
+
+//        setPower(state.getPercent());
     }
 
     @Override

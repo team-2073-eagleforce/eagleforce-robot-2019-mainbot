@@ -1,9 +1,6 @@
 package com.team2073.robot.subsystem;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorController;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
@@ -11,12 +8,14 @@ import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
+import com.team2073.common.position.zeroer.Zeroer;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.PositionalSubsystem;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.RobotState;
@@ -52,8 +51,8 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private IMotorController elevatorSlave2 = appCtx.getElevatorSlave2();
     private DoubleSolenoid elevatorShifter = appCtx.getElevatorShiftSolenoid();
 
-//    private DigitalInput topLimit = appCtx.getElevatorTopLimit();
-//    private DigitalInput bottomLimit = appCtx.getElevatorBottomLimit();
+    private DigitalInput topLimit = appCtx.getElevatorTopLimit();
+    private DigitalInput bottomLimit = appCtx.getElevatorBottomLimit();
 
     private ElevatorPositionConverter converter = new ElevatorPositionConverter();
 
@@ -68,8 +67,8 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private Double setpoint;
     private Value shifterValue = elevatorShifter.get();
 
-//    private Zeroer topZero = new Zeroer(topLimit, elevatorMaster, converter.asTics(MAX_HEIGHT), 0, false);
-//    private Zeroer bottomZero = new Zeroer(bottomLimit, elevatorMaster, converter.asTics(MIN_HEIGHT), 0, false);
+    private Zeroer topZero = new Zeroer(topLimit, elevatorMaster, converter.asTics(MAX_HEIGHT), 0, true);
+    private Zeroer bottomZero = new Zeroer(bottomLimit, elevatorMaster, converter.asTics(MIN_HEIGHT), 0, true);
 
     private boolean isClimbing = false;
 
@@ -80,6 +79,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         TalonUtil.resetVictor(elevatorSlave1, TalonUtil.ConfigurationType.SLAVE);
         TalonUtil.resetVictor(elevatorSlave2, TalonUtil.ConfigurationType.SLAVE);
 
+        elevatorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
         elevatorMaster.setSensorPhase(true);
 
         elevatorMaster.setInverted(directionalityProperties.isElevatorMaster());
@@ -111,18 +111,16 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public void onPeriodic() {
+        System.out.println("bottom zero: " + bottomLimit.get() + "position: " + position());
+//        elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
+        bottomZero.onPeriodic();
+        topZero.onPeriodic();
         if (setpoint == null) {
             return;
         }
 
         normalOperation(setpoint);
 //
-//        bottomZero.onPeriodic();
-//        topZero.onPeriodic();
-
-        if (appCtx.getController().getRawButton(6)) {
-            elevatorMaster.setSelectedSensorPosition(0, 0, 10);
-        }
     }
 
     private boolean isGoingUp = true;
@@ -156,7 +154,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
             }
 
             trapezoidalProfileManager.setPoint(setpoint);
+
             trapezoidalProfileManager.newOutput();
+            elevatorMaster.set(ControlMode.PercentOutput, trapezoidalProfileManager.getOutput());
         }
     }
 
@@ -193,7 +193,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         elevatorShifter.set(value);
     }
 
-    public void zeroElevator(){
+    public void zeroElevator() {
         elevatorMaster.setSelectedSensorPosition(0, 0, 10);
     }
 

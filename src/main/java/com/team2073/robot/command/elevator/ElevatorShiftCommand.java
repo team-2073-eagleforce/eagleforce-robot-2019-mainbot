@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class ElevatorShiftCommand extends AbstractLoggingCommand {
 
-    ApplicationContext appCtx = new ApplicationContext();
+    ApplicationContext appCtx = ApplicationContext.getInstance();
     private Value value;
 
     public ElevatorShiftCommand(Value value){

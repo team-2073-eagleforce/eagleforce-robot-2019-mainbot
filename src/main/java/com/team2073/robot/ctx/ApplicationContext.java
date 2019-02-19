@@ -268,7 +268,7 @@ public class ApplicationContext {
 
     public IMotorController getElevatorSlave2() {
         if (elevatorSlave2 == null) {
-            elevatorSlave2 = new VictorSPX(portProps.getRightDriveVictor2Port()/*, ELEVATOR_SLAVE_2_NAME, SAFE_PERCENT*/);
+            elevatorSlave2 = new VictorSPX(portProps.getElevatorVictor2Port()/*, ELEVATOR_SLAVE_2_NAME, SAFE_PERCENT*/);
         }
         return elevatorSlave2;
     }

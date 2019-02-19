@@ -5,7 +5,9 @@ import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.subsystem.DrivetrainSubsystem;
 import com.team2073.robot.subsystem.ElevatorSubsystem;
+import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
 import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
+import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRollerState;
@@ -24,7 +26,7 @@ public class Mediator implements PeriodicRunnable {
 //	private ShooterSubsystem shooter = appCtx.getShooterSubsystem();
 //	private RobotIntakeSubsystem robotIntake = appCtx.getRobotIntakeSubsystem();
 	private ElevatorSubsystem elevator = appCtx.getElevatorSubsystem();
-	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
+//	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
 
 	public Mediator() {
 		autoRegisterWithPeriodicRunner();
