@@ -100,9 +100,9 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 			intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
 		}
 
-        if(appCtx.getController().getRawButton(1)){
-            intakeMaster.setSelectedSensorPosition(0, 0, 10);
-        }
+//        if(appCtx.getController().getRawButton(1)){
+//            intakeMaster.setSelectedSensorPosition(0, 0, 10);
+//        }
 
     }
 

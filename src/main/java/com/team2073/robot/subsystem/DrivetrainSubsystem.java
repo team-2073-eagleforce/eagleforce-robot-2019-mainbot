@@ -48,7 +48,7 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 
         driveProfileManager.registerProfile(cheesyDriveProfile);
 //        driveProfileManager.registerProfile(tankDriveProfile);
-        driveProfileManager.registerProfile(eagleDriveProfile);
+//        driveProfileManager.registerProfile(eagleDriveProfile);
     }
 
     private void configMotors() {
@@ -89,12 +89,6 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
             }
         }
         currentDriveProfile.setMotors();
-
-        if(appCtx.getJoystick().getRawButton(3)){
-        	shifter.set(DoubleSolenoid.Value.kReverse);
-		}else{
-        	shifter.set(DoubleSolenoid.Value.kForward);
-		}
     }
 
 }

@@ -1,8 +1,7 @@
 package com.team2073.robot;
 
-import com.team2073.robot.command.DriveShiftCommand;
-import com.team2073.robot.command.IntakePivotCommand;
-import com.team2073.robot.command.IntakeRollerCommand;
+import com.team2073.common.trigger.ControllerTriggerTrigger;
+import com.team2073.robot.command.*;
 import com.team2073.robot.command.elevator.ElevatorShiftCommand;
 import com.team2073.robot.command.elevator.ElevatorToPositionCommand;
 import com.team2073.robot.command.elevator.ZeroElevatorCommand;
@@ -12,6 +11,9 @@ import com.team2073.robot.command.shooter.HighShootCommand;
 import com.team2073.robot.command.shooter.ShooterIntakeCommand;
 import com.team2073.robot.command.shooter.ShooterStopCommand;
 import com.team2073.robot.ctx.ApplicationContext;
+import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
+import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem.HatchState;
+import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -47,29 +49,38 @@ public class OperatorInterface {
     private JoystickButton wheelCircle = new JoystickButton(driveWheel, 2);
     private JoystickButton rightPaddle = new JoystickButton(driveWheel, 3);
     private JoystickButton wheelTriangle = new JoystickButton(driveWheel, 4);
+    private ControllerTriggerTrigger leftTrigger = new ControllerTriggerTrigger(controller, 2);
+    private ControllerTriggerTrigger rightTrigger = new ControllerTriggerTrigger(controller, 3);
 
     public OperatorInterface() {
-//        //DRIVE
-//        stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
-//        stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
-//
-//        //Controller
-//        dPadDown.whenPressed(new ElevatorToPositionCommand(0d));
-//        dPadUp.whenPressed(new ElevatorToPositionCommand(70d));
-//        dPadRight.whenPressed(new ElevatorToPositionCommand(35d));
-//        controllerBack.whenPressed(new ZeroElevatorCommand());
-//        a.whenPressed(new ShooterIntakeCommand());
-//        a.whenPressed(new IntakeRollerCommand());
-//        a.whenReleased(new ShooterStopCommand());
-//        a.whenReleased(new IntakeStopCommand());
-//        b.whenPressed(new HighShootCommand());
-//        b.whenPressed(new OutakeCommand());
-//        b.whenReleased(new ShooterStopCommand());
-//        b.whenReleased(new ShooterStopCommand());
-//        x.whenPressed(new IntakePivotCommand(130d));
-//        y.whenPressed(new IntakePivotCommand(0d));
-        a.whenPressed(new ElevatorToPositionCommand(40d));
-        b.whenPressed(new ElevatorShiftCommand(DoubleSolenoid.Value.kReverse));
-        b.whenReleased(new ElevatorShiftCommand(DoubleSolenoid.Value.kForward));
+        //DRIVE
+        stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
+        stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
+        stickThree.whenPressed(new HighShootCommand());
+        stickThree.whenReleased(new ShooterStopCommand());
+
+        //Controller
+        dPadDown.whenPressed(new ElevatorToPositionCommand(.5d));
+        dPadUp.whenPressed(new ElevatorToPositionCommand(70d));
+        dPadRight.whenPressed(new ElevatorToPositionCommand(35d));
+        dPadLeft.whenPressed(new ElevatorToPositionCommand(15d));
+        controllerBack.whenPressed(new ZeroElevatorCommand());
+        controllerStart.whenPressed(new IntakePivotCommand(10d));
+        rightTrigger.whenActive(new ShooterIntakeCommand());
+        rightTrigger.whenActive(new IntakeRollerCommand());
+        rightTrigger.whenInactive(new ShooterStopCommand());
+        rightTrigger.whenInactive(new IntakeStopCommand());
+        leftTrigger.whenActive(new OutakeCommand());
+        leftTrigger.whenInactive(new IntakeStopCommand());
+        rb.whenPressed(new IntakePivotCommand(135d));
+        lb.whenPressed(new IntakePivotCommand(95d));
+        x.whenPressed(new HatchManipulatorCommand(HatchState.READY_TO_INTAKE));
+        a.whenPressed(new HatchManipulatorCommand(HatchState.GRABED_HATCH));
+        y.whenPressed(new HatchManipulatorCommand(HatchState.STARTING_CONFIG));
+
+        wheelCircle.whenPressed(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS));
+        wheelTriangle.whenPressed(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
+        rightPaddle.whenPressed(new ElevatorShiftCommand(DoubleSolenoid.Value.kReverse));
+        rightPaddle.whenReleased(new ElevatorShiftCommand(DoubleSolenoid.Value.kForward));
     }
 }

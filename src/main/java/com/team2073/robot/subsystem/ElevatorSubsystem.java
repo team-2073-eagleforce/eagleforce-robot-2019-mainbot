@@ -37,7 +37,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private static final double KA = .1 / MAX_ACCELERATION;
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
     private static final double ACCEPTABLE_VARIATION = .125d;
-    private static final double MAX_CLIMBING_HEIGHT = 48d;
+    private static final double MAX_CLIMBING_HEIGHT = 45d;
 
     //PID
     private double P = elevatorProperties.getElevatorP();
@@ -70,7 +70,8 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private Zeroer topZero = new Zeroer(topLimit, elevatorMaster, converter.asTics(MAX_HEIGHT), 0, true);
     private Zeroer bottomZero = new Zeroer(bottomLimit, elevatorMaster, converter.asTics(MIN_HEIGHT), 0, true);
 
-    private boolean isClimbing = false;
+    private ElevatorState currentState = ElevatorState.NORMAL_OPERATION;
+    private double lastSetpoint;
 
     public ElevatorSubsystem() {
         autoRegisterWithPeriodicRunner();
@@ -100,26 +101,41 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
         elevatorSlave1.follow(elevatorMaster);
         elevatorSlave2.follow(elevatorMaster);
-
+        elevatorShifter.set(Value.kForward);
 //        holdingClimbingPID.setPositionSupplier(this::position);
     }
 
-    public double holdingStrategy() {
-        elevatorShifter.set(Value.kReverse);
-        return 0;
+    public enum ElevatorState {
+        NORMAL_OPERATION,
+        CLIMBING
+    }
+
+    public void setElevatorState(ElevatorState elevatorState) {
+        this.currentState = elevatorState;
+    }
+
+    public void shiftHighGear(){
+        setElevatorShifter(Value.kForward);
+    }
+
+    public void holdingStrategy() {
+//        elevatorShifter.set(Value.kReverse);
     }
 
     @Override
     public void onPeriodic() {
-        System.out.println("bottom zero: " + bottomLimit.get() + "position: " + position());
-//        elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(1));
         bottomZero.onPeriodic();
         topZero.onPeriodic();
+        System.out.println("Ele voltage: " + elevatorMaster.getMotorOutputVoltage() + "elevator Position: " + position());
         if (setpoint == null) {
             return;
         }
 
-        normalOperation(setpoint);
+        if(appCtx.getWheel().getRawButton(3)){
+            climbingOperation();
+        }else {
+            normalOperation(setpoint);
+        }
 //
     }
 
@@ -154,39 +170,22 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
             }
 
             trapezoidalProfileManager.setPoint(setpoint);
-
             trapezoidalProfileManager.newOutput();
-            elevatorMaster.set(ControlMode.PercentOutput, trapezoidalProfileManager.getOutput());
+
+//            if (position() < MIN_HEIGHT + 3 && trapezoidalProfileManager.getOutput() < 0) {
+//                elevatorMaster.set(ControlMode.PercentOutput, 0);
+//            } else {
+                elevatorMaster.set(ControlMode.PercentOutput, trapezoidalProfileManager.getOutput());
+//            }
         }
     }
 
     private double climbHeight;
 
     private void climbingOperation() {
-        if (isAnalogControlReleased()) {
-            elevatorMaster.set(ControlMode.PercentOutput, holdingClimbingPID.getOutput());
-        } else {
-            if (position() < MAX_CLIMBING_HEIGHT) {
-                elevatorMaster.set(ControlMode.PercentOutput, appCtx.getController().getRawAxis(5));
-            } else {
-
-            }
-        }
-        if (position() < MAX_CLIMBING_HEIGHT) {
-            if (isAnalogControlReleased()) {
-            } else {
-                elevatorMaster.set(ControlMode.PercentOutput, appCtx.getController().getRawAxis(5));
-            }
-
-        } else {
-            holdingClimbingPID.updateSetPoint(MAX_CLIMBING_HEIGHT);
-            elevatorMaster.set(ControlMode.PercentOutput, MAX_CLIMBING_HEIGHT);
-        }
-    }
-
-    private boolean isAnalogControlReleased() {
-        //TODO fill out
-        return false;
+//        if(position() < MAX_CLIMBING_HEIGHT){
+            elevatorMaster.set(ControlMode.PercentOutput, -appCtx.getController().getRawAxis(5));
+//        }
     }
 
     public void setElevatorShifter(Value value) {

@@ -33,8 +33,7 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
 
     @Override
     public void onPeriodic() {
-//        setPower(state.getPercent());
-        intakeRoller2.set(.25);
+        setPower(state.getPercent());
     }
 
     @Override

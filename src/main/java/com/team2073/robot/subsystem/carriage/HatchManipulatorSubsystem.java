@@ -83,9 +83,10 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     //left changing states up to mediator as Jason said
     @Override
     public void onPeriodic() {
+
 //        filterHatchReadings();
-//        hatchPosition.set(currentState().isVerticalPistonActive());
-//        hatchPlace.set(currentState().isFingerPistonActive());
+        hatchPosition.set(currentState().isVerticalPistonActive());
+        hatchPlace.set(currentState().isFingerPistonActive());
     }
 
     private boolean hatchActive() {
