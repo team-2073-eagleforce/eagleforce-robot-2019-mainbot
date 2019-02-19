@@ -89,6 +89,7 @@ deploy {
 
 
     dependencies {
+        compile group: 'org.json', name: 'json', version: '20180813'
         compile group: 'com.team2073', name: 'common-util', version: COMMON_VERSION
         compile group: 'com.team2073', name: 'common-wpi-util', version: COMMON_VERSION
         compile group: 'com.team2073', name: 'common-guice', version: COMMON_VERSION
