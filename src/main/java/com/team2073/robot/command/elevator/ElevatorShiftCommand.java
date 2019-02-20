@@ -14,7 +14,11 @@ public class ElevatorShiftCommand extends AbstractLoggingCommand {
     }
     @Override
     protected void initializeDelegate() {
-        appCtx.getElevatorSubsystem().setElevatorShifter(value);
+        if(value == Value.kForward){
+            appCtx.getElevatorSubsystem().shiftHighGear();
+        }else{
+            appCtx.getElevatorSubsystem().shiftLowGear();
+        }
     }
 
     @Override

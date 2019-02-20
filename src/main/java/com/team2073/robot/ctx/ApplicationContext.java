@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.conf.ApplicationProperties;
@@ -21,6 +22,8 @@ import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 import edu.wpi.first.wpilibj.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 import static com.team2073.robot.AppConstants.Ports.*;
 
@@ -89,6 +92,7 @@ public class ApplicationContext {
     private AnalogPotentiometer intakePot;
     private Ultrasonic hatchSensor;
     //	====================================================================================================================
+
     /*GETTERS*/
 
     public static ApplicationContext getInstance() {
@@ -228,6 +232,7 @@ public class ApplicationContext {
         if(intakePivotSlave == null){
             intakePivotSlave = new VictorSPX(portProps.getIntakePivotVictor());
         }
+
         return intakePivotSlave;
     }
 
@@ -377,4 +382,5 @@ public class ApplicationContext {
         }
         return hatchSensor;
     }
+
 }
