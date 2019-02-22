@@ -2,10 +2,12 @@ package com.team2073.robot.subsystem.climber;
 
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
+import com.team2073.common.util.ConversionUtil;
 import com.team2073.common.util.Timer;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState;
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS;
@@ -42,6 +44,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     @Override
     public void onPeriodic() {
+
         switch (state) {
             // Forks up, clamp down
             case STORE:
@@ -51,17 +54,16 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
             // Forks down, clamps up
             case DEPLOY_FORKS:
                 forkSolenoid.set(DoubleSolenoid.Value.kReverse);
-                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
-//                forkSolenoid.set(DoubleSolenoid.Value.kReverse);
-//                if (!timeStart){
-//                    timer.start();
-//                    timeStart = true;
-//                }
-//                if (timer.getElapsedTime() > DEPLOY_FORKS_WAIT_TIME) {
-//                    robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
-//                    timer.stop();
-//                    timeStart = false;
-//                }
+//                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+                if (!timeStart){
+                    timer.start();
+                    timeStart = true;
+                }
+                if (timer.hasWaited(ConversionUtil.secondsToMs(DEPLOY_FORKS_WAIT_TIME))) {
+                    robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+                    timer.stop();
+                    timeStart = false;
+                }
 
                 break;
             // Clamps up
@@ -79,6 +81,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
         }
 
     }
+
 
     public enum RobotIntakeState {
         STORE,

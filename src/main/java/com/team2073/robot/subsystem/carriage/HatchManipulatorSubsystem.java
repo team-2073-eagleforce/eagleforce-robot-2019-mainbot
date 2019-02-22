@@ -17,7 +17,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
 
     private DoubleSolenoid hatchPosition = appCtx.getHatchPositionSolenoid();
     private DoubleSolenoid hatchPlace = appCtx.getHatchPlaceSolenoid();
-//    private Ultrasonic ultraSensor = appCtx.getHatchSensor();
+    private Ultrasonic ultraSensor = appCtx.getHatchSensor();
 
     private static final double MARGIN_OF_ERROR = AppConstants.Subsystems.Hatch.HATCH_MARGIN_OF_ERROR;
     private HatchState state = HatchState.STARTING_CONFIG;
@@ -90,8 +90,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     }
 
     private boolean hatchActive() {
-//        return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
-        return false;
+        return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
     }
 
     private boolean filterHatchReadings() {

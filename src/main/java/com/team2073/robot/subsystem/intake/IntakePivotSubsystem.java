@@ -117,9 +117,6 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
                 graph.writeToFile();
             }
 		}
-//        if(appCtx.getController().getRawButton(1)){
-//            intakeMaster.setSelectedSensorPosition(0, 0, 10);
-//        }
 
     }
 

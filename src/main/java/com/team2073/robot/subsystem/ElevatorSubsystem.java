@@ -8,18 +8,16 @@ import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
-import com.team2073.common.position.zeroer.Zeroer;
-import com.team2073.common.util.ConversionUtil;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
+import com.team2073.robot.dev.GraphCSV;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.RobotState;
 
 public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem {
 
@@ -39,6 +37,11 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
     private static final double ACCEPTABLE_VARIATION = .125d;
     private static final double MAX_CLIMBING_HEIGHT = 55d;
+
+
+    private GraphCSV graph = new GraphCSV("ElevatorProfile", "time", "Position", "Velocity",
+            "setpoint", "output voltage", "profile position", "profile velocity", "profile acceleration");
+    private double time = 0;
 
     //PID
     private double P = .05;
@@ -65,9 +68,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     private Double setpoint;
     private Value shifterValue = elevatorShifter.get();
-
-//    private Zeroer topZero = new Zeroer(topLimit, elevatorMaster, converter.asTics(MAX_HEIGHT), 0, true);
-//    private Zeroer bottomZero = new Zeroer(bottomLimit, elevatorMaster, converter.asTics(MIN_HEIGHT), 0, true);
 
     private ElevatorState currentState = ElevatorState.NORMAL_OPERATION;
     private ElevatorState lastState;
@@ -101,7 +101,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         elevatorSlave1.follow(elevatorMaster);
         elevatorSlave2.follow(elevatorMaster);
         elevatorShifter.set(Value.kForward);
-//        holdingClimbingPID.setPositionSupplier(this::position);
+        holdingClimbingPID.setPositionSupplier(this::position);
     }
 
     public enum ElevatorState {
@@ -128,8 +128,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public void onPeriodic() {
-//        bottomZero.onPeriodic();
-//        topZero.onPeriodic();
 
         if (isAtBottom()) {
             elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
@@ -139,7 +137,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
             elevatorMaster.setSelectedSensorPosition(converter.asTics(MAX_HEIGHT), 0, 10);
         }
 
-//        System.out.println("Ele voltage: " + elevatorMaster.getMotorOutputVoltage() + "elevator Position: " + position());
         if (setpoint == null) {
             return;
         }
@@ -148,6 +145,11 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         switch (currentState) {
             case NORMAL_OPERATION:
                 normalOperation();
+                graph.updateMainFile(time, position(), velocity(), setpoint, elevatorMaster.getMotorOutputVoltage(),
+                        trapezoidalProfileManager.getProfile().getCurrentPosition(),
+                        trapezoidalProfileManager.getProfile().getCurrentVelocity(),
+                        trapezoidalProfileManager.getProfile().getCurrentAcceleration());
+                time += .01;
                 break;
             case CLIMBING:
                 climbingOperation();
@@ -161,13 +163,11 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
                 break;
 
         }
+        if(appCtx.getController().getRawButton(7)){
+            graph.writeToFile();
+        }
         lastState = currentState;
 
-//        if(appCtx.getWheel().getRawButton(3)){
-//            climbingOperation();
-//        }else {
-//            normalOperation(setpoint);
-//        }
     }
 
     private void holdElevator(){
@@ -182,9 +182,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         if(elevatorShifter.get() != Value.kForward){
             shiftHighGear();
         }
-//        if (isAtSetpoint(setpoint)) {
-//            shiftLowGear();
-//        }
 
         trapezoidalProfileManager.setPoint(setpoint);
         trapezoidalProfileManager.newOutput();
