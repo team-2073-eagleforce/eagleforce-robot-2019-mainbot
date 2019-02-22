@@ -1,9 +1,6 @@
 package com.team2073.robot.subsystem;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorController;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
@@ -16,10 +13,11 @@ import com.team2073.robot.AppConstants;
 import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
+import com.team2073.robot.dev.GraphCSV;
 import com.team2073.robot.mediator.PositionalSubsystem;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.RobotState;
 
 public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem {
 
@@ -32,19 +30,22 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private static final double ENCODER_TICS_PER_INCH = 697d;
     private static final double MAX_HEIGHT = 70.5d;
     private static final double MIN_HEIGHT = 0d;
-    private static final double MAX_VELOCITY = 80.0d;
+    private static final double MAX_VELOCITY = 100.0d;
     private static final double PERCENT_FOR_MAX_VELOCITY = .85d;
     private static final double MAX_ACCELERATION = 300;
     private static final double KA = .1 / MAX_ACCELERATION;
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
     private static final double ACCEPTABLE_VARIATION = .125d;
-    private static final double MAX_CLIMBING_HEIGHT = 48d;
+    private static final double MAX_CLIMBING_HEIGHT = 55d;
+
+
+    private GraphCSV graph = new GraphCSV("ElevatorProfile", "time", "Position", "Velocity",
+            "setpoint", "output voltage", "profile position", "profile velocity", "profile acceleration");
+    private double time = 0;
 
     //PID
-    private double P = elevatorProperties.getElevatorP();
-    private double I = elevatorProperties.getElevatorI();
+    private double P = .05;
     private double D = elevatorProperties.getElevatorD();
-    private double F = elevatorProperties.getElevatorF();
 
 
     private IMotorControllerEnhanced elevatorMaster = appCtx.getElevatorMaster();
@@ -52,13 +53,13 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private IMotorController elevatorSlave2 = appCtx.getElevatorSlave2();
     private DoubleSolenoid elevatorShifter = appCtx.getElevatorShiftSolenoid();
 
-//    private DigitalInput topLimit = appCtx.getElevatorTopLimit();
-//    private DigitalInput bottomLimit = appCtx.getElevatorBottomLimit();
+    private DigitalInput topLimit = appCtx.getElevatorTopLimit();
+    private DigitalInput bottomLimit = appCtx.getElevatorBottomLimit();
 
     private ElevatorPositionConverter converter = new ElevatorPositionConverter();
 
-    private PidfControlLoop holdingClimbingPID = new PidfControlLoop(0, 0, 0, 0, 1);
-    private PidfControlLoop holdingPID = new PidfControlLoop(0.03, 0, 0, 0, 1);
+    private PidfControlLoop holdingClimbingPID = new PidfControlLoop(0.05, 0, 0, 0, 1);
+    private PidfControlLoop holdingPID = new PidfControlLoop(0.15, 0.08, 0, 0, 1);
     private MotionProfileControlloop motionController = new MotionProfileControlloop(P, D,
             PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
@@ -68,10 +69,8 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private Double setpoint;
     private Value shifterValue = elevatorShifter.get();
 
-//    private Zeroer topZero = new Zeroer(topLimit, elevatorMaster, converter.asTics(MAX_HEIGHT), 0, false);
-//    private Zeroer bottomZero = new Zeroer(bottomLimit, elevatorMaster, converter.asTics(MIN_HEIGHT), 0, false);
-
-    private boolean isClimbing = false;
+    private ElevatorState currentState = ElevatorState.NORMAL_OPERATION;
+    private ElevatorState lastState;
 
     public ElevatorSubsystem() {
         autoRegisterWithPeriodicRunner();
@@ -80,6 +79,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         TalonUtil.resetVictor(elevatorSlave1, TalonUtil.ConfigurationType.SLAVE);
         TalonUtil.resetVictor(elevatorSlave2, TalonUtil.ConfigurationType.SLAVE);
 
+        elevatorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
         elevatorMaster.setSensorPhase(true);
 
         elevatorMaster.setInverted(directionalityProperties.isElevatorMaster());
@@ -100,97 +100,129 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
         elevatorSlave1.follow(elevatorMaster);
         elevatorSlave2.follow(elevatorMaster);
-
-//        holdingClimbingPID.setPositionSupplier(this::position);
+        elevatorShifter.set(Value.kForward);
+        holdingClimbingPID.setPositionSupplier(this::position);
     }
 
-    public double holdingStrategy() {
-        elevatorShifter.set(Value.kReverse);
-        return 0;
+    public enum ElevatorState {
+        NORMAL_OPERATION,
+        CLIMBING,
+        HOLD_CLIMB;
+    }
+
+    public void setElevatorState(ElevatorState elevatorState) {
+        this.currentState = elevatorState;
+    }
+
+    public void shiftHighGear() {
+        setElevatorShifter(Value.kForward);
+    }
+
+    public void shiftLowGear() {
+        setElevatorShifter(Value.kReverse);
+    }
+
+    public ElevatorState getCurrentState() {
+        return currentState;
     }
 
     @Override
     public void onPeriodic() {
+
+        if (isAtBottom()) {
+            elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
+        }
+
+        if (isAtTop()) {
+            elevatorMaster.setSelectedSensorPosition(converter.asTics(MAX_HEIGHT), 0, 10);
+        }
+
         if (setpoint == null) {
             return;
         }
 
-        normalOperation(setpoint);
-//
-//        bottomZero.onPeriodic();
-//        topZero.onPeriodic();
 
-        if (appCtx.getController().getRawButton(6)) {
-            elevatorMaster.setSelectedSensorPosition(0, 0, 10);
+        switch (currentState) {
+            case NORMAL_OPERATION:
+                normalOperation();
+                graph.updateMainFile(time, position(), velocity(), setpoint, elevatorMaster.getMotorOutputVoltage(),
+                        trapezoidalProfileManager.getProfile().getCurrentPosition(),
+                        trapezoidalProfileManager.getProfile().getCurrentVelocity(),
+                        trapezoidalProfileManager.getProfile().getCurrentAcceleration());
+                time += .01;
+                break;
+            case CLIMBING:
+                climbingOperation();
+                break;
+            case HOLD_CLIMB:
+                if(lastState != currentState){
+                    holdingClimbingPID.updateSetPoint(position());
+                }
+                holdingClimbingPID.updatePID();
+                elevatorMaster.set(ControlMode.PercentOutput, holdingClimbingPID.getOutput());
+                break;
+
         }
+        if(appCtx.getController().getRawButton(7)){
+            graph.writeToFile();
+        }
+        lastState = currentState;
+
     }
 
-    private boolean isGoingUp = true;
-
-    private void runInElevator() {
-        if (isGoingUp) {
-            if (position() < MAX_HEIGHT - 10) {
-                elevatorMaster.set(ControlMode.PercentOutput, .3);
-            } else {
-                isGoingUp = false;
-            }
-        } else {
-            if (position() > MIN_HEIGHT + 10) {
-                elevatorMaster.set(ControlMode.PercentOutput, -.3);
-            } else {
-                isGoingUp = true;
-            }
-        }
+    private void holdElevator(){
+        shiftHighGear();
+        elevatorMaster.set(ControlMode.PercentOutput, .05);
     }
 
-    private double lastIntegralPosition;
-
-    private void normalOperation(double setpoint) {
+    private void normalOperation() {
         if (!isPositionSafe(setpoint)) {
             setpoint = findClosestBound(MIN_HEIGHT, setpoint, MAX_HEIGHT);
         }
-        if (RobotState.isEnabled()) {
-
-            if (isAtSetpoint(setpoint)) {
-                holdingStrategy();
-            }
-
-            trapezoidalProfileManager.setPoint(setpoint);
-            trapezoidalProfileManager.newOutput();
+        if(elevatorShifter.get() != Value.kForward){
+            shiftHighGear();
         }
-    }
 
-    private double climbHeight;
+        trapezoidalProfileManager.setPoint(setpoint);
+        trapezoidalProfileManager.newOutput();
+        elevatorMaster.set(ControlMode.PercentOutput, trapezoidalProfileManager.getOutput());
+
+    }
 
     private void climbingOperation() {
-        if (isAnalogControlReleased()) {
-            elevatorMaster.set(ControlMode.PercentOutput, holdingClimbingPID.getOutput());
-        } else {
-            if (position() < MAX_CLIMBING_HEIGHT) {
-                elevatorMaster.set(ControlMode.PercentOutput, appCtx.getController().getRawAxis(5));
-            } else {
-
-            }
+        double defaultOutput = -appCtx.getController().getRawAxis(5);
+        double adjustedOutput = defaultOutput * ((MAX_CLIMBING_HEIGHT + 5 - position()) / (MAX_CLIMBING_HEIGHT + 5));
+        double motorOutput;
+        if(elevatorShifter.get() != Value.kReverse){
+            shiftLowGear();
+            motorOutput = 0;
+        }else if(MAX_CLIMBING_HEIGHT - 5 < position()){
+            motorOutput =  adjustedOutput;
+        }else{
+            motorOutput = defaultOutput;
         }
-        if (position() < MAX_CLIMBING_HEIGHT) {
-            if (isAnalogControlReleased()) {
-            } else {
-                elevatorMaster.set(ControlMode.PercentOutput, appCtx.getController().getRawAxis(5));
-            }
 
-        } else {
-            holdingClimbingPID.updateSetPoint(MAX_CLIMBING_HEIGHT);
-            elevatorMaster.set(ControlMode.PercentOutput, MAX_CLIMBING_HEIGHT);
+        if(isAtBottom() && defaultOutput < 0 ){
+            motorOutput = 0;
         }
+
+        elevatorMaster.set(ControlMode.PercentOutput, motorOutput);
     }
 
-    private boolean isAnalogControlReleased() {
-        //TODO fill out
-        return false;
-    }
-
-    public void setElevatorShifter(Value value) {
+    private void setElevatorShifter(Value value) {
         elevatorShifter.set(value);
+    }
+
+    public void zeroElevator() {
+        elevatorMaster.setSelectedSensorPosition(0, 0, 10);
+    }
+
+    private boolean isAtBottom(){
+        return !bottomLimit.get();
+    }
+
+    private boolean isAtTop(){
+        return !topLimit.get();
     }
 
     private boolean isPositionSafe(double position) {

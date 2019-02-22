@@ -42,16 +42,10 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
 
     @Override
     public void onPeriodic() {
-//        if(appCtx.getController().getRawButton(1)){
-//            set(ShooterState.INTAKE);
-//        }else if (appCtx.getController().getRawButton(2)){
-//            set(ShooterState.HIGH_SHOOT);
-//        }else{
-//            set(ShooterState.STOP);
-//        }
         if (cargoSensor.get() && currentState() != ShooterState.HIGH_SHOOT && currentState() != ShooterState.INTAKE) {
             set(ShooterState.STALL);
         }
+
 
         setPower(state.getPercent());
     }
@@ -70,7 +64,7 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
         HIGH_SHOOT(0.9),
         INTAKE(-0.5),
         STOP(0d),
-        STALL(-0.09),
+        STALL(-0.12),
         DISABLED(0d);
 
         private Double percent;

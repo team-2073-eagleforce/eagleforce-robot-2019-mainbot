@@ -118,6 +118,9 @@ public abstract class AppConstants {
         private int elevatorBottomLimitDioPort;
         private int elevatorTopLimitDioPort;
 
+        //ANALOG
+        private int intakePivotPotentiometerPort;
+
         public int getPigeonGyro() {
             return pigeonGyro;
         }
@@ -413,9 +416,6 @@ public abstract class AppConstants {
         public void setIntakePivotPotentiometerPort(int intakePivotPotentiometerPort) {
             this.intakePivotPotentiometerPort = intakePivotPotentiometerPort;
         }
-
-        //ANALOG
-        private int intakePivotPotentiometerPort = 3;
     }
 
 

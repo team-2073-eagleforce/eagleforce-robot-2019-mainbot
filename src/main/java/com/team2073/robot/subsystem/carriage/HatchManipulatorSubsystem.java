@@ -17,7 +17,7 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
 
     private DoubleSolenoid hatchPosition = appCtx.getHatchPositionSolenoid();
     private DoubleSolenoid hatchPlace = appCtx.getHatchPlaceSolenoid();
-//    private Ultrasonic ultraSensor = appCtx.getHatchSensor();
+    private Ultrasonic ultraSensor = appCtx.getHatchSensor();
 
     private static final double MARGIN_OF_ERROR = AppConstants.Subsystems.Hatch.HATCH_MARGIN_OF_ERROR;
     private HatchState state = HatchState.STARTING_CONFIG;
@@ -83,22 +83,14 @@ public class HatchManipulatorSubsystem implements PeriodicRunnable, StateSubsyst
     //left changing states up to mediator as Jason said
     @Override
     public void onPeriodic() {
-//        filterHatchReadings();
-        if(appCtx.getController().getRawButton(1)){
-            set(HatchState.READY_TO_INTAKE);
-        }else if (appCtx.getController().getRawButton(2)){
-            set(HatchState.GRABED_HATCH);
-        }else if (appCtx.getController().getRawButton(3)){
-            set(HatchState.STARTING_CONFIG);
-        }
 
+//        filterHatchReadings();
         hatchPosition.set(currentState().isVerticalPistonActive());
         hatchPlace.set(currentState().isFingerPistonActive());
     }
 
     private boolean hatchActive() {
-//        return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
-        return false;
+        return (ultraSensor.getRangeInches() <= MARGIN_OF_ERROR && ultraSensor.isRangeValid());
     }
 
     private boolean filterHatchReadings() {

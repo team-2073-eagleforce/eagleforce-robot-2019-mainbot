@@ -48,29 +48,37 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 
         driveProfileManager.registerProfile(cheesyDriveProfile);
 //        driveProfileManager.registerProfile(tankDriveProfile);
-        driveProfileManager.registerProfile(eagleDriveProfile);
+//        driveProfileManager.registerProfile(eagleDriveProfile);
     }
 
     private void configMotors() {
         leftMaster.setInverted(directionalityProperties.isLeftDrivetrainMaster());
         leftSlave.setInverted(directionalityProperties.isLeftDrivetrainSlave());
-        leftSlave.follow(leftMaster);
         leftSlave2.setInverted(directionalityProperties.isLeftDrivetrainSlave2());
+        leftSlave.follow(leftMaster);
         leftSlave2.follow(leftMaster);
 
         rightMaster.setInverted(directionalityProperties.isRightDrivetrainMaster());
         rightSlave.setInverted(directionalityProperties.isRightDrivetrainSlave());
-        rightSlave.follow(rightMaster);
         rightSlave2.setInverted(directionalityProperties.isRightDrivetrainSlave2());
+        rightSlave.follow(rightMaster);
         rightSlave2.follow(rightMaster);
 
         leftMaster.configPeakOutputForward(1, 10);
         leftMaster.configPeakOutputReverse(-1, 10);
         rightMaster.configPeakOutputForward(1, 10);
         rightMaster.configPeakOutputReverse(-1, 10);
+
+        rightMaster.setSensorPhase(true);
+        leftMaster.setSensorPhase(true);
+
     }
 
     private DriveProfileManager driveProfileManager = ApplicationContext.getInstance().getDriveProfileManager();
+
+    public void shiftDrivetrain(DoubleSolenoid.Value value){
+        shifter.set(value);
+    }
 
     @Override
     public void onPeriodic() {
@@ -81,12 +89,6 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
             }
         }
         currentDriveProfile.setMotors();
-
-        if(appCtx.getJoystick().getRawButton(3)){
-        	shifter.set(DoubleSolenoid.Value.kReverse);
-		}else{
-        	shifter.set(DoubleSolenoid.Value.kForward);
-		}
     }
 
 }
