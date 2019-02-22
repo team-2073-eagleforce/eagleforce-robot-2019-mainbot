@@ -383,4 +383,12 @@ public class ApplicationContext {
         return hatchSensor;
     }
 
+    public SerialPort getTrackingCameraSerialPort(){
+        return new SerialPort(115200, SerialPort.Port.kUSB);
+    }
+
+    public SerialPort getLivestreamCmeraSerialPort(){
+        return new SerialPort(115200, SerialPort.Port.kUSB1);
+    }
+
 }
