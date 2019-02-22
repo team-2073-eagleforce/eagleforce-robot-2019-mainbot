@@ -3,6 +3,7 @@ package com.team2073.robot.svc.camera;
 import com.team2073.common.camera.CameraMessageReceiverSerialImpl;
 import com.team2073.common.camera.CameraMessageService;
 import com.team2073.common.periodic.PeriodicRunnable;
+import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.domain.CameraMessage;
 import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
 import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
@@ -13,29 +14,27 @@ public class CameraOverlayAdapter implements PeriodicRunnable {
     private final String AT_CENTER = "B";
     private final String TO_FAR_LEFT = "C";
     private final String NOT_TRACKING = "D";
+    private final String BALL_NOT_DETECTED = "0";
+    private final String BALL_DETECTED_KEY="1";
 
-    SerialPort trackingCamPort;
-    SerialPort liveStreamPort;
+    SerialPort trackingCamPort = ApplicationContext.getInstance().getTrackingCameraSerialPort();
+    SerialPort liveStreamPort = ApplicationContext.getInstance().getLivestreamCmeraSerialPort();
     String command;
 
     CameraMessageParserTargetTrackerImpl parser = new CameraMessageParserTargetTrackerImpl();
-    ShooterSubsystem.ShooterState shooterState = new ShooterSubsystem().currentState();
     boolean hatchDetected = new HatchManipulatorSubsystem().hatchDetected();
 
     public CameraOverlayAdapter(){
         autoRegisterWithPeriodicRunner();
     }
 
-
     @Override
     public void onPeriodic() {
-        if(hatchDetected){
-            sendMessage("1", trackingCamPort);
-        }
 
-        //Not sure how to check for whether it has the ball or not. This is just a guess.
-        if(shooterState == ShooterSubsystem.ShooterState.HIGH_SHOOT){
-            sendMessage("0", trackingCamPort);
+        if(ApplicationContext.getInstance().getShooterSubsystem().hasBall()){
+            sendMessage(BALL_DETECTED_KEY, trackingCamPort);
+        }else{
+            sendMessage(BALL_NOT_DETECTED, trackingCamPort);
         }
         parser.parseMsg(getlastMessage(trackingCamPort).toString());
         String alignState = getAlignState(getlastMessage(trackingCamPort).getRetroreflectiveAlign());

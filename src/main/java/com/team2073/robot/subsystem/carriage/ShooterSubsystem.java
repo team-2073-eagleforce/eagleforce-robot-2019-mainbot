@@ -107,4 +107,8 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
             this.stallPercent = stallPercent;
         }
     }
+
+    public boolean hasBall(){
+        return ApplicationContext.getInstance().getCargoSensor().get();
+    }
 }
