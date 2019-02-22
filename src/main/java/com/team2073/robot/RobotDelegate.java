@@ -6,7 +6,10 @@ import com.team2073.common.robot.AbstractRobotDelegate;
 import com.team2073.common.util.Timer;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.Mediator;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.SerialPort;
 
 import java.sql.SQLOutput;
 
@@ -17,6 +20,8 @@ public class RobotDelegate extends AbstractRobotDelegate {
     private ApplicationContext appCtx = ApplicationContext.getInstance();
     private Mediator mediator;
     private OperatorInterface oi;
+
+
 
 
     public RobotDelegate(double period) {
@@ -31,6 +36,7 @@ public class RobotDelegate extends AbstractRobotDelegate {
         robotCtx.getDataRecorder().disable();
         oi = new OperatorInterface();
         mediator = appCtx.getMediator();
+        UsbCamera livestreamCam = CameraServer.getInstance().startAutomaticCapture(1);
     }
 
     @Override

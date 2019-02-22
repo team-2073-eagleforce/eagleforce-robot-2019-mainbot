@@ -19,6 +19,7 @@ import com.team2073.robot.subsystem.climber.WheelieBarSubsystem;
 import com.team2073.robot.subsystem.driveprofile.DriveProfileManager;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,11 @@ public class ApplicationContext {
     private static ApplicationContext instance;
 
     private Logger log = LoggerFactory.getLogger(getClass());
-
+    /*CAMERA */
+    private UsbCamera trackingCam;
+    private SerialPort trackingCamSerial;
+    private SerialPort livestreamCamSerial;
+    //	====================================================================================================================
     /*UTIL */
     private DriveProfileManager driveProfileManager /*= new DriveProfileManager()*/;
     //	====================================================================================================================
@@ -107,6 +112,27 @@ public class ApplicationContext {
             mediator = new Mediator();
         }
         return mediator;
+    }
+
+    public UsbCamera getTrackingCam(){
+        if(trackingCam == null){
+            trackingCam = new UsbCamera("trackingCamera", 0);
+        }
+        return trackingCam;
+    }
+
+    public SerialPort getTrackingCamSerial(){
+        if(trackingCamSerial == null){
+            trackingCamSerial = new SerialPort(115200, SerialPort.Port.kUSB2);
+        }
+        return trackingCamSerial;
+    }
+
+    public SerialPort getLivestreamCamSerial(){
+        if(livestreamCamSerial == null){
+            livestreamCamSerial = new SerialPort(115200, SerialPort.Port.kUSB);
+        }
+        return livestreamCamSerial;
     }
 
     public DriveProfileManager getDriveProfileManager() {
