@@ -6,6 +6,7 @@ import com.team2073.robot.command.*;
 import com.team2073.robot.command.elevator.ElevatorShiftCommand;
 import com.team2073.robot.command.elevator.ElevatorStateCommand;
 import com.team2073.robot.command.elevator.ElevatorToPositionCommand;
+import com.team2073.robot.command.elevator.ElevatorToPositionCommand.ElevatorHeight;
 import com.team2073.robot.command.elevator.ZeroElevatorCommand;
 import com.team2073.robot.command.intakeRoller.IntakeStopCommand;
 import com.team2073.robot.command.intakeRoller.OutakeCommand;
@@ -23,59 +24,60 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 
 public class OperatorInterface {
 
-    private static ApplicationContext appCtx = ApplicationContext.getInstance();
+	private static ApplicationContext appCtx = ApplicationContext.getInstance();
 
-    private Joystick controller = appCtx.getController();
-    private Joystick driveWheel = appCtx.getWheel();
-    private Joystick driveStick = appCtx.getJoystick();
+	private Joystick controller = appCtx.getController();
+	private Joystick driveWheel = appCtx.getWheel();
+	private Joystick driveStick = appCtx.getJoystick();
 
-    private JoystickButton a = new JoystickButton(controller, 1);
-    private JoystickButton b = new JoystickButton(controller, 2);
-    private JoystickButton x = new JoystickButton(controller, 3);
-    private JoystickButton y = new JoystickButton(controller, 4);
-    private JoystickButton lb = new JoystickButton(controller, 5);
-    private JoystickButton rb = new JoystickButton(controller, 6);
-    private JoystickButton controllerBack = new JoystickButton(controller, 7);
-    private JoystickButton controllerStart = new JoystickButton(controller, 8);
-    private POVButton dPadUp = new POVButton(controller, 0);
-    private POVButton dPadRight = new POVButton(controller, 90);
-    private POVButton dPadDown = new POVButton(controller, 180);
-    private POVButton dPadLeft = new POVButton(controller, 270);
-    private JoystickButton backTrigger = new JoystickButton(driveStick, 1);
-    private JoystickButton stickTwo = new JoystickButton(driveStick, 2);
-    private JoystickButton stickThree = new JoystickButton(driveStick, 3);
-    private JoystickButton stickFour = new JoystickButton(driveStick, 4);
-    private JoystickButton stickFive = new JoystickButton(driveStick, 5);
+	private JoystickButton a = new JoystickButton(controller, 1);
+	private JoystickButton b = new JoystickButton(controller, 2);
+	private JoystickButton x = new JoystickButton(controller, 3);
+	private JoystickButton y = new JoystickButton(controller, 4);
+	private JoystickButton lb = new JoystickButton(controller, 5);
+	private JoystickButton rb = new JoystickButton(controller, 6);
+	private JoystickButton controllerBack = new JoystickButton(controller, 7);
+	private JoystickButton controllerStart = new JoystickButton(controller, 8);
+	private POVButton dPadUp = new POVButton(controller, 0);
+	private POVButton dPadRight = new POVButton(controller, 90);
+	private POVButton dPadDown = new POVButton(controller, 180);
+	private POVButton dPadLeft = new POVButton(controller, 270);
+	private JoystickButton backTrigger = new JoystickButton(driveStick, 1);
+	private JoystickButton stickTwo = new JoystickButton(driveStick, 2);
+	private JoystickButton stickThree = new JoystickButton(driveStick, 3);
+	private JoystickButton stickFour = new JoystickButton(driveStick, 4);
+	private JoystickButton stickFive = new JoystickButton(driveStick, 5);
 
-    private JoystickButton leftPaddle = new JoystickButton(driveWheel, 1);
-    private JoystickButton wheelCircle = new JoystickButton(driveWheel, 2);
-    private JoystickButton rightPaddle = new JoystickButton(driveWheel, 3);
-    private JoystickButton wheelTriangle = new JoystickButton(driveWheel, 4);
-    private ControllerTriggerTrigger leftTrigger = new ControllerTriggerTrigger(controller, 2);
-    private ControllerTriggerTrigger rightTrigger = new ControllerTriggerTrigger(controller, 3);
-    private MultiTrigger climbMode = new MultiTrigger(leftPaddle, rightPaddle);
-    private ElevatorStateTrigger isClimbMode = new ElevatorStateTrigger(ElevatorState.CLIMBING);
-    private MultiTrigger downDpadAndClimb = new MultiTrigger( isClimbMode, dPadDown);
-    private MultiTrigger upDpadAndClimb = new MultiTrigger( isClimbMode, dPadUp);
+	private JoystickButton leftPaddle = new JoystickButton(driveWheel, 1);
+	private JoystickButton wheelCircle = new JoystickButton(driveWheel, 2);
+	private JoystickButton rightPaddle = new JoystickButton(driveWheel, 3);
+	private JoystickButton wheelTriangle = new JoystickButton(driveWheel, 4);
+	private ControllerTriggerTrigger leftTrigger = new ControllerTriggerTrigger(controller, 2);
+	private ControllerTriggerTrigger rightTrigger = new ControllerTriggerTrigger(controller, 3);
+	private MultiTrigger climbMode = new MultiTrigger(leftPaddle, rightPaddle);
+	private ElevatorStateTrigger isClimbMode = new ElevatorStateTrigger(ElevatorState.CLIMBING);
+	private MultiTrigger downDpadAndClimb = new MultiTrigger(isClimbMode, dPadDown);
+	private MultiTrigger upDpadAndClimb = new MultiTrigger(isClimbMode, dPadUp);
 
-    public OperatorInterface() {
-        //DRIVE
-        stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
-        stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
-        stickThree.whenPressed(new HighShootCommand());
-        stickThree.whenReleased(new ShooterStopCommand());
+	public OperatorInterface() {
+		//DRIVE
+		stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
+		stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
+		stickThree.whenPressed(new HighShootCommand());
+		stickThree.whenReleased(new ShooterStopCommand());
 
-        //Controller
-        dPadDown.whenPressed(new ElevatorToPositionCommand(.5d));
+		//Controller
+		dPadDown.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
 //        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.CLAMP));
 //        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.OPEN_INTAKE));
-        dPadUp.whenPressed(new ElevatorToPositionCommand(71.25d));
-        dPadRight.whenPressed(new ElevatorToPositionCommand(31.25d));
-        dPadLeft.whenPressed(new ElevatorToPositionCommand(5d));
-        controllerBack.whenPressed(new ZeroElevatorCommand());
+		dPadUp.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.HIGH_BALL));
+		dPadRight.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.DRIVE));
+		dPadLeft.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.LOW_HATCH));
+		controllerBack.whenPressed(new ZeroElevatorCommand());
 //        controllerStart.whenPressed(new IntakePivotCommand(10d));
 //        rightTrigger.whenActive(new ShooterIntakeCommand());
 //        rightTrigger.whenActive(new IntakeRollerCommand());
@@ -92,6 +94,6 @@ public class OperatorInterface {
 //        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS));
 //        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
 //        climbMode.whenActive(new ElevatorStateCommand(ElevatorState.CLIMBING));
-    }
+	}
 
 }
