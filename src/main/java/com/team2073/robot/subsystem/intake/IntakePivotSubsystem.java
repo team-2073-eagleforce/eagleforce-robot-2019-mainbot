@@ -91,6 +91,11 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     }
 
     @Override
+    public double getSetpoint() {
+        return setpoint;
+    }
+
+    @Override
     public double position() {
         return converter.asPosition(intakeMaster.getSelectedSensorPosition(0));
     }

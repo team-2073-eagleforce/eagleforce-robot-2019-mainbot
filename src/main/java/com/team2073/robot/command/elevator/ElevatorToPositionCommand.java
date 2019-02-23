@@ -15,7 +15,7 @@ public class ElevatorToPositionCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        appCtx.getElevatorSubsystem().set(setpoint);
+        appCtx.getMediator().elevatorGoal(setpoint);
     }
 
     @Override

@@ -242,6 +242,11 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     }
 
     @Override
+    public double getSetpoint(){
+        return setpoint;
+    }
+
+    @Override
     public double position() {
         return converter.asPosition(elevatorMaster.getSelectedSensorPosition(0));
     }
