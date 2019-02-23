@@ -70,29 +70,28 @@ public class OperatorInterface {
 
         //Controller
         dPadDown.whenPressed(new ElevatorToPositionCommand(.5d));
-        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.CLAMP));
-        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.OPEN_INTAKE));
-        dPadUp.whenPressed(new ElevatorToPositionCommand(70d));
+//        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.CLAMP));
+//        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.OPEN_INTAKE));
+        dPadUp.whenPressed(new ElevatorToPositionCommand(71.25d));
         dPadRight.whenPressed(new ElevatorToPositionCommand(31.25d));
         dPadLeft.whenPressed(new ElevatorToPositionCommand(5d));
         controllerBack.whenPressed(new ZeroElevatorCommand());
-        controllerStart.whenPressed(new IntakePivotCommand(10d));
-        rightTrigger.whenActive(new ShooterIntakeCommand());
-        rightTrigger.whenActive(new IntakeRollerCommand());
-        rightTrigger.whenInactive(new ShooterStopCommand());
-        rightTrigger.whenInactive(new IntakeStopCommand());
-        leftTrigger.whenActive(new OutakeCommand());
-        leftTrigger.whenInactive(new IntakeStopCommand());
-        rb.whenPressed(new IntakePivotCommand(140d));
-        lb.whenPressed(new IntakePivotCommand(100d));
-        x.whenPressed(new HatchManipulatorCommand(HatchState.READY_TO_INTAKE));
-        a.whenPressed(new HatchManipulatorCommand(HatchState.GRABED_HATCH));
-        y.whenPressed(new HatchManipulatorCommand(HatchState.STARTING_CONFIG));
+//        controllerStart.whenPressed(new IntakePivotCommand(10d));
+//        rightTrigger.whenActive(new ShooterIntakeCommand());
+//        rightTrigger.whenActive(new IntakeRollerCommand());
+//        rightTrigger.whenInactive(new ShooterStopCommand());
+//        rightTrigger.whenInactive(new IntakeStopCommand());
+//        leftTrigger.whenActive(new OutakeCommand());
+//        leftTrigger.whenInactive(new IntakeStopCommand());
+//        rb.whenPressed(new IntakePivotCommand(140d));
+//        lb.whenPressed(new IntakePivotCommand(100d));
+//        x.whenPressed(new HatchManipulatorCommand(HatchState.READY_TO_INTAKE));
+//        a.whenPressed(new HatchManipulatorCommand(HatchState.GRABED_HATCH));
+//        y.whenPressed(new HatchManipulatorCommand(HatchState.STARTING_CONFIG));
 
-        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS));
-        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
-        climbMode.whenActive(new ElevatorStateCommand(ElevatorState.CLIMBING));
-//        rightPaddle.whenPressed(new ElevatorShiftCommand(DoubleSolenoid.Value.kReverse));
-//        rightPaddle.whenReleased(new ElevatorShiftCommand(DoubleSolenoid.Value.kForward));
+//        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS));
+//        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
+//        climbMode.whenActive(new ElevatorStateCommand(ElevatorState.CLIMBING));
     }
+
 }
