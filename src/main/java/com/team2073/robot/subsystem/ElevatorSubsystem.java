@@ -128,7 +128,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public void onPeriodic() {
-        System.out.println("Elevator Position: " + position());
+//        System.out.println("Elevator Position: " + position());
         if (isAtBottom()) {
             elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
         }
@@ -242,7 +242,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     }
 
     @Override
-    public double getSetpoint(){
+    public Double getSetpoint(){
         return setpoint;
     }
 

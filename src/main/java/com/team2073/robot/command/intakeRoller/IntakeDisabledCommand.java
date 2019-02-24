@@ -11,7 +11,7 @@ public class IntakeDisabledCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        mediator.intakeRollers(IntakeRollerSubsystem.IntakeRollerState.DISABLED);
+        appCtx.getIntakeRollerSubsystem().set(IntakeRollerSubsystem.IntakeRollerState.DISABLED);
     }
 
     @Override

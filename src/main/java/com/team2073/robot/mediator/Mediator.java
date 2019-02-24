@@ -20,10 +20,10 @@ public class Mediator implements PeriodicRunnable {
 	private ElevatorSubsystem elevator = appCtx.getElevatorSubsystem();
 //	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
 
-	private static final double INTAKE_MINIMUM_CLEARING_POSITION = 90;
-	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 20;
-	private static final double ELEVATOR_CLEARS_INTAKE = 25;
-	private static final double INTAKE_BELOW_CARRIAGE = 10;
+	private static final double INTAKE_MINIMUM_CLEARING_POSITION = 100;
+	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 16.5;
+	private static final double ELEVATOR_CLEARS_INTAKE = 20;/**/
+	private static final double INTAKE_BELOW_CARRIAGE = 8;/**/
 	private static final double ELEVATOR_SAFE_RANGE = 2;
 	private static final double INTAKE_PIVOT_SAFE_RANGE = 5;
 
@@ -48,42 +48,54 @@ public class Mediator implements PeriodicRunnable {
 
 
 	private void elevatorCheckPeriodic() {
-		if (intakePivot.position() < INTAKE_MINIMUM_CLEARING_POSITION
-				&& intakePivot.position() > INTAKE_BELOW_CARRIAGE
-				&& elevator.getSetpoint() < MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT
-				&& elevator.position() > elevator.getSetpoint()) {
-			if (elevatorCachedSetpoint == null) {
+		System.out.println("elevatorCached = " + elevatorCachedSetpoint);
+		if (elevator.getSetpoint() != null) {
+			if (intakePivot.position() < INTAKE_MINIMUM_CLEARING_POSITION
+					&& intakePivot.position() > INTAKE_BELOW_CARRIAGE
+					&& elevator.getSetpoint() < MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT
+					&& elevator.position() > elevator.getSetpoint()
+					&& elevatorCachedSetpoint == null) {
 				elevatorCachedSetpoint = elevator.getSetpoint();
+				elevator.set(MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT);
+				intakePivot.set(closerBound(0, INTAKE_MINIMUM_CLEARING_POSITION, intakePivot.position()));
+			} else if (elevatorCachedSetpoint != null) {
+				elevator.set(elevatorCachedSetpoint);
+				elevatorCachedSetpoint = null;
 			}
-			elevator.set(MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT);
-			intakePivot.set(closerBound(0, INTAKE_MINIMUM_CLEARING_POSITION, intakePivot.position()));
 		} else if (elevatorCachedSetpoint != null) {
-			elevatorGoal(elevatorCachedSetpoint);
+			elevator.set(elevatorCachedSetpoint);
 			elevatorCachedSetpoint = null;
 		}
 	}
 
 	private void intakePivotCheckPeriodic() {
-		if (intakePivot.getSetpoint() < INTAKE_MINIMUM_CLEARING_POSITION
-				&& intakePivot.position() > INTAKE_MINIMUM_CLEARING_POSITION
-				&& elevator.position() < MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT) {
+		if (intakePivot.getSetpoint() != null) {
 
-			if (intakePivotCachedSetpoint == null) {
-				intakePivotCachedSetpoint = intakePivot.getSetpoint();
-			}
-			intakePivot.set(INTAKE_MINIMUM_CLEARING_POSITION);
-			elevator.set(ELEVATOR_CLEARS_INTAKE);
-		} else if (intakePivot.getSetpoint() >= INTAKE_BELOW_CARRIAGE
-				&& intakePivot.position() < INTAKE_BELOW_CARRIAGE
-				&& elevator.position() < MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT) {
+			if (intakePivot.getSetpoint() < INTAKE_MINIMUM_CLEARING_POSITION
+					&& intakePivot.position() > INTAKE_MINIMUM_CLEARING_POSITION
+					&& elevator.position() < MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT) {
+				if (intakePivotCachedSetpoint == null) {
+					intakePivotCachedSetpoint = intakePivot.getSetpoint();
+				}
+				intakePivot.set(INTAKE_MINIMUM_CLEARING_POSITION);
+				elevator.set(ELEVATOR_CLEARS_INTAKE);
+			} else if (intakePivot.getSetpoint() >= INTAKE_BELOW_CARRIAGE
+					&& intakePivot.position() < INTAKE_BELOW_CARRIAGE
+					&& elevator.position() < MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT) {
 
-			if (intakePivotCachedSetpoint == null) {
-				intakePivotCachedSetpoint = intakePivot.getSetpoint();
+				if (intakePivotCachedSetpoint == null) {
+					intakePivotCachedSetpoint = intakePivot.getSetpoint();
+				}
+				intakePivot.set(intakePivot.position());
+				elevator.set(ELEVATOR_CLEARS_INTAKE);
+			} else if (intakePivotCachedSetpoint != null) {
+
+				intakePivot.set(intakePivotCachedSetpoint);
+				intakePivotCachedSetpoint = null;
+			}else{
 			}
-			intakePivot.set(intakePivot.position());
-			elevator.set(ELEVATOR_CLEARS_INTAKE);
-		} else if (elevatorCachedSetpoint != null) {
-			intakePivotGoal(intakePivotCachedSetpoint);
+		} else if (intakePivotCachedSetpoint != null) {
+			intakePivot.set(intakePivotCachedSetpoint);
 			intakePivotCachedSetpoint = null;
 		}
 	}

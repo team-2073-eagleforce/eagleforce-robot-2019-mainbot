@@ -91,7 +91,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     }
 
     @Override
-    public double getSetpoint() {
+    public Double getSetpoint() {
         return setpoint;
     }
 
@@ -112,7 +112,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         if(!hasZeroed)
             zeroFromPot();
 
-        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
+//        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
         if (setpoint == null) {
             return;
         }

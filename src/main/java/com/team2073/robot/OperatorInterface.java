@@ -78,14 +78,14 @@ public class OperatorInterface {
 		dPadRight.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.DRIVE));
 		dPadLeft.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.LOW_HATCH));
 		controllerBack.whenPressed(new ZeroElevatorCommand());
-//        controllerStart.whenPressed(new IntakePivotCommand(10d));
+        controllerStart.whenPressed(new IntakePivotCommand(5d));
 //        rightTrigger.whenActive(new ShooterIntakeCommand());
 //        rightTrigger.whenActive(new IntakeRollerCommand());
 //        rightTrigger.whenInactive(new ShooterStopCommand());
 //        rightTrigger.whenInactive(new IntakeStopCommand());
 //        leftTrigger.whenActive(new OutakeCommand());
 //        leftTrigger.whenInactive(new IntakeStopCommand());
-//        rb.whenPressed(new IntakePivotCommand(140d));
+        rb.whenPressed(new IntakePivotCommand(130d));
 //        lb.whenPressed(new IntakePivotCommand(100d));
 //        x.whenPressed(new HatchManipulatorCommand(HatchState.READY_TO_INTAKE));
 //        a.whenPressed(new HatchManipulatorCommand(HatchState.GRABED_HATCH));
