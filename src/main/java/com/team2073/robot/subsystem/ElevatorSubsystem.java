@@ -4,6 +4,9 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
+import com.team2073.common.mediator.condition.Condition;
+import com.team2073.common.mediator.condition.PositionBasedCondition;
+import com.team2073.common.mediator.subsys.PositionBasedSubsystem;
 import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
 import com.team2073.common.periodic.PeriodicRunnable;
@@ -18,9 +21,11 @@ import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.RobotState;
+import org.apache.commons.lang3.Range;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.jetbrains.annotations.NotNull;
 
-public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem {
+public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem, PositionBasedSubsystem {
 
 	private final RobotContext robotCtx = RobotContext.getInstance();
 	private final ApplicationContext appCtx = ApplicationContext.getInstance();
@@ -108,11 +113,33 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		holdingPID.setMaxIContribution(.2);
 	}
 
-	public enum ElevatorState {
-		NORMAL_OPERATION,
-		CLIMBING,
-		HOLD_CLIMB;
-	}
+    @Override
+    public double getSafetyRange() {
+        return 5;
+    }
+
+    @Override
+    public double pointToPosition(@NotNull Vector2D vector2D) {
+        return vector2D.getY();
+    }
+
+    @NotNull
+    @Override
+    public Vector2D positionToPoint(double v) {
+        return new Vector2D(0, v);
+    }
+
+    @NotNull
+    @Override
+    public Condition<Double> getCurrentCondition() {
+        return new PositionBasedCondition(position(), Range.between(position() - getSafetyRange(), position() + getSafetyRange()));
+    }
+
+    public enum ElevatorState {
+        NORMAL_OPERATION,
+        CLIMBING,
+        HOLD_CLIMB;
+    }
 
 	public void setElevatorState(ElevatorState elevatorState) {
 		this.currentState = elevatorState;
@@ -126,19 +153,16 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		setElevatorShifter(Value.kReverse);
 	}
 
-	public ElevatorState getCurrentState() {
-		return currentState;
-	}
+    public ElevatorState getCurrentState() {
+        return currentState;
+    }
 
-	@Override
-	public void onPeriodic() {
-		if(appCtx.getController().getRawButton(7)){
-			zeroElevator();
-		}
+    @Override
+    public void onPeriodic() {
 //        System.out.println("Elevator Position: " + position());
-		if (isAtBottom()) {
-			elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
-		}
+        if (isAtBottom()) {
+            elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
+        }
 
 //		elevatorMaster.set(ControlMode.PercentOutput, .85);
 
@@ -151,9 +175,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 //            elevatorMaster.setSelectedSensorPosition(converter.asTics(MAX_HEIGHT), 0, 10);
 //        }
 
-		if (setpoint == null) {
-			return;
-		}
+        if (setpoint == null) {
+            return;
+        }
 
 //
 		switch (currentState) {
@@ -228,157 +252,157 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 			motorOutput = defaultOutput;
 		}
 
-		if (/*isAtBottom()*/position() < 5 && motorOutput < 0) {
-			motorOutput = 0;
-		}
+        if(isAtBottom() && defaultOutput < 0 ){
+            motorOutput = 0;
+        }
 
-		elevatorMaster.set(ControlMode.PercentOutput, motorOutput);
-	}
+        elevatorMaster.set(ControlMode.PercentOutput, motorOutput);
+    }
 
-	private void setElevatorShifter(Value value) {
-		elevatorShifter.set(value);
-	}
+    private void setElevatorShifter(Value value) {
+        elevatorShifter.set(value);
+    }
 
-	public void zeroElevator() {
-		elevatorMaster.setSelectedSensorPosition(0, 0, 10);
-	}
+    public void zeroElevator() {
+        elevatorMaster.setSelectedSensorPosition(0, 0, 10);
+    }
 
-	private boolean isAtBottom() {
-		return !bottomLimit.get();
-	}
+    private boolean isAtBottom(){
+        return !bottomLimit.get();
+    }
 
-	private boolean isAtTop() {
-		return !topLimit.get();
-	}
+    private boolean isAtTop(){
+        return !topLimit.get();
+    }
 
-	private boolean isPositionSafe(double position) {
-		return position < MAX_HEIGHT || position > MIN_HEIGHT;
-	}
+    private boolean isPositionSafe(double position) {
+        return position < MAX_HEIGHT || position > MIN_HEIGHT;
+    }
 
-	private double findClosestBound(double lowerBound, double position, double upperBound) {
-		if (position - lowerBound > position - upperBound) {
-			return lowerBound;
-		} else {
-			return upperBound;
-		}
-	}
+    private double findClosestBound(double lowerBound, double position, double upperBound) {
+        if (position - lowerBound > position - upperBound) {
+            return lowerBound;
+        } else {
+            return upperBound;
+        }
+    }
 
-	private boolean isAtSetpoint(double setpoint) {
-		return setpoint - position() < ACCEPTABLE_VARIATION;
-	}
+    private boolean isAtSetpoint(double setpoint) {
+        return setpoint - position() < ACCEPTABLE_VARIATION;
+    }
 
-	@Override
-	public Double getSetpoint() {
-		return setpoint;
-	}
+    @Override
+    public Double getSetpoint(){
+        return setpoint;
+    }
 
-	@Override
-	public double position() {
-		return converter.asPosition(elevatorMaster.getSelectedSensorPosition(0));
-	}
+    @Override
+    public double position() {
+        return converter.asPosition(elevatorMaster.getSelectedSensorPosition(0));
+    }
 
-	@Override
-	public double velocity() {
-		return converter.asPosition(elevatorMaster.getSelectedSensorVelocity(0)) * 10;
-	}
+    @Override
+    public double velocity() {
+        return converter.asPosition(elevatorMaster.getSelectedSensorVelocity(0)) * 10;
+    }
 
-	@Override
-	public void set(Double setpoint) {
-		this.setpoint = setpoint;
-	}
+    @Override
+    public void set(Double setpoint) {
+        this.setpoint = setpoint;
+    }
 
-	private class ElevatorPositionConverter implements PositionConverter {
+    private class ElevatorPositionConverter implements PositionConverter {
 
-		@Override
-		public double asPosition(int tics) {
-			return tics / ENCODER_TICS_PER_INCH;
-		}
+        @Override
+        public double asPosition(int tics) {
+            return tics / ENCODER_TICS_PER_INCH;
+        }
 
-		@Override
-		public int asTics(double position) {
-			return (int) (position * ENCODER_TICS_PER_INCH);
-		}
+        @Override
+        public int asTics(double position) {
+            return (int) (position * ENCODER_TICS_PER_INCH);
+        }
 
-		@Override
-		public String positionalUnit() {
-			return Units.INCHES;
-		}
-	}
+        @Override
+        public String positionalUnit() {
+            return Units.INCHES;
+        }
+    }
 
-	public static class ElevatorProperties {
-		private double elevatorP = 0.05;
-		private double elevatorI;
-		private double elevatorD = 0.001;
-		private double elevatorF;
+    public static class ElevatorProperties {
+        private double elevatorP = 0.05;
+        private double elevatorI;
+        private double elevatorD = 0.001;
+        private double elevatorF;
 
-		private double elevatorHoldingP;
-		private double elevatorHoldingI;
-		private double elevatorHoldingD;
-		private double elevatorHoldingF;
+        private double elevatorHoldingP;
+        private double elevatorHoldingI;
+        private double elevatorHoldingD;
+        private double elevatorHoldingF;
 
-		public double getElevatorP() {
-			return elevatorP;
-		}
+        public double getElevatorP() {
+            return elevatorP;
+        }
 
-		public void setElevatorP(double elevatorP) {
-			this.elevatorP = elevatorP;
-		}
+        public void setElevatorP(double elevatorP) {
+            this.elevatorP = elevatorP;
+        }
 
-		public double getElevatorI() {
-			return elevatorI;
-		}
+        public double getElevatorI() {
+            return elevatorI;
+        }
 
-		public void setElevatorI(double elevatorI) {
-			this.elevatorI = elevatorI;
-		}
+        public void setElevatorI(double elevatorI) {
+            this.elevatorI = elevatorI;
+        }
 
-		public double getElevatorD() {
-			return elevatorD;
-		}
+        public double getElevatorD() {
+            return elevatorD;
+        }
 
-		public void setElevatorD(double elevatorD) {
-			this.elevatorD = elevatorD;
-		}
+        public void setElevatorD(double elevatorD) {
+            this.elevatorD = elevatorD;
+        }
 
-		public double getElevatorF() {
-			return elevatorF;
-		}
+        public double getElevatorF() {
+            return elevatorF;
+        }
 
-		public void setElevatorF(double elevatorF) {
-			this.elevatorF = elevatorF;
-		}
+        public void setElevatorF(double elevatorF) {
+            this.elevatorF = elevatorF;
+        }
 
-		public double getElevatorHoldingP() {
-			return elevatorHoldingP;
-		}
+        public double getElevatorHoldingP() {
+            return elevatorHoldingP;
+        }
 
-		public void setElevatorHoldingP(double elevatorHoldingP) {
-			this.elevatorHoldingP = elevatorHoldingP;
-		}
+        public void setElevatorHoldingP(double elevatorHoldingP) {
+            this.elevatorHoldingP = elevatorHoldingP;
+        }
 
-		public double getElevatorHoldingI() {
-			return elevatorHoldingI;
-		}
+        public double getElevatorHoldingI() {
+            return elevatorHoldingI;
+        }
 
-		public void setElevatorHoldingI(double elevatorHoldingI) {
-			this.elevatorHoldingI = elevatorHoldingI;
-		}
+        public void setElevatorHoldingI(double elevatorHoldingI) {
+            this.elevatorHoldingI = elevatorHoldingI;
+        }
 
-		public double getElevatorHoldingD() {
-			return elevatorHoldingD;
-		}
+        public double getElevatorHoldingD() {
+            return elevatorHoldingD;
+        }
 
-		public void setElevatorHoldingD(double elevatorHoldingD) {
-			this.elevatorHoldingD = elevatorHoldingD;
-		}
+        public void setElevatorHoldingD(double elevatorHoldingD) {
+            this.elevatorHoldingD = elevatorHoldingD;
+        }
 
-		public double getElevatorHoldingF() {
-			return elevatorHoldingF;
-		}
+        public double getElevatorHoldingF() {
+            return elevatorHoldingF;
+        }
 
-		public void setElevatorHoldingF(double elevatorHoldingF) {
-			this.elevatorHoldingF = elevatorHoldingF;
-		}
-	}
+        public void setElevatorHoldingF(double elevatorHoldingF) {
+            this.elevatorHoldingF = elevatorHoldingF;
+        }
+    }
 
 }

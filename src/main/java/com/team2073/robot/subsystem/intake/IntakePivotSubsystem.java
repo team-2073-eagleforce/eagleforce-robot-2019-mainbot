@@ -1,6 +1,7 @@
 package com.team2073.robot.subsystem.intake;
 
 import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
@@ -16,10 +17,13 @@ import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.RobotState;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.jetbrains.annotations.NotNull;
 
-public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem {
+import java.io.IOException;
 
-//    MAINBOT
+public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem, PositionBasedSubsystem {
+    //    MAINBOT
 //    private static final double POT_MIN_VALUE = .878;
 //    private static final double POT_MAX_VALUE = .38;
 
@@ -135,6 +139,37 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 
     private double potPosition() {
         return (pot.get() - POT_MIN_VALUE) * (MAX_POSITION - MIN_POSITION) / (POT_MAX_VALUE - POT_MIN_VALUE) + MIN_POSITION;
+    }
+
+    @Override
+    public double getSafetyRange() {
+        return 5;
+    }
+
+    private static final double PIVOT_LENGTH  = 15;
+    private static final double ROBOT_WIDTH = 48;
+
+    @Override
+    public double pointToPosition(@NotNull Vector2D vector2D) {
+        double positionFromX = Math.acos(((ROBOT_WIDTH - vector2D.getX()) / PIVOT_LENGTH) * (Math.PI / 180)) * (180 / Math.PI);
+        double positionFromY = Math.asin((vector2D.getY() / PIVOT_LENGTH) * (Math.PI / 180)) * (180 / Math.PI);
+
+        return positionFromX;
+    }
+
+    @NotNull
+    @Override
+    public Vector2D positionToPoint(double v) {
+        double y = PIVOT_LENGTH * Math.sin(position());
+        double x = ROBOT_WIDTH - (PIVOT_LENGTH * Math.cos(position()));
+
+        return new Vector2D(x, y);
+    }
+
+    @NotNull
+    @Override
+    public Condition<Double> getCurrentCondition() {
+        return null;
     }
 
     private static class IntakePositionConverter implements PositionConverter {
