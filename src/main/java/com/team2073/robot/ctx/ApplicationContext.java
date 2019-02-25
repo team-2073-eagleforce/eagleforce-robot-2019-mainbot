@@ -19,6 +19,7 @@ import com.team2073.robot.subsystem.climber.WheelieBarSubsystem;
 import com.team2073.robot.subsystem.driveprofile.DriveProfileManager;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
+import com.team2073.robot.svc.camera.CameraOverlayAdapter;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.*;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ public class ApplicationContext {
     private UsbCamera trackingCam;
     private SerialPort trackingCamSerial;
     private SerialPort livestreamCamSerial;
+    private CameraOverlayAdapter cameraOverlayAdapter;
     //	====================================================================================================================
     /*UTIL */
     private DriveProfileManager driveProfileManager /*= new DriveProfileManager()*/;
@@ -112,6 +114,13 @@ public class ApplicationContext {
             mediator = new Mediator();
         }
         return mediator;
+    }
+
+    public CameraOverlayAdapter getCameraOverlayAdapter(){
+        if(cameraOverlayAdapter == null){
+            cameraOverlayAdapter = new CameraOverlayAdapter();
+        }
+        return cameraOverlayAdapter;
     }
 
     public UsbCamera getTrackingCam(){
@@ -407,14 +416,6 @@ public class ApplicationContext {
             hatchSensor = new Ultrasonic(portProps.getHatchUltrasonicTriggerDioPort(), portProps.getHatchUltrasonicEchoDioPort(), Ultrasonic.Unit.kInches);
         }
         return hatchSensor;
-    }
-
-    public SerialPort getTrackingCameraSerialPort(){
-        return new SerialPort(115200, SerialPort.Port.kUSB);
-    }
-
-    public SerialPort getLivestreamCmeraSerialPort(){
-        return new SerialPort(115200, SerialPort.Port.kUSB1);
     }
 
 }

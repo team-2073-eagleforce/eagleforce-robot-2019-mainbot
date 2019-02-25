@@ -3,9 +3,18 @@ package com.team2073.robot.domain;
 public class CameraMessage {
     private boolean tracking;
     private double retroreflectiveAlign;
-    private int retroreflectiveDistance;
+    private double retroreflectiveDistance;
     private String timeStamp;
     private int trackingHeight;
+    private float pose;
+
+    public float getPose() {
+        return pose;
+    }
+
+    public void setPose(float pose) {
+        this.pose = pose;
+    }
 
     public boolean isTracking() {
         return tracking;
@@ -23,11 +32,11 @@ public class CameraMessage {
         this.retroreflectiveAlign = retroreflectiveAlign;
     }
 
-    public int getRetroreflectiveDistance() {
+    public double getRetroreflectiveDistance() {
         return retroreflectiveDistance;
     }
 
-    public void setRetroreflectiveDistance(int retroreflectiveDistance) {
+    public void setRetroreflectiveDistance(double retroreflectiveDistance) {
         this.retroreflectiveDistance = retroreflectiveDistance;
     }
 

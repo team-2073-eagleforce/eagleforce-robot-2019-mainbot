@@ -15,7 +15,9 @@ public class CameraMessageParserTargetTrackerImpl implements CameraMessageParser
     private static final String RETROREFLECTIVE_ALIGN_JSON_KEY = "Xcenter";
     private static final String RETROREFLECTIVE_DISTANCE_JSON_KEY = "distance";
     private static final String TIMESTAMP_JSON_KEY = "Timer";
+    private static final String POSE = "Pose";
     private static final String rawMsg = "Not yet recieved";
+    private CameraMessage lastMsg = new CameraMessage();
 
     public CameraMessageParserTargetTrackerImpl(){
         RobotContext.getInstance().getSmartDashboardRunner().registerInstance(this);
@@ -25,30 +27,36 @@ public class CameraMessageParserTargetTrackerImpl implements CameraMessageParser
 
     @Override
     public CameraMessage parseMsg(String msg) {
+        CameraMessage message = new CameraMessage();
         try{
             if(msg == null){
                 logger.trace("Null JSON String received.");
-                return new CameraMessage();
+                return lastMsg;
             }
 
             if(!msg.startsWith("{")){
                 logger.trace("String is not JSON [{}]", msg);
-                return new CameraMessage();
+                return lastMsg;
             }
 
+            if(msg.contains("}\n{")){
+                msg = msg.split("\n", 2)[0];
+            }
             logger.trace("Parsing camera message: [{}]", msg);
 
             JSONObject jsonObject = new JSONObject(msg);
-            CameraMessage message = new CameraMessage();
             message.setTracking(jsonObject.getBoolean(TRACKING_JSON_KEY));
             message.setRetroreflectiveAlign(jsonObject.getDouble(RETROREFLECTIVE_ALIGN_JSON_KEY));
-            message.setRetroreflectiveDistance(jsonObject.getInt(RETROREFLECTIVE_DISTANCE_JSON_KEY));
+            message.setRetroreflectiveDistance(jsonObject.getDouble(RETROREFLECTIVE_DISTANCE_JSON_KEY));
+            message.setPose(jsonObject.getFloat(POSE));
             logger.trace("CameraMessage: [{}].", message.toString());
+            lastMsg = message;
+            return message;
         }catch (JSONException e){
             logger.error("Could not parse camera message: [{}]", msg);
             SmartDashboard.putString("JSON object error", msg);
+            return lastMsg;
         }
-        return new CameraMessage();
     }
 
     @Override

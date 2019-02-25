@@ -3,15 +3,12 @@ package com.team2073.robot;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.proploader.PropertyLoader;
 import com.team2073.common.robot.AbstractRobotDelegate;
-import com.team2073.common.util.Timer;
 import com.team2073.robot.ctx.ApplicationContext;
+import com.team2073.robot.domain.CameraMessage;
 import com.team2073.robot.mediator.Mediator;
+import com.team2073.robot.svc.camera.CameraOverlayAdapter;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.SerialPort;
-
-import java.sql.SQLOutput;
 
 public class RobotDelegate extends AbstractRobotDelegate {
 
@@ -20,9 +17,7 @@ public class RobotDelegate extends AbstractRobotDelegate {
     private ApplicationContext appCtx = ApplicationContext.getInstance();
     private Mediator mediator;
     private OperatorInterface oi;
-
-
-
+    private CameraOverlayAdapter cameraOverlayAdapter = appCtx.getCameraOverlayAdapter();
 
     public RobotDelegate(double period) {
         super(period);
@@ -33,15 +28,15 @@ public class RobotDelegate extends AbstractRobotDelegate {
     public void robotInit() {
         loader.autoRegisterAllPropContainers(getClass().getPackage().getName());
         loader.loadProperties();
-        robotCtx.getDataRecorder().disable();
+//        robotCtx.getDataRecorder().disable();
         oi = new OperatorInterface();
         mediator = appCtx.getMediator();
         UsbCamera livestreamCam = CameraServer.getInstance().startAutomaticCapture(1);
+        UsbCamera trackingCam = new UsbCamera("trackingCam", 0);
     }
 
     @Override
     public void robotPeriodic() {
-//        System.out.println("Elevator Position: " + appCtx.getElevatorSubsystem().position() + "\t IntakePivotPosition: " + appCtx.getIntakePivotSubsystem().position());
 
     }
 
