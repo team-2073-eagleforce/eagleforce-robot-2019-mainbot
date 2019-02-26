@@ -384,6 +384,9 @@ public class ApplicationContext {
     }
 
     public SerialPort getTrackingCameraSerialPort(){
+        // This will create a new SerialPort every time you call the getter
+        // We only want to create a new instance the first time.
+        // Follow the same pattern as the other getters
         return new SerialPort(115200, SerialPort.Port.kUSB);
     }
 

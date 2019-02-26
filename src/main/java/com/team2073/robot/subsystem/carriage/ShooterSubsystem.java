@@ -4,16 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
-import com.team2073.common.util.Timer;
 import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
-import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterState;
-import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.ShooterState.DISABLED;
+import static com.team2073.robot.subsystem.carriage.ShooterSubsystem.*;
 
 public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<ShooterState> {
     private final RobotContext robotCtx = RobotContext.getInstance();
@@ -108,7 +105,9 @@ public class ShooterSubsystem implements PeriodicRunnable, StateSubsystem<Shoote
         }
     }
 
+    // Move this method to be next to the other methods of this class
     public boolean hasBall(){
+        // Use the instance of ApplicationContext that is stored as a private field in this class
         return ApplicationContext.getInstance().getCargoSensor().get();
     }
 }
