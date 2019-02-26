@@ -13,7 +13,8 @@ public class IntakePivotCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        appctx.getMediator().intakePivotGoal(setpoint);
+//        appctx.getMediator().intakePivotGoal(setpoint);
+        appctx.getIntakePivotSubsystem().set(setpoint);
     }
 
     @Override
