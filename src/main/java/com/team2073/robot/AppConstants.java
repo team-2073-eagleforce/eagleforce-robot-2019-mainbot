@@ -52,6 +52,12 @@ public abstract class AppConstants {
         }
     }
 
+    public abstract class Measurements {
+        public static final double PIVOT_LENGTH  = 16;
+        public static final double CARRIAGE_LENGTH = 21.5;
+        public static final double ROBOT_WIDTH = 32;
+    }
+
     public abstract class Defaults {
         public static final double SAFE_PERCENT = .25;
     }

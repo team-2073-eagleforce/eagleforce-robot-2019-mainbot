@@ -13,6 +13,7 @@ import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
+import com.team2073.robot.AppConstants.Measurements;
 import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
@@ -24,6 +25,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.jetbrains.annotations.NotNull;
+
+import static com.team2073.robot.AppConstants.Measurements.*;
 
 public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem, PositionBasedSubsystem {
 
@@ -77,27 +80,27 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
 	private Double setpoint;
 	private Value shifterValue = elevatorShifter.get();
 
-	private ElevatorState currentState = ElevatorState.NORMAL_OPERATION;
-	private ElevatorState lastState;
+    private ElevatorState currentState = ElevatorState.NORMAL_OPERATION;
+    private ElevatorState lastState;
 
-	public ElevatorSubsystem() {
-		autoRegisterWithPeriodicRunner();
+    public ElevatorSubsystem() {
+        autoRegisterWithPeriodicRunner();
 
-		TalonUtil.resetTalon(elevatorMaster, TalonUtil.ConfigurationType.SENSOR);
-		TalonUtil.resetVictor(elevatorSlave1, TalonUtil.ConfigurationType.SLAVE);
-		TalonUtil.resetVictor(elevatorSlave2, TalonUtil.ConfigurationType.SLAVE);
+        TalonUtil.resetTalon(elevatorMaster, TalonUtil.ConfigurationType.SENSOR);
+        TalonUtil.resetVictor(elevatorSlave1, TalonUtil.ConfigurationType.SLAVE);
+        TalonUtil.resetVictor(elevatorSlave2, TalonUtil.ConfigurationType.SLAVE);
 
-		elevatorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
-		elevatorMaster.setSensorPhase(true);
+        elevatorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
+        elevatorMaster.setSensorPhase(true);
 
-		elevatorMaster.setInverted(directionalityProperties.isElevatorMaster());
-		elevatorSlave1.setInverted(directionalityProperties.isElevatorSlave1());
-		elevatorSlave2.setInverted(directionalityProperties.isElevatorSlave2());
-		holdingPID.setPositionSupplier(this::position);
+        elevatorMaster.setInverted(directionalityProperties.isElevatorMaster());
+        elevatorSlave1.setInverted(directionalityProperties.isElevatorSlave1());
+        elevatorSlave2.setInverted(directionalityProperties.isElevatorSlave2());
+        holdingPID.setPositionSupplier(this::position);
 
-		elevatorMaster.setNeutralMode(NeutralMode.Brake);
-		elevatorSlave1.setNeutralMode(NeutralMode.Brake);
-		elevatorSlave2.setNeutralMode(NeutralMode.Brake);
+        elevatorMaster.setNeutralMode(NeutralMode.Brake);
+        elevatorSlave1.setNeutralMode(NeutralMode.Brake);
+        elevatorSlave2.setNeutralMode(NeutralMode.Brake);
 
 		elevatorMaster.configPeakOutputForward(1, 10);
 		elevatorSlave1.configPeakOutputForward(1, 10);
@@ -106,12 +109,11 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
 		elevatorSlave1.configPeakOutputReverse(-.6, 10);
 		elevatorSlave2.configPeakOutputReverse(-.6, 10);
 
-		elevatorSlave1.follow(elevatorMaster);
-		elevatorSlave2.follow(elevatorMaster);
-		elevatorShifter.set(Value.kForward);
-		holdingClimbingPID.setPositionSupplier(this::position);
-		holdingPID.setMaxIContribution(.2);
-	}
+        elevatorSlave1.follow(elevatorMaster);
+        elevatorSlave2.follow(elevatorMaster);
+        elevatorShifter.set(Value.kForward);
+        holdingClimbingPID.setPositionSupplier(this::position);
+    }
 
     @Override
     public double getSafetyRange() {
@@ -141,17 +143,17 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
         HOLD_CLIMB;
     }
 
-	public void setElevatorState(ElevatorState elevatorState) {
-		this.currentState = elevatorState;
-	}
+    public void setElevatorState(ElevatorState elevatorState) {
+        this.currentState = elevatorState;
+    }
 
-	public void shiftHighGear() {
-		setElevatorShifter(Value.kForward);
-	}
+    public void shiftHighGear() {
+        setElevatorShifter(Value.kForward);
+    }
 
-	public void shiftLowGear() {
-		setElevatorShifter(Value.kReverse);
-	}
+    public void shiftLowGear() {
+        setElevatorShifter(Value.kReverse);
+    }
 
     public ElevatorState getCurrentState() {
         return currentState;
@@ -163,13 +165,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
         if (isAtBottom()) {
             elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
         }
-
-//		elevatorMaster.set(ControlMode.PercentOutput, .85);
-
-//		System.out.println("Position: " + position() + "\t Volts: " + elevatorSlave2.getMotorOutputVoltage() + "\t amps: " + elevatorMaster.getOutputCurrent());
-//		climbingOperation();
-
-
 
 //        if (isAtTop()) {
 //            elevatorMaster.setSelectedSensorPosition(converter.asTics(MAX_HEIGHT), 0, 10);
@@ -205,31 +200,26 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
 				elevatorMaster.set(ControlMode.PercentOutput, holdingClimbingPID.getOutput());
 				break;
 
-		}
-//		if (appCtx.getController().getRawButton(1)) {
-//			graph.writeToFile();
-//		}
+        }
+        if(appCtx.getController().getRawButton(7)){
+            graph.writeToFile();
+        }
+        lastState = currentState;
 
-		lastState = currentState;
+    }
 
-	}
+    private void holdElevator(){
+        shiftHighGear();
+        elevatorMaster.set(ControlMode.PercentOutput, .05);
+    }
 
-	public void setCarriagePosition(Value value){
-		carriagePosition.set(value);
-	}
-
-	private void holdElevator() {
-		shiftHighGear();
-		elevatorMaster.set(ControlMode.PercentOutput, .05);
-	}
-
-	private void normalOperation() {
-		if (!isPositionSafe(setpoint)) {
-			setpoint = findClosestBound(MIN_HEIGHT, setpoint, MAX_HEIGHT);
-		}
-		if (elevatorShifter.get() != Value.kForward) {
-			shiftHighGear();
-		}
+    private void normalOperation() {
+        if (!isPositionSafe(setpoint)) {
+            setpoint = findClosestBound(MIN_HEIGHT, setpoint, MAX_HEIGHT);
+        }
+        if(elevatorShifter.get() != Value.kForward){
+            shiftHighGear();
+        }
 
 		if (RobotState.isEnabled()) {
 			trapezoidalProfileManager.setPoint(setpoint);
@@ -239,18 +229,18 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
 
 	}
 
-	private void climbingOperation() {
-		double defaultOutput = -appCtx.getController().getRawAxis(5);
-		double adjustedOutput = defaultOutput * ((MAX_CLIMBING_HEIGHT + 5 - position()) / (MAX_CLIMBING_HEIGHT + 5));
-		double motorOutput;
-		if (elevatorShifter.get() != Value.kReverse) {
-			shiftLowGear();
-			motorOutput = 0;
-		} else if (MAX_CLIMBING_HEIGHT - 5 < position()) {
-			motorOutput = adjustedOutput;
-		} else {
-			motorOutput = defaultOutput;
-		}
+    private void climbingOperation() {
+        double defaultOutput = -appCtx.getController().getRawAxis(5);
+        double adjustedOutput = defaultOutput * ((MAX_CLIMBING_HEIGHT + 5 - position()) / (MAX_CLIMBING_HEIGHT + 5));
+        double motorOutput;
+        if(elevatorShifter.get() != Value.kReverse){
+            shiftLowGear();
+            motorOutput = 0;
+        }else if(MAX_CLIMBING_HEIGHT - 5 < position()){
+            motorOutput =  adjustedOutput;
+        }else{
+            motorOutput = defaultOutput;
+        }
 
         if(isAtBottom() && defaultOutput < 0 ){
             motorOutput = 0;

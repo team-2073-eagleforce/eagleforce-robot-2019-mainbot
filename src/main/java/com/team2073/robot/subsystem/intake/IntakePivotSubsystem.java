@@ -9,8 +9,10 @@ import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.common.position.converter.PositionConverter;
+import com.team2073.common.util.MathUtil;
 import com.team2073.common.util.TalonUtil;
 import com.team2073.robot.AppConstants;
+import com.team2073.robot.AppConstants.Measurements;
 import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
@@ -21,6 +23,9 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+
+import static com.team2073.robot.AppConstants.Measurements.PIVOT_LENGTH;
+import static com.team2073.robot.AppConstants.Measurements.ROBOT_WIDTH;
 
 public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem, PositionBasedSubsystem {
     //    MAINBOT
@@ -146,22 +151,19 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         return 5;
     }
 
-    private static final double PIVOT_LENGTH  = 15;
-    private static final double ROBOT_WIDTH = 48;
-
     @Override
     public double pointToPosition(@NotNull Vector2D vector2D) {
-        double positionFromX = Math.acos(((ROBOT_WIDTH - vector2D.getX()) / PIVOT_LENGTH) * (Math.PI / 180)) * (180 / Math.PI);
-        double positionFromY = Math.asin((vector2D.getY() / PIVOT_LENGTH) * (Math.PI / 180)) * (180 / Math.PI);
+        double positionFromX = Math.abs(MathUtil.degreeArcCosine(((ROBOT_WIDTH - vector2D.getX()) / PIVOT_LENGTH)));
+        double positionFromY = Math.abs(MathUtil.degreeArcSine((vector2D.getY() / PIVOT_LENGTH)));
 
-        return positionFromX;
+        return MathUtil.average(positionFromX, positionFromY);
     }
 
     @NotNull
     @Override
     public Vector2D positionToPoint(double v) {
-        double y = PIVOT_LENGTH * Math.sin(position());
-        double x = ROBOT_WIDTH - (PIVOT_LENGTH * Math.cos(position()));
+        double y = Math.abs(PIVOT_LENGTH * Math.sin(position()));
+        double x = Math.abs(ROBOT_WIDTH - (PIVOT_LENGTH * Math.cos(position())));
 
         return new Vector2D(x, y);
     }
