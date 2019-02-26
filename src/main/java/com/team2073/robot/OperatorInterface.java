@@ -13,6 +13,7 @@ import com.team2073.robot.command.intakeRoller.OutakeCommand;
 import com.team2073.robot.command.shooter.HighShootCommand;
 import com.team2073.robot.command.shooter.ShooterIntakeCommand;
 import com.team2073.robot.command.shooter.ShooterStopCommand;
+import com.team2073.robot.command.CameraLEDCommand;
 import com.team2073.robot.command.triggers.ElevatorStateTrigger;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.subsystem.ElevatorSubsystem.ElevatorState;
@@ -69,7 +70,7 @@ public class OperatorInterface {
 		stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
 		stickThree.whenPressed(new HighShootCommand());
 		stickThree.whenReleased(new ShooterStopCommand());
-
+		stickTwo.toggleWhenPressed(new CameraLEDCommand());
 		//Controller
 		dPadDown.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
 //        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.CLAMP));

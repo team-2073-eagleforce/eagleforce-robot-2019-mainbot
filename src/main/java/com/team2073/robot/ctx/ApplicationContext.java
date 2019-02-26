@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.conf.ApplicationProperties;
@@ -24,8 +23,6 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
 
 import static com.team2073.robot.AppConstants.Ports.*;
 
@@ -98,6 +95,7 @@ public class ApplicationContext {
     private DigitalInput elevatorBottomLimit;
     private AnalogPotentiometer intakePot;
     private Ultrasonic hatchSensor;
+    private DigitalOutput cameraLED;
     //	====================================================================================================================
 
     /*GETTERS*/
@@ -116,36 +114,36 @@ public class ApplicationContext {
         return mediator;
     }
 
-    public CameraOverlayAdapter getCameraOverlayAdapter(){
-        if(cameraOverlayAdapter == null){
+    public CameraOverlayAdapter getCameraOverlayAdapter() {
+        if (cameraOverlayAdapter == null) {
             cameraOverlayAdapter = new CameraOverlayAdapter();
         }
         return cameraOverlayAdapter;
     }
 
-    public UsbCamera getTrackingCam(){
-        if(trackingCam == null){
+    public UsbCamera getTrackingCam() {
+        if (trackingCam == null) {
             trackingCam = new UsbCamera("trackingCamera", 0);
         }
         return trackingCam;
     }
 
-    public SerialPort getTrackingCamSerial(){
-        if(trackingCamSerial == null){
+    public SerialPort getTrackingCamSerial() {
+        if (trackingCamSerial == null) {
             trackingCamSerial = new SerialPort(115200, SerialPort.Port.kUSB2);
         }
         return trackingCamSerial;
     }
 
-    public SerialPort getLivestreamCamSerial(){
-        if(livestreamCamSerial == null){
+    public SerialPort getLivestreamCamSerial() {
+        if (livestreamCamSerial == null) {
             livestreamCamSerial = new SerialPort(115200, SerialPort.Port.kUSB);
         }
         return livestreamCamSerial;
     }
 
     public DriveProfileManager getDriveProfileManager() {
-        if(driveProfileManager == null){
+        if (driveProfileManager == null) {
             driveProfileManager = new DriveProfileManager();
         }
         return driveProfileManager;
@@ -263,8 +261,8 @@ public class ApplicationContext {
         return intakePivotMaster;
     }
 
-    public IMotorController getIntakePivotSlave(){
-        if(intakePivotSlave == null){
+    public IMotorController getIntakePivotSlave() {
+        if (intakePivotSlave == null) {
             intakePivotSlave = new VictorSPX(portProps.getIntakePivotVictor());
         }
 
@@ -416,6 +414,13 @@ public class ApplicationContext {
             hatchSensor = new Ultrasonic(portProps.getHatchUltrasonicTriggerDioPort(), portProps.getHatchUltrasonicEchoDioPort(), Ultrasonic.Unit.kInches);
         }
         return hatchSensor;
+    }
+
+    public DigitalOutput getCameraLED() {
+        if (cameraLED == null) {
+            cameraLED = new DigitalOutput(4);
+        }
+        return cameraLED;
     }
 
 }

@@ -9,36 +9,37 @@ import com.team2073.robot.domain.CameraMessage;
 import edu.wpi.first.wpilibj.SerialPort;
 
 public class CameraOverlayAdapter implements AsyncPeriodicRunnable {
-    private final String TO_FAR_RIGHT = "A";
-    private final String AT_CENTER = "B";
-    private final String TO_FAR_LEFT = "C";
-    private final String NOT_TRACKING = "D";
-    private final String HATCH = "0";
-    private final String BALL = "1";
-    private final String SEND_JSON = "2";
+    private static final String TO_FAR_RIGHT = "A";
+    private static final String AT_CENTER = "B";
+    private static final String TO_FAR_LEFT = "C";
+    private static final String NOT_TRACKING = "D";
+    private static final String HATCH = "0";
+    private static final String BALL = "1";
+    private static final String REQUEST_MESSAGE = "2";
 
     private SerialPort trackingCamPort = ApplicationContext.getInstance().getTrackingCamSerial();
     private SerialPort liveStreamPort = ApplicationContext.getInstance().getLivestreamCamSerial();
-    private String command;
+    private String angle;
 
     private CameraMessageParserTargetTrackerImpl parser = new CameraMessageParserTargetTrackerImpl();
-    private CameraMessageReceiverSerialImpl cameraMessageReceiverSerial = new CameraMessageReceiverSerialImpl(ApplicationContext.getInstance().getTrackingCamSerial());
-    private CameraMessageService cameraMessageService = new CameraMessageService<>(parser, cameraMessageReceiverSerial);
+    private CameraMessageReceiverSerialImpl cameraMessageReceiverSerial = new CameraMessageReceiverSerialImpl(new SerialPort(115200, SerialPort.Port.kUSB2));
+    private CameraMessageService cameraMessageService;
 
     public CameraOverlayAdapter() {
         RobotContext.getInstance().getPeriodicRunner().registerAsync(this, 30);
+        cameraMessageService = new CameraMessageService<>(parser, cameraMessageReceiverSerial);
     }
 
     @Override
     public void onPeriodicAsync() {
-        trackingCamPort.writeString(SEND_JSON + "\n");
         if (ApplicationContext.getInstance().getShooterSubsystem().hasBall()) {
             sendMessage(BALL, trackingCamPort);
         } else if (ApplicationContext.getInstance().getHatchManipulatorSubsystem().hatchDetected()) {
             sendMessage(HATCH, trackingCamPort);
         }
-        String alignState = getAlignState(getMessage().getRetroreflectiveAlign());
-        sendMessage(alignState, liveStreamPort);
+//        String alignState = getAlignState(
+//                getMessage().getRetroreflectiveAlign());
+//        sendMessage(alignState, liveStreamPort);
     }
 
     public CameraMessage getMessage() {
@@ -50,18 +51,18 @@ public class CameraOverlayAdapter implements AsyncPeriodicRunnable {
     }
 
     public String getAlignState(double angle) {
-        if (!getMessage().isTracking()) {
-            command = NOT_TRACKING;
+        if (getMessage().isTracking() != 1) {
+            this.angle = NOT_TRACKING;
         } else {
             if (angle <= -2) {
-                command = TO_FAR_LEFT;
+                this.angle = TO_FAR_LEFT;
             } else if (angle > -2 && angle < 2) {
-                command = AT_CENTER;
+                this.angle = AT_CENTER;
             } else {
-                command = TO_FAR_RIGHT;
+                this.angle = TO_FAR_RIGHT;
             }
         }
-        return command;
+        return this.angle;
     }
 
 }

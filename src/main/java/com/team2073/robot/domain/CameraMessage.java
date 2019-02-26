@@ -1,26 +1,25 @@
 package com.team2073.robot.domain;
 
 public class CameraMessage {
-    private boolean tracking;
-    private double retroreflectiveAlign;
-    private double retroreflectiveDistance;
-    private String timeStamp;
-    private int trackingHeight;
-    private float pose;
+    private int tracking = 0;
+    private double retroreflectiveAlign = 0;
+    private double retroreflectiveDistance = 0;
+    private double timeStamp = 0;
+    private double pose = 0;
 
-    public float getPose() {
+    public double getPose() {
         return pose;
     }
 
-    public void setPose(float pose) {
+    public void setPose(double pose) {
         this.pose = pose;
     }
 
-    public boolean isTracking() {
+    public int isTracking() {
         return tracking;
     }
 
-    public void setTracking(boolean tracking) {
+    public void setTracking(int tracking) {
         this.tracking = tracking;
     }
 
@@ -40,19 +39,11 @@ public class CameraMessage {
         this.retroreflectiveDistance = retroreflectiveDistance;
     }
 
-    public String getTimeStamp() {
+    public double getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(double timeStamp) {
         this.timeStamp = timeStamp;
-    }
-
-    public int getTrackingHeight() {
-        return trackingHeight;
-    }
-
-    public void setTrackingHeight(int trackingHeight) {
-        this.trackingHeight = trackingHeight;
     }
 }

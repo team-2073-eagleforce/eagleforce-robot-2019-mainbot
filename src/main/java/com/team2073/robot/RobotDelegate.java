@@ -17,7 +17,7 @@ public class RobotDelegate extends AbstractRobotDelegate {
     private ApplicationContext appCtx = ApplicationContext.getInstance();
     private Mediator mediator;
     private OperatorInterface oi;
-    private CameraOverlayAdapter cameraOverlayAdapter = appCtx.getCameraOverlayAdapter();
+    private CameraOverlayAdapter cameraOverlayAdapter;
 
     public RobotDelegate(double period) {
         super(period);
@@ -37,7 +37,6 @@ public class RobotDelegate extends AbstractRobotDelegate {
 
     @Override
     public void robotPeriodic() {
-
     }
 
 }
