@@ -28,7 +28,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
     private MotorDirectionalityProperties directionalityProperties = applicationProperties.getMotorDirectionalityProperties();
 
     private static final double ENCODER_TICS_PER_INCH = 697d;
-    private static final double MAX_HEIGHT = 70.5d;
+    private static final double MAX_HEIGHT = 71.5d;
     private static final double MIN_HEIGHT = 0d;
     private static final double MAX_VELOCITY = 100.0d;
     private static final double PERCENT_FOR_MAX_VELOCITY = .85d;
@@ -128,14 +128,14 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     @Override
     public void onPeriodic() {
-
+//        System.out.println("Elevator Position: " + position());
         if (isAtBottom()) {
             elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
         }
 
-        if (isAtTop()) {
-            elevatorMaster.setSelectedSensorPosition(converter.asTics(MAX_HEIGHT), 0, 10);
-        }
+//        if (isAtTop()) {
+//            elevatorMaster.setSelectedSensorPosition(converter.asTics(MAX_HEIGHT), 0, 10);
+//        }
 
         if (setpoint == null) {
             return;
@@ -145,11 +145,11 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
         switch (currentState) {
             case NORMAL_OPERATION:
                 normalOperation();
-                graph.updateMainFile(time, position(), velocity(), setpoint, elevatorMaster.getMotorOutputVoltage(),
-                        trapezoidalProfileManager.getProfile().getCurrentPosition(),
-                        trapezoidalProfileManager.getProfile().getCurrentVelocity(),
-                        trapezoidalProfileManager.getProfile().getCurrentAcceleration());
-                time += .01;
+//                graph.updateMainFile(time, position(), velocity(), setpoint, elevatorMaster.getMotorOutputVoltage(),
+//                        trapezoidalProfileManager.getProfile().getCurrentPosition(),
+//                        trapezoidalProfileManager.getProfile().getCurrentVelocity(),
+//                        trapezoidalProfileManager.getProfile().getCurrentAcceleration());
+//                time += .01;
                 break;
             case CLIMBING:
                 climbingOperation();
@@ -239,6 +239,11 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
     private boolean isAtSetpoint(double setpoint) {
         return setpoint - position() < ACCEPTABLE_VARIATION;
+    }
+
+    @Override
+    public Double getSetpoint(){
+        return setpoint;
     }
 
     @Override

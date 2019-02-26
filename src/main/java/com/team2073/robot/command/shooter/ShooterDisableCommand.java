@@ -11,7 +11,7 @@ public class ShooterDisableCommand extends AbstractLoggingCommand{
 
     @Override
     protected void initializeDelegate() {
-        mediator.shooterSubsystem(ShooterSubsystem.ShooterState.DISABLED);
+        appCtx.getShooterSubsystem().set(ShooterSubsystem.ShooterState.DISABLED);
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.Mediator;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
+import java.sql.SQLOutput;
+
 public class RobotDelegate extends AbstractRobotDelegate {
 
     private RobotContext robotCtx = RobotContext.getInstance();
@@ -33,6 +35,7 @@ public class RobotDelegate extends AbstractRobotDelegate {
 
     @Override
     public void robotPeriodic() {
+//        System.out.println("Elevator Position: " + appCtx.getElevatorSubsystem().position() + "\t IntakePivotPosition: " + appCtx.getIntakePivotSubsystem().position());
 
     }
 

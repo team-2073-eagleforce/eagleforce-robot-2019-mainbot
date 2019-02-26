@@ -11,7 +11,7 @@ public class ShooterStallCommand extends AbstractLoggingCommand{
 
     @Override
     protected void initializeDelegate() {
-        mediator.shooterSubsystem(ShooterSubsystem.ShooterState.STALL);
+        appCtx.getShooterSubsystem().set(ShooterSubsystem.ShooterState.STALL);
     }
 
     @Override

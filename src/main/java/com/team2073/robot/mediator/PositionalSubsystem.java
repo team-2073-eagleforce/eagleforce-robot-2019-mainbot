@@ -5,4 +5,5 @@ public interface PositionalSubsystem {
 	double position();
 	double velocity();
 	void set(Double setpoint);
+	Double getSetpoint();
 }
