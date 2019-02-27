@@ -6,6 +6,9 @@ import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.mediator.condition.Condition;
 import com.team2073.common.mediator.condition.PositionBasedCondition;
+import com.team2073.common.mediator.conflict.Conflict;
+import com.team2073.common.mediator.conflict.PositionBasedConflict;
+import com.team2073.common.mediator.subsys.ColleagueSubsystem;
 import com.team2073.common.mediator.subsys.PositionBasedSubsystem;
 import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
@@ -19,9 +22,11 @@ import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.dev.GraphCSV;
 import com.team2073.robot.mediator.PositionalSubsystem;
+import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.RobotState;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +90,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
 
     public ElevatorSubsystem() {
         autoRegisterWithPeriodicRunner();
+        appCtx.getCommonMediator().registerColleague(((ColleagueSubsystem) this));
 
         TalonUtil.resetTalon(elevatorMaster, TalonUtil.ConfigurationType.SENSOR);
         TalonUtil.resetVictor(elevatorSlave1, TalonUtil.ConfigurationType.SLAVE);
@@ -113,6 +119,12 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
         elevatorSlave2.follow(elevatorMaster);
         elevatorShifter.set(Value.kForward);
         holdingClimbingPID.setPositionSupplier(this::position);
+
+        appCtx.getCommonMediator().registerConflict((Conflict) new PositionBasedConflict(ElevatorSubsystem.class,
+                new PositionBasedCondition(30, Range.between(25d, 35d)),
+                IntakePivotSubsystem.class,
+                new PositionBasedCondition(0d, Range.between(0d, 90d)), true,
+                true));
     }
 
     @Override
@@ -161,7 +173,10 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
 
     @Override
     public void onPeriodic() {
-//        System.out.println("Elevator Position: " + position());
+        System.out.println("Elevator Position: " + position());
+        if(appCtx.getController().getRawButton(5)){
+            zeroElevator();
+        }
         if (isAtBottom()) {
             elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
         }
@@ -202,7 +217,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
 
         }
         if(appCtx.getController().getRawButton(7)){
-            graph.writeToFile();
+//            graph.writeToFile();
         }
         lastState = currentState;
 
@@ -275,6 +290,10 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem,
         } else {
             return upperBound;
         }
+    }
+
+    public void setCarriagePosition(Value value){
+        carriagePosition.set(value);
     }
 
     private boolean isAtSetpoint(double setpoint) {

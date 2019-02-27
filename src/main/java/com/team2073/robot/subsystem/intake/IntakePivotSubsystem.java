@@ -5,6 +5,8 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
+import com.team2073.common.mediator.condition.Condition;
+import com.team2073.common.mediator.subsys.PositionBasedSubsystem;
 import com.team2073.common.motionprofiling.ProfileConfiguration;
 import com.team2073.common.motionprofiling.TrapezoidalProfileManager;
 import com.team2073.common.periodic.PeriodicRunnable;
@@ -156,7 +158,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         double positionFromX = Math.abs(MathUtil.degreeArcCosine(((ROBOT_WIDTH - vector2D.getX()) / PIVOT_LENGTH)));
         double positionFromY = Math.abs(MathUtil.degreeArcSine((vector2D.getY() / PIVOT_LENGTH)));
 
-        return MathUtil.average(positionFromX, positionFromY);
+        return positionFromX;
     }
 
     @NotNull
