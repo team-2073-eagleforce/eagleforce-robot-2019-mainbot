@@ -43,7 +43,10 @@ public class CameraOverlayAdapter implements AsyncPeriodicRunnable {
     }
 
     public CameraMessage getMessage() {
-        return (CameraMessage) cameraMessageService.currentMessage();
+        if(cameraMessageService.currentMessage() == null){
+            return new CameraMessage();
+        }else
+            return (CameraMessage) cameraMessageService.currentMessage();
     }
 
     public void sendMessage(String msg, SerialPort port) {

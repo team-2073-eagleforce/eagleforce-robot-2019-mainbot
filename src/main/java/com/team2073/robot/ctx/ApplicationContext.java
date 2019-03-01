@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.conf.ApplicationProperties;
@@ -96,7 +97,15 @@ public class ApplicationContext {
     private AnalogPotentiometer intakePot;
     private Ultrasonic hatchSensor;
     private DigitalOutput cameraLED;
+    private PigeonIMU gyro;
     //	====================================================================================================================
+
+    public PigeonIMU getGyro() {
+        if(gyro == null){
+            gyro = new PigeonIMU(0);
+        }
+        return gyro;
+    }
 
     /*GETTERS*/
 

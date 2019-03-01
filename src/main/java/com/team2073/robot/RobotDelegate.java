@@ -35,8 +35,15 @@ public class RobotDelegate extends AbstractRobotDelegate {
         UsbCamera trackingCam = new UsbCamera("trackingCam", 0);
     }
 
+    CameraMessage msg = new CameraMessage();
+    double[] gyro = new double[3];
     @Override
     public void robotPeriodic() {
+        appCtx.getGyro().getAccumGyro(gyro);
+        msg = appCtx.getCameraOverlayAdapter().getMessage();
+        System.out.println("Distance: " + (msg.getRetroreflectiveDistance() - 24.625)
+                + "\t Angle: " + msg.getRetroreflectiveAlign() + "\t Pose: "
+                + msg.getPose() + "\t time: " + msg.getTimeStamp() + "\t Actual Gyro: " + gyro[2]);
     }
 
 }

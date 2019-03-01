@@ -1,11 +1,11 @@
 package com.team2073.robot.domain;
 
 public class CameraMessage {
-    private int tracking = 0;
-    private double retroreflectiveAlign = 0;
-    private double retroreflectiveDistance = 0;
-    private double timeStamp = 0;
-    private double pose = 0;
+    private int tracking = -2;
+    private double retroreflectiveAlign = -2;
+    private double retroreflectiveDistance = -2;
+    private double timeStamp = -2;
+    private double pose = -2;
 
     public double getPose() {
         return pose;
