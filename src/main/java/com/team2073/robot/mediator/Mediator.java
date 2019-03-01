@@ -32,7 +32,7 @@ public class Mediator implements PeriodicRunnable {
 	private Double intakePivotCachedSetpoint;
 
 	public Mediator() {
-//		autoRegisterWithPeriodicRunner();
+		autoRegisterWithPeriodicRunner();
 	}
 
 	//ELEVATOR
@@ -48,7 +48,7 @@ public class Mediator implements PeriodicRunnable {
 
 
 	private void elevatorCheckPeriodic() {
-//		System.out.println("elevatorCached = " + elevatorCachedSetpoint);
+		System.out.println("elevatorCached = " + elevatorCachedSetpoint);
 		if (elevator.getSetpoint() != null) {
 			if (intakePivot.position() < INTAKE_MINIMUM_CLEARING_POSITION
 					&& intakePivot.position() > INTAKE_BELOW_CARRIAGE

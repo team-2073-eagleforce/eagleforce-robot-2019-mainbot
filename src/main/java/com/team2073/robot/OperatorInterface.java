@@ -72,13 +72,13 @@ public class OperatorInterface {
 		stickThree.whenReleased(new ShooterStopCommand());
 		stickTwo.toggleWhenPressed(new CameraLEDCommand());
 		//Controller
-//		dPadDown.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
+		dPadDown.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
 //        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.CLAMP));
 //        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.OPEN_INTAKE));
-//		dPadUp.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.HIGH_BALL));
-//		dPadRight.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.DRIVE));
-//		dPadLeft.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.LOW_HATCH));
-//		controllerBack.whenPressed(new ZeroElevatorCommand());
+		dPadUp.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.HIGH_BALL));
+		dPadRight.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.DRIVE));
+		dPadLeft.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.LOW_HATCH));
+		controllerBack.whenPressed(new ZeroElevatorCommand());
         controllerStart.whenPressed(new IntakePivotCommand(5d));
 //        rightTrigger.whenActive(new ShooterIntakeCommand());
 //        rightTrigger.whenActive(new IntakeRollerCommand());
@@ -87,7 +87,7 @@ public class OperatorInterface {
 //        leftTrigger.whenActive(new OutakeCommand());
 //        leftTrigger.whenInactive(new IntakeStopCommand());
         rb.whenPressed(new IntakePivotCommand(130d));
-        lb.whenPressed(new IntakePivotCommand(100d));
+//        lb.whenPressed(new IntakePivotCommand(100d));
 //        x.whenPressed(new HatchManipulatorCommand(HatchState.READY_TO_INTAKE));
 //        a.whenPressed(new HatchManipulatorCommand(HatchState.GRABED_HATCH));
 //        y.whenPressed(new HatchManipulatorCommand(HatchState.STARTING_CONFIG));
