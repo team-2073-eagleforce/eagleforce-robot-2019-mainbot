@@ -29,17 +29,17 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 //    private static final double POT_MAX_VALUE = .38;
 
 //    PRACTICE BOT
-    private static final double POT_MIN_VALUE = .911;
-    private static final double POT_MAX_VALUE = .414;
+    private static final double POT_MIN_VALUE = .981;
+    private static final double POT_MAX_VALUE = .412;
 
     private static final double MIN_POSITION = 0;
     private static final double MAX_POSITION = 146.3;
-    private static final double MAX_VELOCITY = 375;
-    private static final double PERCENT_FOR_MAX_VELOCITY = .4;
-    private static final double MAX_ACCELERATION = 300d;
+    private static final double MAX_VELOCITY = 400;
+    private static final double PERCENT_FOR_MAX_VELOCITY = .35;
+    private static final double MAX_ACCELERATION = 1100d;
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
     private static final double TICS_PER_DEGREE = 4096d / 360d;
-    private static final double KA = .1 / MAX_ACCELERATION;
+    private static final double KA = .15 / MAX_ACCELERATION;
 
     private final RobotContext robotCtx = RobotContext.getInstance();
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
@@ -73,6 +73,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         intakeMaster.setInverted(directionalityProperties.isIntakePivotMaster());
         intakeSlave.follow(intakeMaster);
         intakeMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
+        intakeMaster.setSensorPhase(false);
         intakeMaster.setNeutralMode(NeutralMode.Brake);
         intakeSlave.setNeutralMode(NeutralMode.Brake);
         holdingPID.setPositionSupplier(this::position);
@@ -112,7 +113,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         if(!hasZeroed)
             zeroFromPot();
 
-//        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
+        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
         if (setpoint == null) {
             return;
         }
@@ -125,9 +126,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 
 //            graph.updateMainFile(time, position(), velocity(), profileManager.getProfile().getCurrentPosition(), profileManager.getProfile().getCurrentVelocity(), profileManager.getProfile().getCurrentAcceleration(), profileManager.getOutput());
 //            time += .01;
-            if(appCtx.getController().getRawButton(7)){
-                graph.writeToFile();
-            }
+
 		}
 
     }
