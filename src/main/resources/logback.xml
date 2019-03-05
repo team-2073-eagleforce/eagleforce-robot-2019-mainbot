@@ -32,7 +32,7 @@
 		</encoder>
 	</appender>
 
-	<root level="TRACE">
+	<root level="ERROR">
 		<appender-ref ref="CONSOLE"/>
 		<appender-ref ref="FILE_BY_SECOND"/>
 		<appender-ref ref="FILE_BY_DAY"/>
