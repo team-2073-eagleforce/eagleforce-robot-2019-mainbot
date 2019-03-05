@@ -21,9 +21,8 @@ public class Mediator implements PeriodicRunnable {
 	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
 
 	private static final double INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION = 110;
-	private static final double INTAKE_MINIMUM_CLEARING_POSITION = 110;
-	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 16.5;
-	private static final double ELEVATOR_CLEARS_INTAKE = 20;/**/
+	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 20;
+	private static final double ELEVATOR_CLEARS_INTAKE = 25;/**/
 	private static final double INTAKE_BELOW_CARRIAGE = 8;/**/
 	private static final double ELEVATOR_SAFE_RANGE = 2;
 	private static final double INTAKE_PIVOT_SAFE_RANGE = 5;
@@ -135,7 +134,10 @@ public class Mediator implements PeriodicRunnable {
 				&& elevator.position() > MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT) {
 
 			adjustedSetpoint = ELEVATOR_CLEARS_INTAKE;
-			intakeReturnPosition = intakePivot.position();
+			if(intakePivot.getSetpoint() != null)
+				intakeReturnPosition = intakePivot.getSetpoint();
+			else
+				intakeReturnPosition = intakePivot.position();
 			elevatorGoalPosition = setpoint;
 			intakePivot.set(closerBound(INTAKE_BELOW_CARRIAGE - INTAKE_PIVOT_SAFE_RANGE, INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION + INTAKE_PIVOT_SAFE_RANGE, intakePivot.position()));
 		}
@@ -156,14 +158,20 @@ public class Mediator implements PeriodicRunnable {
 
 			adjustedSetpoint = INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION;
 			intakeGoalPosition = setpoint;
-			elevatorGoalPosition = elevator.position();
+			if(elevator.getSetpoint() != null)
+				elevatorReturnPosition = elevator.getSetpoint();
+			else
+				elevatorReturnPosition = elevator.position();
 			elevator.set(ELEVATOR_CLEARS_INTAKE);
 		} else if (setpoint > INTAKE_BELOW_CARRIAGE
 				&& intakePivot.position() < INTAKE_BELOW_CARRIAGE
 				&& elevator.position() < MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT) {
 			adjustedSetpoint = intakePivot.position();
 			intakeGoalPosition = setpoint;
-			elevatorReturnPosition = elevator.position();
+			if(elevator.getSetpoint() != null)
+				elevatorReturnPosition = elevator.getSetpoint();
+			else
+				elevatorReturnPosition = elevator.position();
 			elevator.set(ELEVATOR_CLEARS_INTAKE);
 		}
 
