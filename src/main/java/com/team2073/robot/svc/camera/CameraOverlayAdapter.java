@@ -26,17 +26,17 @@ public class CameraOverlayAdapter implements AsyncPeriodicRunnable {
     private CameraMessageService cameraMessageService;
 
     public CameraOverlayAdapter() {
-        RobotContext.getInstance().getPeriodicRunner().registerAsync(this, 30);
-        cameraMessageService = new CameraMessageService<>(parser, cameraMessageReceiverSerial);
+//        RobotContext.getInstance().getPeriodicRunner().registerAsync(this, 30);
+//        cameraMessageService = new CameraMessageService<>(parser, cameraMessageReceiverSerial);
     }
 
     @Override
     public void onPeriodicAsync() {
-        if (ApplicationContext.getInstance().getShooterSubsystem().hasBall()) {
-            sendMessage(BALL, trackingCamPort);
-        } else if (ApplicationContext.getInstance().getHatchManipulatorSubsystem().hatchDetected()) {
-            sendMessage(HATCH, trackingCamPort);
-        }
+//        if (ApplicationContext.getInstance().getCarriageSubsystem().hasBall()) {
+//            sendMessage(BALL, trackingCamPort);
+//        } else if (ApplicationContext.getInstance().getHatchManipulatorSubsystem().hatchDetected()) {
+//            sendMessage(HATCH, trackingCamPort);
+//        }
 //        String alignState = getAlignState(
 //                getMessage().getRetroreflectiveAlign());
 //        sendMessage(alignState, liveStreamPort);

@@ -1,7 +1,6 @@
 package com.team2073.robot.subsystem.intake;
 
 import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.team2073.common.controlloop.MotionProfileControlloop;
 import com.team2073.common.controlloop.PidfControlLoop;
 import com.team2073.common.ctx.RobotContext;
@@ -14,13 +13,9 @@ import com.team2073.robot.AppConstants;
 import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
-import com.team2073.robot.dev.GraphCSV;
 import com.team2073.robot.mediator.PositionalSubsystem;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.VictorSP;
-
-import java.io.IOException;
 
 public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem {
 
@@ -29,12 +24,12 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 //    private static final double POT_MAX_VALUE = .38;
 
 //    PRACTICE BOT
-    private static final double POT_MIN_VALUE = .981;
-    private static final double POT_MAX_VALUE = .412;
+    private static final double POT_MIN_VALUE = .9573;
+    private static final double POT_MAX_VALUE = .4312;
 
     private static final double MIN_POSITION = 0;
     private static final double MAX_POSITION = 146.3;
-    private static final double MAX_VELOCITY = 400;
+    private static final double MAX_VELOCITY = 420;
     private static final double PERCENT_FOR_MAX_VELOCITY = .35;
     private static final double MAX_ACCELERATION = 1100d;
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
@@ -54,15 +49,15 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     private boolean hasZeroed = false;
 
     private PositionConverter converter = new IntakePositionConverter();
-    private PidfControlLoop holdingPID = new PidfControlLoop(0.01, 0.0, 0.0, 0, .3);
+    private PidfControlLoop holdingPID = new PidfControlLoop(0.01, 0.0002, 0.0, 0, .3);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
-    private MotionProfileControlloop controller = new MotionProfileControlloop(.01, 0,
+    private MotionProfileControlloop controller = new MotionProfileControlloop(.008, 0,
             PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
 
     private TrapezoidalProfileManager profileManager = new TrapezoidalProfileManager(controller, profileConfig,
             this::position, holdingPID);
 
-    private GraphCSV graph = new GraphCSV("IntakePivot", "time", "position", "velocity", "profile position", "profile velocity", "profile acceleration", "output");
+//    private GraphCSV graph = new GraphCSV("IntakePivot", "time", "position", "velocity", "profile position", "profile velocity", "profile acceleration", "output");
 
     public IntakePivotSubsystem() {
         autoRegisterWithPeriodicRunner();
@@ -79,11 +74,11 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         holdingPID.setPositionSupplier(this::position);
         intakeMaster.configPeakOutputForward(.625, 10);
         intakeMaster.configPeakOutputReverse(-.625, 10);
-        try {
-            graph.initFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            graph.initFile();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -113,7 +108,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         if(!hasZeroed)
             zeroFromPot();
 
-        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
+//        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
         if (setpoint == null) {
             return;
         }

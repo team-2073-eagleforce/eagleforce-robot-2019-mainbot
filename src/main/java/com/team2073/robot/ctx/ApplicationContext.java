@@ -10,9 +10,7 @@ import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.mediator.Mediator;
 import com.team2073.robot.subsystem.DrivetrainSubsystem;
 import com.team2073.robot.subsystem.ElevatorSubsystem;
-import com.team2073.robot.subsystem.ExampleArmSubsystem;
-import com.team2073.robot.subsystem.carriage.HatchManipulatorSubsystem;
-import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
+import com.team2073.robot.subsystem.CarriageSubsystem;
 import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
 import com.team2073.robot.subsystem.climber.WheelieBarSubsystem;
 import com.team2073.robot.subsystem.driveprofile.DriveProfileManager;
@@ -67,11 +65,9 @@ public class ApplicationContext {
     //	====================================================================================================================
     /*SUBSYSTEMS*/
     private DrivetrainSubsystem drivetrainSubsystem;
-    private ExampleArmSubsystem exampleArmSubsystem;
     private IntakeRollerSubsystem intakeRollerSubsystem;
     private IntakePivotSubsystem intakePivotSubsystem;
-    private HatchManipulatorSubsystem hatchManipulatorSubsystem;
-    private ShooterSubsystem shooterSubsystem;
+    private CarriageSubsystem carriageSubsystem;
     private RobotIntakeSubsystem robotIntakeSubsystem;
     private WheelieBarSubsystem wheelieBarSubsystem;
     private ElevatorSubsystem elevatorSubsystem;
@@ -79,8 +75,8 @@ public class ApplicationContext {
     /*SOLENOIDS*/
     private DoubleSolenoid driveShiftSolenoid;
     private DoubleSolenoid elevatorShiftSolenoid;
-    private DoubleSolenoid hatchPositionSolenoid;
-    private DoubleSolenoid hatchPlaceSolenoid;
+    private DoubleSolenoid shooterClampSolenoid;
+    private DoubleSolenoid carriageSlideSolenoid;
     private DoubleSolenoid forkDeploySolenoid;
     private DoubleSolenoid robotGrabSolenoid;
     //	====================================================================================================================
@@ -94,7 +90,6 @@ public class ApplicationContext {
     private DigitalInput elevatorTopLimit;
     private DigitalInput elevatorBottomLimit;
     private AnalogPotentiometer intakePot;
-    private Ultrasonic hatchSensor;
     private DigitalOutput cameraLED;
     //	====================================================================================================================
 
@@ -130,7 +125,7 @@ public class ApplicationContext {
 
     public SerialPort getTrackingCamSerial() {
         if (trackingCamSerial == null) {
-            trackingCamSerial = new SerialPort(115200, SerialPort.Port.kUSB2);
+//            trackingCamSerial = new SerialPort(115200, SerialPort.Port.kUSB2);
         }
         return trackingCamSerial;
     }
@@ -177,13 +172,6 @@ public class ApplicationContext {
         return drivetrainSubsystem;
     }
 
-    public ExampleArmSubsystem getExampleArmSubsystem() {
-        if (exampleArmSubsystem == null) {
-            exampleArmSubsystem = new ExampleArmSubsystem();
-        }
-        return exampleArmSubsystem;
-    }
-
     public IntakeRollerSubsystem getIntakeRollerSubsystem() {
         if (intakeRollerSubsystem == null) {
             intakeRollerSubsystem = new IntakeRollerSubsystem();
@@ -198,18 +186,11 @@ public class ApplicationContext {
         return intakePivotSubsystem;
     }
 
-    public HatchManipulatorSubsystem getHatchManipulatorSubsystem() {
-        if (hatchManipulatorSubsystem == null) {
-            hatchManipulatorSubsystem = new HatchManipulatorSubsystem();
+    public CarriageSubsystem getCarriageSubsystem() {
+        if (carriageSubsystem == null) {
+            carriageSubsystem = new CarriageSubsystem();
         }
-        return hatchManipulatorSubsystem;
-    }
-
-    public ShooterSubsystem getShooterSubsystem() {
-        if (shooterSubsystem == null) {
-            shooterSubsystem = new ShooterSubsystem();
-        }
-        return shooterSubsystem;
+        return carriageSubsystem;
     }
 
     public RobotIntakeSubsystem getRobotIntakeSubsystem() {
@@ -353,18 +334,18 @@ public class ApplicationContext {
         return elevatorShiftSolenoid;
     }
 
-    public DoubleSolenoid getHatchPositionSolenoid() {
-        if (hatchPositionSolenoid == null) {
-            hatchPositionSolenoid = new DoubleSolenoid(portProps.getPcm2CanId(), portProps.getHatchUpSolenoidPort(), portProps.getHatchDownSolenoidPort());
+    public DoubleSolenoid getShooterClampSolenoid() {
+        if (shooterClampSolenoid == null) {
+            shooterClampSolenoid = new DoubleSolenoid(portProps.getPcm2CanId(), portProps.getShooterClampSolenoidPort(), portProps.getShooterOpenSolenoidPort());
         }
-        return hatchPositionSolenoid;
+        return shooterClampSolenoid;
     }
 
-    public DoubleSolenoid getHatchPlaceSolenoid() {
-        if (hatchPlaceSolenoid == null) {
-            hatchPlaceSolenoid = new DoubleSolenoid(portProps.getPcm2CanId(), portProps.getHatchHoldSolenoidPort(), portProps.getHatchReleaseSolenoidPort());
+    public DoubleSolenoid getCarriageSlideSolenoid() {
+        if (carriageSlideSolenoid == null) {
+            carriageSlideSolenoid = new DoubleSolenoid(portProps.getPcm2CanId(), portProps.getCarriageOutSolenoidPort(), portProps.getCarriageInSolenoidPort());
         }
-        return hatchPlaceSolenoid;
+        return carriageSlideSolenoid;
     }
 
     public DoubleSolenoid getForkDeploySolenoid() {
@@ -407,13 +388,6 @@ public class ApplicationContext {
             intakePot = new AnalogPotentiometer(portProps.getIntakePivotPotentiometerPort());
         }
         return intakePot;
-    }
-
-    public Ultrasonic getHatchSensor() {
-        if (hatchSensor == null) {
-            hatchSensor = new Ultrasonic(portProps.getHatchUltrasonicTriggerDioPort(), portProps.getHatchUltrasonicEchoDioPort(), Ultrasonic.Unit.kInches);
-        }
-        return hatchSensor;
     }
 
     public DigitalOutput getCameraLED() {

@@ -15,10 +15,10 @@ public class ElevatorToPositionCommand extends AbstractLoggingCommand {
 		LOW_BALL(13.5),
 		LOW_HATCH(5d),
 		LOW_DETERMINE(null),
-		MID_BALL(41.5),
+		MID_BALL(45.5),
 		MID_HATCH(33d),
 		MID_DETERMINE(null),
-		HIGH_BALL(70.5),
+		HIGH_BALL(71.5),
 		HIGH_HATCH(61d),
 		HIGH_DETERMINE(null);
 		private Double height;
@@ -41,21 +41,21 @@ public class ElevatorToPositionCommand extends AbstractLoggingCommand {
 		double setpoint;
 		switch (height) {
 			case LOW_DETERMINE:
-				if(appCtx.getCargoSensor().get()){
+				if(appCtx.getCarriageSubsystem().isCargoMode()){
 					setpoint = ElevatorHeight.LOW_BALL.getValue();
 				}else{
 					setpoint = ElevatorHeight.LOW_HATCH.getValue();
 				}
 				break;
 			case MID_DETERMINE:
-				if(appCtx.getCargoSensor().get()){
+				if(appCtx.getCarriageSubsystem().isCargoMode()){
 					setpoint = ElevatorHeight.MID_BALL.getValue();
 				}else{
 					setpoint = ElevatorHeight.MID_HATCH.getValue();
 				}
 				break;
 			case HIGH_DETERMINE:
-				if(appCtx.getCargoSensor().get()){
+				if(appCtx.getCarriageSubsystem().isCargoMode()){
 					setpoint = ElevatorHeight.HIGH_BALL.getValue();
 				}else{
 					setpoint = ElevatorHeight.HIGH_HATCH.getValue();

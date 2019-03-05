@@ -45,40 +45,40 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
     @Override
     public void onPeriodic() {
 
-        switch (state) {
-            // Forks up, clamp down
-            case STORE:
-                forkSolenoid.set(DoubleSolenoid.Value.kForward);
-                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
-                break;
-            // Forks down, clamps up
-            case DEPLOY_FORKS:
-                forkSolenoid.set(DoubleSolenoid.Value.kReverse);
+//        switch (state) {
+//            // Forks up, clamp down
+//            case STORE:
+//                forkSolenoid.set(DoubleSolenoid.Value.kForward);
+//                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
+//                break;
+//            // Forks down, clamps up
+//            case DEPLOY_FORKS:
+//                forkSolenoid.set(DoubleSolenoid.Value.kReverse);
+////                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+//                if (!timeStart){
+//                    timer.start();
+//                    timeStart = true;
+//                }
+//                if (timer.hasWaited(ConversionUtil.secondsToMs(DEPLOY_FORKS_WAIT_TIME))) {
+//                    robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+//                    timer.stop();
+//                    timeStart = false;
+//                }
+//
+//                break;
+//            // Clamps up
+//            case OPEN_INTAKE:
 //                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
-                if (!timeStart){
-                    timer.start();
-                    timeStart = true;
-                }
-                if (timer.hasWaited(ConversionUtil.secondsToMs(DEPLOY_FORKS_WAIT_TIME))) {
-                    robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
-                    timer.stop();
-                    timeStart = false;
-                }
-
-                break;
-            // Clamps up
-            case OPEN_INTAKE:
-                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
-                break;
-            // Clamps down
-            case CLAMP:
-                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
-                break;
-            case DISABLED:
-                break;
-            default:
-                throw new IllegalStateException("Unknown state: " + state);
-        }
+//                break;
+//            // Clamps down
+//            case CLAMP:
+//                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
+//                break;
+//            case DISABLED:
+//                break;
+//            default:
+//                throw new IllegalStateException("Unknown state: " + state);
+//        }
 
     }
 

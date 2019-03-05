@@ -1,9 +1,9 @@
-package com.team2073.robot.command.shooter;
+package com.team2073.robot.command.carriage;
 
 import com.team2073.common.command.AbstractLoggingCommand;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.Mediator;
-import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
+import com.team2073.robot.subsystem.CarriageSubsystem;
 
 public class ShooterDisableCommand extends AbstractLoggingCommand{
     private ApplicationContext appCtx = ApplicationContext.getInstance();
@@ -11,7 +11,7 @@ public class ShooterDisableCommand extends AbstractLoggingCommand{
 
     @Override
     protected void initializeDelegate() {
-        appCtx.getShooterSubsystem().set(ShooterSubsystem.ShooterState.DISABLED);
+        appCtx.getCarriageSubsystem().set(CarriageSubsystem.CarriageState.DISABLED);
     }
 
     @Override

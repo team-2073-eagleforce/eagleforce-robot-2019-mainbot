@@ -4,14 +4,14 @@ import com.team2073.common.proploader.model.PropertyContainer;
 import com.team2073.common.proploader.model.PropertyContainerField;
 import com.team2073.robot.AppConstants;
 import com.team2073.robot.subsystem.ElevatorSubsystem;
-import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
+import com.team2073.robot.subsystem.CarriageSubsystem;
 
 @PropertyContainer
 public class ApplicationProperties {
     @PropertyContainerField(name = "elevator")
     private ElevatorSubsystem.ElevatorProperties elevatorProperties;
-    @PropertyContainerField(name = "shooter")
-    private ShooterSubsystem.ShooterProperties shooterProperties;
+    @PropertyContainerField(name = "carriage")
+    private CarriageSubsystem.ShooterProperties shooterProperties;
     @PropertyContainerField(name = "ports")
     private AppConstants.RobotPortsProperties portsProperties;
     @PropertyContainerField(name = "directionality")
@@ -34,11 +34,11 @@ public class ApplicationProperties {
         this.elevatorProperties = elevatorProperties;
     }
 
-    public ShooterSubsystem.ShooterProperties getShooterProperties() {
+    public CarriageSubsystem.ShooterProperties getShooterProperties() {
         return shooterProperties;
     }
 
-    public void setShooterProperties(ShooterSubsystem.ShooterProperties shooterProperties) {
+    public void setShooterProperties(CarriageSubsystem.ShooterProperties shooterProperties) {
         this.shooterProperties = shooterProperties;
     }
 

@@ -6,11 +6,9 @@ import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
-import com.team2073.robot.subsystem.carriage.ShooterSubsystem;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import static com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRollerState;
-import static com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRollerState.DISABLED;
 
 public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<IntakeRollerState> {
     private final RobotContext robotCtx = RobotContext.getInstance();
