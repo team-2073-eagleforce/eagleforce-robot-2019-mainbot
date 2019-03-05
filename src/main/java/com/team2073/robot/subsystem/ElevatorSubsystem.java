@@ -190,6 +190,10 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
 	}
 
+	public void setCarriagePosition(Value value){
+		carriagePosition.set(value);
+	}
+
 	private void holdElevator() {
 		shiftHighGear();
 		elevatorMaster.set(ControlMode.PercentOutput, .05);

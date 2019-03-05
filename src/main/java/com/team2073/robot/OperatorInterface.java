@@ -3,6 +3,7 @@ package com.team2073.robot;
 import com.team2073.common.trigger.ControllerTriggerTrigger;
 import com.team2073.common.trigger.MultiTrigger;
 import com.team2073.robot.command.*;
+import com.team2073.robot.command.carriage.ToggleCarriagePositionCommand;
 import com.team2073.robot.command.carriage.ToggleHatchCommand;
 import com.team2073.robot.command.elevator.ElevatorToPositionCommand;
 import com.team2073.robot.command.elevator.ElevatorToPositionCommand.ElevatorHeight;
@@ -86,8 +87,8 @@ public class OperatorInterface {
 		//Controller
 		dPadDown.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
 		dPadUp.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.HIGH_DETERMINE));
-		dPadRight.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.DRIVE));
-		dPadLeft.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.LOW_HATCH));
+		dPadRight.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.MID_DETERMINE));
+		dPadLeft.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.LOW_DETERMINE));
 //        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.CLAMP));
 //        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.OPEN_INTAKE));
 		controllerBack.whenPressed(new ZeroElevatorCommand());
@@ -99,9 +100,10 @@ public class OperatorInterface {
 		a.whenPressed(new IntakeCommand());
 		a.whenReleased(new IntakeStopCommand());
 		rightTrigger.toggleWhenActive(new ToggleHatchCommand());
+		x.toggleWhenPressed(new ToggleCarriagePositionCommand());
 
-        rb.whenPressed(new IntakePivotCommand(130d));
-        lb.whenPressed(new IntakePivotCommand(100d));
+        rb.whenPressed(new IntakePivotCommand(140d));
+        lb.whenPressed(new IntakePivotCommand(105d));
 		controllerStart.whenPressed(new IntakePivotCommand(5d));
 
 //        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS));

@@ -18,8 +18,10 @@ public class RobotDelegate extends AbstractRobotDelegate {
     private Mediator mediator;
     private OperatorInterface oi;
     private CameraOverlayAdapter cameraOverlayAdapter;
+	UsbCamera livestreamCam = CameraServer.getInstance().startAutomaticCapture();
 
-    public RobotDelegate(double period) {
+
+	public RobotDelegate(double period) {
         super(period);
     }
 
@@ -31,7 +33,6 @@ public class RobotDelegate extends AbstractRobotDelegate {
 //        robotCtx.getDataRecorder().disable();
         oi = new OperatorInterface();
         mediator = appCtx.getMediator();
-//        UsbCamera livestreamCam = CameraServer.getInstance().startAutomaticCapture(1);
 //        UsbCamera trackingCam = new UsbCamera("trackingCam", 0);
     }
 

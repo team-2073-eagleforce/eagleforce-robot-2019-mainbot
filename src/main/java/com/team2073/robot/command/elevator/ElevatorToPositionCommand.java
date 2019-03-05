@@ -15,10 +15,10 @@ public class ElevatorToPositionCommand extends AbstractLoggingCommand {
 		LOW_BALL(13.5),
 		LOW_HATCH(5d),
 		LOW_DETERMINE(null),
-		MID_BALL(41.5),
+		MID_BALL(45.5),
 		MID_HATCH(33d),
 		MID_DETERMINE(null),
-		HIGH_BALL(70.5),
+		HIGH_BALL(71.5),
 		HIGH_HATCH(61d),
 		HIGH_DETERMINE(null);
 		private Double height;
