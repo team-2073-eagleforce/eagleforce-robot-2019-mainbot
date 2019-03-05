@@ -99,10 +99,10 @@ public abstract class AppConstants {
         private int driveShiftHighPort;
         private int elevatorShiftLowPort;
         private int elevatorShiftHighPort;
-        private int hatchUpSolenoidPort;
-        private int hatchDownSolenoidPort;
-        private int hatchHoldSolenoidPort;
-        private int hatchReleaseSolenoidPort;
+        private int shooterClampSolenoidPort;
+        private int shooterOpenSolenoidPort;
+        private int carriageOutSolenoidPort;
+        private int carriageInSolenoidPort;
 
         // PCM 1
         private int pcm1CanId;
@@ -297,36 +297,36 @@ public abstract class AppConstants {
             this.elevatorShiftHighPort = elevatorShiftHighPort;
         }
 
-        public int getHatchUpSolenoidPort() {
-            return hatchUpSolenoidPort;
+        public int getShooterClampSolenoidPort() {
+            return shooterClampSolenoidPort;
         }
 
-        public void setHatchUpSolenoidPort(int hatchUpSolenoidPort) {
-            this.hatchUpSolenoidPort = hatchUpSolenoidPort;
+        public void setShooterClampSolenoidPort(int shooterClampSolenoidPort) {
+            this.shooterClampSolenoidPort = shooterClampSolenoidPort;
         }
 
-        public int getHatchDownSolenoidPort() {
-            return hatchDownSolenoidPort;
+        public int getShooterOpenSolenoidPort() {
+            return shooterOpenSolenoidPort;
         }
 
-        public void setHatchDownSolenoidPort(int hatchDownSolenoidPort) {
-            this.hatchDownSolenoidPort = hatchDownSolenoidPort;
+        public void setShooterOpenSolenoidPort(int shooterOpenSolenoidPort) {
+            this.shooterOpenSolenoidPort = shooterOpenSolenoidPort;
         }
 
-        public int getHatchHoldSolenoidPort() {
-            return hatchHoldSolenoidPort;
+        public int getCarriageOutSolenoidPort() {
+            return carriageOutSolenoidPort;
         }
 
-        public void setHatchHoldSolenoidPort(int hatchHoldSolenoidPort) {
-            this.hatchHoldSolenoidPort = hatchHoldSolenoidPort;
+        public void setCarriageOutSolenoidPort(int carriageOutSolenoidPort) {
+            this.carriageOutSolenoidPort = carriageOutSolenoidPort;
         }
 
-        public int getHatchReleaseSolenoidPort() {
-            return hatchReleaseSolenoidPort;
+        public int getCarriageInSolenoidPort() {
+            return carriageInSolenoidPort;
         }
 
-        public void setHatchReleaseSolenoidPort(int hatchReleaseSolenoidPort) {
-            this.hatchReleaseSolenoidPort = hatchReleaseSolenoidPort;
+        public void setCarriageInSolenoidPort(int carriageInSolenoidPort) {
+            this.carriageInSolenoidPort = carriageInSolenoidPort;
         }
 
         public int getPcm1CanId() {

@@ -41,21 +41,21 @@ public class ElevatorToPositionCommand extends AbstractLoggingCommand {
 		double setpoint;
 		switch (height) {
 			case LOW_DETERMINE:
-				if(appCtx.getCargoSensor().get()){
+				if(appCtx.getCarriageSubsystem().isCargoMode()){
 					setpoint = ElevatorHeight.LOW_BALL.getValue();
 				}else{
 					setpoint = ElevatorHeight.LOW_HATCH.getValue();
 				}
 				break;
 			case MID_DETERMINE:
-				if(appCtx.getCargoSensor().get()){
+				if(appCtx.getCarriageSubsystem().isCargoMode()){
 					setpoint = ElevatorHeight.MID_BALL.getValue();
 				}else{
 					setpoint = ElevatorHeight.MID_HATCH.getValue();
 				}
 				break;
 			case HIGH_DETERMINE:
-				if(appCtx.getCargoSensor().get()){
+				if(appCtx.getCarriageSubsystem().isCargoMode()){
 					setpoint = ElevatorHeight.HIGH_BALL.getValue();
 				}else{
 					setpoint = ElevatorHeight.HIGH_HATCH.getValue();

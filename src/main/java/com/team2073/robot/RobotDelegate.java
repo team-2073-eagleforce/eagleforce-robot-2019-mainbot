@@ -31,8 +31,8 @@ public class RobotDelegate extends AbstractRobotDelegate {
 //        robotCtx.getDataRecorder().disable();
         oi = new OperatorInterface();
         mediator = appCtx.getMediator();
-        UsbCamera livestreamCam = CameraServer.getInstance().startAutomaticCapture(1);
-        UsbCamera trackingCam = new UsbCamera("trackingCam", 0);
+//        UsbCamera livestreamCam = CameraServer.getInstance().startAutomaticCapture(1);
+//        UsbCamera trackingCam = new UsbCamera("trackingCam", 0);
     }
 
     @Override
