@@ -9,6 +9,8 @@ import com.team2073.robot.subsystem.CarriageSubsystem;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 
+import java.sql.SQLOutput;
+
 public class Mediator implements PeriodicRunnable {
 	private final ApplicationContext appCtx = ApplicationContext.getInstance();
 	private final RobotContext robotCtx = RobotContext.getInstance();
@@ -63,15 +65,19 @@ public class Mediator implements PeriodicRunnable {
 	}
 
 	private void elevatorCheckPeriodic() {
+//		System.out.println("ELE PERIODIC");
 		if (elevator.getSetpoint() != null && (elevatorGoalPosition != null || elevatorReturnPosition != null)) {
-
+//			System.out.println(" \t 1");
 			if (!(intakePivot.position() < INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION
 					&& intakePivot.position() > INTAKE_BELOW_CARRIAGE)) {
-
+//				System.out.println("\t \t  ELE 2");
 				if (elevatorReturnPosition != null && intakeInGoalBound(intakeGoalPosition)) {
+//					System.out.println(" \t \t \t 3 ");
 					elevator.set(elevatorReturnPosition);
 					elevatorReturnPosition = null;
 					intakeGoalPosition = null;
+				}else if(elevatorGoalPosition != null){
+					elevator.set(elevatorGoalPosition);
 				}
 			}
 
@@ -82,12 +88,14 @@ public class Mediator implements PeriodicRunnable {
 
 		if (intakePivot.getSetpoint() != null && (intakeGoalPosition != null || intakeReturnPosition != null)) {
 
-			if (elevator.position() > ELEVATOR_CLEARS_INTAKE) {
+			if (elevator.position() > MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT) {
 
 				if (intakeReturnPosition != null) {
 					intakePivot.set(intakeReturnPosition);
 					intakeReturnPosition = null;
 					elevatorGoalPosition = null;
+				}else if(intakeGoalPosition != null){
+					intakePivot.set(intakeGoalPosition);
 				}
 			}
 

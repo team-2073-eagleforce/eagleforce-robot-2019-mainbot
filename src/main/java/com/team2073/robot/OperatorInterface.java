@@ -103,7 +103,7 @@ public class OperatorInterface {
 		x.toggleWhenPressed(new ToggleCarriagePositionCommand());
 
         rb.whenPressed(new IntakePivotCommand(140d));
-        lb.whenPressed(new IntakePivotCommand(105d));
+        lb.whenPressed(new IntakePivotCommand(111d));
 		controllerStart.whenPressed(new IntakePivotCommand(5d));
 
 //        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS));
