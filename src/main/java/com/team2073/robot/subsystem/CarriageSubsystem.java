@@ -2,6 +2,7 @@ package com.team2073.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
+import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.robot.conf.ApplicationProperties;
@@ -21,7 +22,7 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 	private MotorDirectionalityProperties directionalityProperties = applicationProperties.getMotorDirectionalityProperties();
 
 	private IMotorController shooterLeft = appCtx.getLeftShooter();
-	private IMotorController shooterRight = appCtx.getRightShooter();
+	private IMotorControllerEnhanced shooterRight = appCtx.getRightShooter();
 	private DigitalInput cargoSensor = appCtx.getCargoSensor();
 	private DoubleSolenoid shooterPosition = appCtx.getShooterClampSolenoid();
 
@@ -78,12 +79,12 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 
 
 	public enum CarriageState {
-		CARGO_INTAKE(-.666),
+		CARGO_INTAKE(-.333),
 		CARGO_OUTTAKE(.7),
 		CARGO_STALL(-.15),
 		HATCH_INTAKE(.9),
 		HATCH_OUTTAKE(-.9),
-		HATCH_STALL(.15),
+		HATCH_STALL(.2),
 		STOP(0d),
 		HATCH_MODE(0d),
 		CARGO_MODE(0d),
@@ -132,5 +133,9 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 
 	public boolean isCargoMode(){
 		return (shooterPosition.get() == DoubleSolenoid.Value.kReverse);
+	}
+
+	public double getAmperage(){
+		return shooterRight.getOutputCurrent();
 	}
 }

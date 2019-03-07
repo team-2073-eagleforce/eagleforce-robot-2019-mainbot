@@ -25,8 +25,8 @@ public class Mediator implements PeriodicRunnable {
 	private static final double INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION = 110;
 	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 20;
 	private static final double ELEVATOR_CLEARS_INTAKE = 25;/**/
-	private static final double INTAKE_BELOW_CARRIAGE = 8;/**/
-	private static final double ELEVATOR_SAFE_RANGE = 2;
+	private static final double INTAKE_BELOW_CARRIAGE = 15;/**/
+	private static final double ELEVATOR_BOTTOM_SAFE_RANGE = 3;
 	private static final double INTAKE_PIVOT_SAFE_RANGE = 5;
 
 
@@ -148,6 +148,18 @@ public class Mediator implements PeriodicRunnable {
 				intakeReturnPosition = intakePivot.position();
 			elevatorGoalPosition = setpoint;
 			intakePivot.set(closerBound(INTAKE_BELOW_CARRIAGE - INTAKE_PIVOT_SAFE_RANGE, INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION + INTAKE_PIVOT_SAFE_RANGE, intakePivot.position()));
+		} else if (setpoint < ELEVATOR_BOTTOM_SAFE_RANGE
+				&& intakePivot.position() < INTAKE_BELOW_CARRIAGE
+				&& elevator.position() > ELEVATOR_BOTTOM_SAFE_RANGE) {
+
+			adjustedSetpoint = ELEVATOR_CLEARS_INTAKE;
+			if(intakePivot.getSetpoint() != null)
+				intakeReturnPosition = intakePivot.getSetpoint();
+			else
+				intakeReturnPosition = intakePivot.position();
+
+			elevatorGoalPosition = setpoint;
+			intakePivot.set(INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION + INTAKE_PIVOT_SAFE_RANGE);
 		}
 //		CONSIDER PULLING INTAKES IN IF ELEVATOR IS ABOVE MIN HEIGHT
 //		else if(elevator.position() > 30 ){

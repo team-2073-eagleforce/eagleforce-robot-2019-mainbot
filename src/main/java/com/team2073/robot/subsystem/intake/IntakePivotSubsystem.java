@@ -29,9 +29,9 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 
     private static final double MIN_POSITION = 0;
     private static final double MAX_POSITION = 146.3;
-    private static final double MAX_VELOCITY = 420;
-    private static final double PERCENT_FOR_MAX_VELOCITY = .35;
-    private static final double MAX_ACCELERATION = 1100d;
+    private static final double MAX_VELOCITY = 800;
+    private static final double PERCENT_FOR_MAX_VELOCITY = .6;
+    private static final double MAX_ACCELERATION = 1500d;
     private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
     private static final double TICS_PER_DEGREE = 4096d / 360d;
     private static final double KA = .15 / MAX_ACCELERATION;
@@ -49,7 +49,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     private boolean hasZeroed = false;
 
     private PositionConverter converter = new IntakePositionConverter();
-    private PidfControlLoop holdingPID = new PidfControlLoop(0.01, 0.0002, 0.0, 0, .3);
+    private PidfControlLoop holdingPID = new PidfControlLoop(0.01, 0.0004, 0, 0, .3);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
     private MotionProfileControlloop controller = new MotionProfileControlloop(.008, 0,
             PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
@@ -72,8 +72,8 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         intakeMaster.setNeutralMode(NeutralMode.Brake);
         intakeSlave.setNeutralMode(NeutralMode.Brake);
         holdingPID.setPositionSupplier(this::position);
-        intakeMaster.configPeakOutputForward(.625, 10);
-        intakeMaster.configPeakOutputReverse(-.625, 10);
+        intakeMaster.configPeakOutputForward(.725, 10);
+        intakeMaster.configPeakOutputReverse(-.725, 10);
 //        try {
 //            graph.initFile();
 //        } catch (IOException e) {

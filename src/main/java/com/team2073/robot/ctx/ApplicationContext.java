@@ -56,7 +56,7 @@ public class ApplicationContext {
     private IMotorController elevatorSlave;
     private IMotorController elevatorSlave2;
     private IMotorController leftShooter;
-    private IMotorController rightShooter;
+    private IMotorControllerEnhanced rightShooter;
     private IMotorController intakePivotSlave;
     //	====================================================================================================================
     /* VICTOR SPs */
@@ -299,7 +299,7 @@ public class ApplicationContext {
         return leftShooter;
     }
 
-    public IMotorController getRightShooter() {
+    public IMotorControllerEnhanced getRightShooter() {
         if (rightShooter == null) {
             rightShooter = new TalonSRX(portProps.getRightShooterVictorPort()/*, RIGHT_SHOOTER_NAME, SAFE_PERCENT*/);
         }
