@@ -3,6 +3,7 @@ package com.team2073.robot;
 import com.team2073.common.trigger.ControllerTriggerTrigger;
 import com.team2073.common.trigger.MultiTrigger;
 import com.team2073.robot.command.*;
+import com.team2073.robot.command.IntakePivotCommand.IntakeSetpoint;
 import com.team2073.robot.command.carriage.ToggleCarriagePositionCommand;
 import com.team2073.robot.command.carriage.ToggleHatchCommand;
 import com.team2073.robot.command.elevator.BumpElevatorCommand;
@@ -53,6 +54,7 @@ public class OperatorInterface {
 	private JoystickButton stickThree = new JoystickButton(driveStick, 3);
 	private JoystickButton stickFour = new JoystickButton(driveStick, 4);
 	private JoystickButton stickFive = new JoystickButton(driveStick, 5);
+	private JoystickButton stickTen = new JoystickButton(driveStick, 10);
 
 	private JoystickButton leftPaddle = new JoystickButton(driveWheel, 1);
 	private JoystickButton wheelCircle = new JoystickButton(driveWheel, 2);
@@ -69,10 +71,12 @@ public class OperatorInterface {
 	private MultiTrigger hatchShoot = new MultiTrigger(new InverseTrigger(cargoModeTrigger), backTrigger);
 	private MultiTrigger cargoIntake = new MultiTrigger(cargoModeTrigger, a);
 	private MultiTrigger hatchIntake = new MultiTrigger(new InverseTrigger(cargoModeTrigger), a);
-	private ElevatorHeightTrigger elvatorAboveIntakes = new ElevatorHeightTrigger(25d);
+	private ElevatorHeightTrigger elvatorAboveIntakes = new ElevatorHeightTrigger(28d);
 	private MultiTrigger cargoModeAndElevatorUp = new MultiTrigger(elvatorAboveIntakes, cargoModeTrigger);
 	private MultiTrigger grabbingHatch = new MultiTrigger(new CarriageAmpedTrigger(30d),
 			new InverseTrigger(cargoModeTrigger));
+
+	private MultiTrigger dpadLeftAndCargo = new MultiTrigger(dPadLeft, cargoModeTrigger);
 
 
 
@@ -89,15 +93,15 @@ public class OperatorInterface {
 
 		stickTwo.toggleWhenPressed(new CameraLEDCommand());
 
-		cargoModeAndElevatorUp.whenActive(new IntakePivotCommand(111d));
+		cargoModeAndElevatorUp.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
 
 		//Controller
-		dPadLeft.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
+		dpadLeftAndCargo.whenActive(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
 		dPadUp.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.HIGH_DETERMINE));
 		dPadRight.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.MID_DETERMINE));
-		dPadDown.whenPressed(new IntakePivotCommand(5d));
+		dPadDown.whenPressed(new IntakePivotCommand(IntakeSetpoint.STORE));
 		dPadDown.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.LOW_DETERMINE));
-		grabbingHatch.whenActive(new BumpElevatorCommand(8d));
+//		grabbingHatch.whenActive(new BumpElevatorCommand(8d));
 //        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.CLAMP));
 //        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.OPEN_INTAKE));
 		controllerBack.whenPressed(new ZeroElevatorCommand());
@@ -111,11 +115,13 @@ public class OperatorInterface {
 		b.whenPressed(new OutakeCommand());
 		b.whenReleased(new IntakeStopCommand());
 		rb.toggleWhenActive(new ToggleHatchCommand());
-		x.toggleWhenPressed(new ToggleCarriagePositionCommand());
+		new InverseTrigger(cargoModeTrigger).whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
+		new InverseTrigger(cargoModeTrigger).whenActive(new ElevatorToPositionCommand(ElevatorHeight.LOW_HATCH));
+		x.whileHeld(new ToggleCarriagePositionCommand());
 
-        rightTrigger.whenActive(new IntakePivotCommand(140d));
-        leftTrigger.whenActive(new IntakePivotCommand(111d));
-		controllerStart.whenPressed(new IntakePivotCommand(5d));
+        rightTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.INTAKE));
+        leftTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.VERTICAL));
+		controllerStart.whenPressed(new IntakePivotCommand(IntakeSetpoint.STORE));
 
 //        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS));
 //        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));

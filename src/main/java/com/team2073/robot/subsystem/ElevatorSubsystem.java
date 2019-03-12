@@ -106,6 +106,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		elevatorShifter.set(Value.kForward);
 		holdingClimbingPID.setPositionSupplier(this::position);
 		holdingPID.setMaxIContribution(.2);
+		carriagePosition.set(Value.kReverse);
 	}
 
 	public enum ElevatorState {

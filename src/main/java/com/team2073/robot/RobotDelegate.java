@@ -38,6 +38,8 @@ public class RobotDelegate extends AbstractRobotDelegate {
 
     @Override
     public void robotPeriodic() {
+//        System.out.println("ElevatorPosition: " + appCtx.getElevatorSubsystem().position()
+//                + "\t IntakePosition: " + appCtx.getIntakePivotSubsystem().position() );
     }
 
 }

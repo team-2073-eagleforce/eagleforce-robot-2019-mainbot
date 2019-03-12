@@ -3,6 +3,7 @@ package com.team2073.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
 import com.team2073.robot.conf.ApplicationProperties;
@@ -33,6 +34,9 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 		shooterLeft.setInverted(directionalityProperties.isShooterLeft());
 		shooterRight.setInverted(directionalityProperties.isShooterRight());
 		shooterPosition.set(DoubleSolenoid.Value.kForward);
+
+		shooterRight.setNeutralMode(NeutralMode.Brake);
+		shooterLeft.setNeutralMode(NeutralMode.Brake);
 	}
 
 	private void setPower(Double percent) {

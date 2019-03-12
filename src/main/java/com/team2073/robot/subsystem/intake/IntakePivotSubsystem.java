@@ -24,8 +24,8 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
 //    private static final double POT_MAX_VALUE = .38;
 
 //    PRACTICE BOT
-    private static final double POT_MIN_VALUE = .9573;
-    private static final double POT_MAX_VALUE = .4312;
+    private static final double POT_MIN_VALUE = .612;
+    private static final double POT_MAX_VALUE = .114;
 
     private static final double MIN_POSITION = 0;
     private static final double MAX_POSITION = 146.3;
@@ -49,13 +49,14 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
     private boolean hasZeroed = false;
 
     private PositionConverter converter = new IntakePositionConverter();
-    private PidfControlLoop holdingPID = new PidfControlLoop(0.01, 0.0004, 0, 0, .3);
+//    private PidfControlLoop holdingPID = new PidfControlLoop(0.01, 0.0004, 0, 0, .3);
+    private PidfControlLoop holdingPID = new PidfControlLoop(0.005, 0.008, 0.0003, 0, .4);
     private ProfileConfiguration profileConfig = new ProfileConfiguration(MAX_VELOCITY, MAX_ACCELERATION, TIME_STEP);
     private MotionProfileControlloop controller = new MotionProfileControlloop(.008, 0,
             PERCENT_FOR_MAX_VELOCITY / MAX_VELOCITY, KA, 1);
 
-    private TrapezoidalProfileManager profileManager = new TrapezoidalProfileManager(controller, profileConfig,
-            this::position, holdingPID);
+//    private TrapezoidalProfileManager profileManager = new TrapezoidalProfileManager(controller, profileConfig,
+//            this::position, holdingPID);
 
 //    private GraphCSV graph = new GraphCSV("IntakePivot", "time", "position", "velocity", "profile position", "profile velocity", "profile acceleration", "output");
 
@@ -72,8 +73,8 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         intakeMaster.setNeutralMode(NeutralMode.Brake);
         intakeSlave.setNeutralMode(NeutralMode.Brake);
         holdingPID.setPositionSupplier(this::position);
-        intakeMaster.configPeakOutputForward(.725, 10);
-        intakeMaster.configPeakOutputReverse(-.725, 10);
+        intakeMaster.configPeakOutputForward(.625, 10);
+        intakeMaster.configPeakOutputReverse(-.625, 10);
 //        try {
 //            graph.initFile();
 //        } catch (IOException e) {
@@ -108,19 +109,19 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         if(!hasZeroed)
             zeroFromPot();
 
-//        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
+        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
         if (setpoint == null) {
             return;
         }
 
 
 		if(RobotState.isEnabled()){
-			profileManager.setPoint(setpoint);
-			profileManager.newOutput();
-			intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
-
-//            graph.updateMainFile(time, position(), velocity(), profileManager.getProfile().getCurrentPosition(), profileManager.getProfile().getCurrentVelocity(), profileManager.getProfile().getCurrentAcceleration(), profileManager.getOutput());
-//            time += .01;
+//			profileManager.setPoint(setpoint);
+//			profileManager.newOutput();
+//			intakeMaster.set(ControlMode.PercentOutput, profileManager.getOutput());
+            holdingPID.updateSetPoint(setpoint);
+            holdingPID.updatePID(.01);
+			intakeMaster.set(ControlMode.PercentOutput, holdingPID.getOutput());
 
 		}
 
