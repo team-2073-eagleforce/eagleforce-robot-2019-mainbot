@@ -3,6 +3,7 @@ package com.team2073.robot;
 import com.team2073.common.trigger.ControllerTriggerTrigger;
 import com.team2073.common.trigger.MultiTrigger;
 import com.team2073.robot.command.*;
+import com.team2073.robot.command.IntakePivotCommand.IntakeSetpoint;
 import com.team2073.robot.command.carriage.ToggleCarriagePositionCommand;
 import com.team2073.robot.command.carriage.ToggleHatchCommand;
 import com.team2073.robot.command.elevator.ElevatorToPositionCommand;
@@ -11,22 +12,17 @@ import com.team2073.robot.command.elevator.ZeroElevatorCommand;
 import com.team2073.robot.command.carriage.CarriageCommand;
 import com.team2073.robot.command.CameraLEDCommand;
 import com.team2073.robot.command.intakeRoller.IntakeCommand;
-import com.team2073.robot.command.intakeRoller.IntakeDisabledCommand;
 import com.team2073.robot.command.intakeRoller.IntakeStopCommand;
-import com.team2073.robot.command.triggers.CargoModeTrigger;
-import com.team2073.robot.command.triggers.ElevatorStateTrigger;
-import com.team2073.robot.command.triggers.InverseTrigger;
+import com.team2073.robot.command.intakeRoller.OutakeCommand;
+import com.team2073.robot.command.triggers.*;
 import com.team2073.robot.ctx.ApplicationContext;
-import com.team2073.robot.subsystem.CarriageSubsystem;
 import com.team2073.robot.subsystem.CarriageSubsystem.CarriageState;
 import com.team2073.robot.subsystem.ElevatorSubsystem.ElevatorState;
-import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
+import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
-import edu.wpi.first.wpilibj.buttons.Trigger;
-import edu.wpi.first.wpilibj.command.Command;
 
 public class OperatorInterface {
 
@@ -53,6 +49,7 @@ public class OperatorInterface {
 	private JoystickButton stickThree = new JoystickButton(driveStick, 3);
 	private JoystickButton stickFour = new JoystickButton(driveStick, 4);
 	private JoystickButton stickFive = new JoystickButton(driveStick, 5);
+	private JoystickButton stickTen = new JoystickButton(driveStick, 10);
 
 	private JoystickButton leftPaddle = new JoystickButton(driveWheel, 1);
 	private JoystickButton wheelCircle = new JoystickButton(driveWheel, 2);
@@ -65,16 +62,30 @@ public class OperatorInterface {
 	private MultiTrigger downDpadAndClimb = new MultiTrigger(isClimbMode, dPadDown);
 	private MultiTrigger upDpadAndClimb = new MultiTrigger(isClimbMode, dPadUp);
 	private CargoModeTrigger cargoModeTrigger = new CargoModeTrigger();
-	private MultiTrigger cargoShoot = new MultiTrigger(cargoModeTrigger, stickThree);
-	private MultiTrigger hatchShoot = new MultiTrigger(new InverseTrigger(cargoModeTrigger), stickThree);
+	private MultiTrigger cargoShoot = new MultiTrigger(cargoModeTrigger, backTrigger);
+	private MultiTrigger hatchShoot = new MultiTrigger(new InverseTrigger(cargoModeTrigger), backTrigger);
 	private MultiTrigger cargoIntake = new MultiTrigger(cargoModeTrigger, a);
 	private MultiTrigger hatchIntake = new MultiTrigger(new InverseTrigger(cargoModeTrigger), a);
+	private ElevatorHeightTrigger elevatorAboveIntakes = new ElevatorHeightTrigger(25d);
+	private MultiTrigger cargoModeAndElevatorUp = new MultiTrigger(elevatorAboveIntakes, cargoModeTrigger);
+	private MultiTrigger grabbingHatch = new MultiTrigger(new CarriageAmpedTrigger(30d),
+			new InverseTrigger(cargoModeTrigger));
+	private MultiTrigger dpadDownAndNotClimb = new MultiTrigger(dPadDown, new InverseTrigger(isClimbMode));
+	private MultiTrigger dpadUpAndNotClimb = new MultiTrigger(dPadUp, new InverseTrigger(isClimbMode));
+	private MultiTrigger dpadLeftAndCargo = new MultiTrigger(dPadLeft, cargoModeTrigger);
+
+	private MultiTrigger outtakeCargo = new MultiTrigger(b, cargoModeTrigger);
+	private MultiTrigger outtakeHatch = new MultiTrigger(b, new InverseTrigger(cargoModeTrigger));
+	private MultiTrigger elevatorUpAndNotGoingDown = new MultiTrigger(cargoModeAndElevatorUp,
+			new InverseTrigger(new CompareTrigger(25d, appCtx.getMediator()::getElevatorGoalPosition,
+					CompareTrigger.Comparitor.LESS_THAN_OR_EQUAL_TO)));
+
 
 
 	public OperatorInterface() {
 		//DRIVE
-		stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
-		stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
+		stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
+		stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
 
 //		Stick 3
 		cargoShoot.whenActive(new CarriageCommand(CarriageState.CARGO_OUTTAKE));
@@ -84,31 +95,50 @@ public class OperatorInterface {
 
 		stickTwo.toggleWhenPressed(new CameraLEDCommand());
 
+		elevatorUpAndNotGoingDown.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
+
 		//Controller
-		dPadDown.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
-		dPadUp.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.HIGH_DETERMINE));
+		dpadLeftAndCargo.whenActive(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
+		dpadUpAndNotClimb.whenActive(new ElevatorToPositionCommand(ElevatorHeight.HIGH_DETERMINE));
 		dPadRight.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.MID_DETERMINE));
-		dPadLeft.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.LOW_DETERMINE));
-//        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.CLAMP));
-//        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeState.OPEN_INTAKE));
+		dpadDownAndNotClimb.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
+		dpadDownAndNotClimb.whenActive(new ElevatorToPositionCommand(ElevatorHeight.LOW_DETERMINE));
+//		grabbingHatch.whenActive(new BumpElevatorCommand(8d));
+        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
+        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.OPEN_INTAKE));
 		controllerBack.whenPressed(new ZeroElevatorCommand());
 
+//		INTAKE ('A' Button)
 		cargoIntake.whenActive(new CarriageCommand(CarriageState.CARGO_INTAKE));
 		cargoIntake.whenInactive(new CarriageCommand(CarriageState.STOP));
 		hatchIntake.whenActive(new CarriageCommand(CarriageState.HATCH_INTAKE));
 		hatchIntake.whenInactive(new CarriageCommand(CarriageState.STOP));
-		a.whenPressed(new IntakeCommand());
-		a.whenReleased(new IntakeStopCommand());
-		rightTrigger.toggleWhenActive(new ToggleHatchCommand());
-		x.toggleWhenPressed(new ToggleCarriagePositionCommand());
+		cargoIntake.whenActive(new IntakeCommand());
+		cargoIntake.whenInactive(new IntakeStopCommand());
 
-        rb.whenPressed(new IntakePivotCommand(140d));
-        lb.whenPressed(new IntakePivotCommand(105d));
-		controllerStart.whenPressed(new IntakePivotCommand(5d));
+//		OUTTAKE ('B' Button)
+		b.whenPressed(new OutakeCommand());
+		b.whenReleased(new IntakeStopCommand());
+		outtakeCargo.whenActive(new CarriageCommand(CarriageState.CARGO_OUTTAKE));
+		outtakeHatch.whenActive(new CarriageCommand(CarriageState.HATCH_OUTTAKE));
 
-//        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS));
-//        climbMode.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
-//        climbMode.whenActive(new ElevatorStateCommand(ElevatorState.CLIMBING));
+		rb.toggleWhenActive(new ToggleHatchCommand());
+
+		new InverseTrigger(cargoModeTrigger).whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
+		new InverseTrigger(cargoModeTrigger).whenActive(new ElevatorToPositionCommand(ElevatorHeight.LOW_HATCH));
+		cargoModeTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.INTAKE));
+		cargoModeTrigger.whenActive(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
+
+		x.whileHeld(new ToggleCarriagePositionCommand());
+
+		lb.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.CARGO_SHIP_BALL));
+
+        rightTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.INTAKE));
+        leftTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.VERTICAL));
+		controllerStart.whenPressed(new IntakePivotCommand(IntakeSetpoint.STORE));
+
+		climbMode.whenActive(new ClimbModeCommandGroup());
 	}
+
 
 }

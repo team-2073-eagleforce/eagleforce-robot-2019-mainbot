@@ -5,15 +5,31 @@ import com.team2073.robot.ctx.ApplicationContext;
 
 public class IntakePivotCommand extends AbstractLoggingCommand {
     private ApplicationContext appctx = ApplicationContext.getInstance();
-    private double setpoint;
+    private IntakeSetpoint setpoint;
 
-    public IntakePivotCommand(double setpoint){
+
+    public enum IntakeSetpoint {
+        STORE(2.5d),
+        INTAKE(145d),
+        VERTICAL(112d);
+
+        private Double position;
+
+        IntakeSetpoint(Double position) {
+            this.position = position;
+        }
+
+        public Double getValue() {
+            return position;
+        }
+    }
+    public IntakePivotCommand(IntakeSetpoint setpoint){
         this.setpoint = setpoint;
     }
 
     @Override
     protected void initializeDelegate() {
-        appctx.getMediator().intakePivotGoal(setpoint);
+        appctx.getMediator().intakePivotGoal(setpoint.getValue());
     }
 
     @Override

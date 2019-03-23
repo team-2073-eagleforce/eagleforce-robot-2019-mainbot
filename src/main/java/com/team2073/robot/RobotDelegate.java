@@ -9,6 +9,7 @@ import com.team2073.robot.mediator.Mediator;
 import com.team2073.robot.svc.camera.CameraOverlayAdapter;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class RobotDelegate extends AbstractRobotDelegate {
 
@@ -38,6 +39,14 @@ public class RobotDelegate extends AbstractRobotDelegate {
 
     @Override
     public void robotPeriodic() {
+//        System.out.println("ELEVATOR MAX: " + appCtx.getElevatorTopLimit().get() +
+//                "\t ELEVATOR MIN: " + appCtx.getElevatorBottomLimit().get());
+        if(!appCtx.getElevatorBottomLimit().get()){
+            System.out.println("\n\n\n ZERO \n\n\n");
+        }
+//        System.out.println("ElevatorPosition: " + appCtx.getElevatorSubsystem().position()
+//                + "\t IntakePosition: " + appCtx.getIntakePivotSubsystem().position() );
+
     }
 
 }
