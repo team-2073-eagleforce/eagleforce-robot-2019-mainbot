@@ -37,7 +37,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 	private static final double KA = .15 / MAX_ACCELERATION;
 	private static final double TIME_STEP = AppConstants.Subsystems.DEFAULT_TIMESTEP;
 	private static final double ACCEPTABLE_VARIATION = .125d;
-	private static final double MAX_CLIMBING_HEIGHT = 55d;
+	private static final double MAX_CLIMBING_HEIGHT = 69d;
 
 //
 //	private GraphCSV graph = new GraphCSV("ElevatorProfile", "time", "Position", "Velocity",
@@ -112,7 +112,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 	public enum ElevatorState {
 		NORMAL_OPERATION,
 		CLIMBING,
-		HOLD_CLIMB;
+		HOLD_CLIMB
 	}
 
 	public void setElevatorState(ElevatorState elevatorState) {
@@ -137,7 +137,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 			zeroElevator();
 		}
 //        System.out.println("Elevator Position: " + position());
-		if (isAtBottom()) {
+		if (isAtBottom() && currentState != ElevatorState.CLIMBING) {
 			elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
 		}
 
@@ -169,13 +169,14 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 //		                elevatorMaster.getMotorOutputVoltage(),
 //
 //		                (trapezoidalProfileManager.getProfile().getCurrentPosition() - lastProfilePosition)/.01);
-                time += .01;
+//                time += .01;
 				break;
 			case CLIMBING:
 				climbingOperation();
 				break;
 			case HOLD_CLIMB:
 				if (lastState != currentState) {
+
 					holdingClimbingPID.updateSetPoint(position());
 				}
 				holdingClimbingPID.updatePID();
@@ -229,7 +230,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 			motorOutput = defaultOutput;
 		}
 
-		if (/*isAtBottom()*/position() < 5 && motorOutput < 0) {
+		if (/*isAtBottom()*/position() < 1 && motorOutput < 0) {
 			motorOutput = 0;
 		}
 

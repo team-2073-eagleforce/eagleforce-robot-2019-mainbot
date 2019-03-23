@@ -12,7 +12,6 @@ import com.team2073.robot.subsystem.DrivetrainSubsystem;
 import com.team2073.robot.subsystem.ElevatorSubsystem;
 import com.team2073.robot.subsystem.CarriageSubsystem;
 import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
-import com.team2073.robot.subsystem.climber.WheelieBarSubsystem;
 import com.team2073.robot.subsystem.driveprofile.DriveProfileManager;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
@@ -69,7 +68,6 @@ public class ApplicationContext {
     private IntakePivotSubsystem intakePivotSubsystem;
     private CarriageSubsystem carriageSubsystem;
     private RobotIntakeSubsystem robotIntakeSubsystem;
-    private WheelieBarSubsystem wheelieBarSubsystem;
     private ElevatorSubsystem elevatorSubsystem;
     //	====================================================================================================================
     /*SOLENOIDS*/
@@ -79,6 +77,9 @@ public class ApplicationContext {
     private DoubleSolenoid carriageSlideSolenoid;
     private DoubleSolenoid forkDeploySolenoid;
     private DoubleSolenoid robotGrabSolenoid;
+    private Solenoid footDeploySolenoid;
+
+
     //	====================================================================================================================
     /*JOYSTICKS*/
     private Joystick controller;
@@ -198,13 +199,6 @@ public class ApplicationContext {
             robotIntakeSubsystem = new RobotIntakeSubsystem();
         }
         return robotIntakeSubsystem;
-    }
-
-    public WheelieBarSubsystem getWheelieBarSubsystem() {
-        if (wheelieBarSubsystem == null) {
-            wheelieBarSubsystem = new WheelieBarSubsystem();
-        }
-        return wheelieBarSubsystem;
     }
 
     public ElevatorSubsystem getElevatorSubsystem() {
@@ -360,6 +354,13 @@ public class ApplicationContext {
             robotGrabSolenoid = new DoubleSolenoid(portProps.getPcm1CanId(), portProps.getRobotIntakeGrabSolenoidPort(), portProps.getRobotIntakeOpenSolenoidPort());
         }
         return robotGrabSolenoid;
+    }
+
+    public Solenoid getFootDeploySolenoid() {
+        if(footDeploySolenoid == null){
+            footDeploySolenoid = new Solenoid(portProps.getPcm1CanId(),4);
+        }
+        return footDeploySolenoid;
     }
 
     public DigitalInput getCargoSensor() {

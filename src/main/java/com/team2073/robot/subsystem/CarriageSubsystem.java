@@ -27,7 +27,7 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 	private DigitalInput cargoSensor = appCtx.getCargoSensor();
 	private DoubleSolenoid shooterPosition = appCtx.getShooterClampSolenoid();
 
-	private CarriageState state = CarriageState.STOP;
+	private CarriageState state = CarriageState.HATCH_STALL;
 
 	public CarriageSubsystem() {
 		autoRegisterWithPeriodicRunner();
@@ -47,6 +47,7 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 
 	@Override
 	public void onPeriodic() {
+//		System.out.println("MODE: "+ state.toString());
 //		System.out.println("shooter position : " + shooterPosition.get() + "\t cargo sensor: " + cargoSensor.get());
 		switch (state){
 			case CARGO_MODE:
@@ -57,8 +58,7 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 				break;
 		}
 
-		if (!cargoSensor.get() &&
-				!(state == CarriageState.CARGO_INTAKE || state == CarriageState.CARGO_OUTTAKE)
+		if (!(state == CarriageState.CARGO_INTAKE || state == CarriageState.CARGO_OUTTAKE)
 				&& !(state == CarriageState.HATCH_OUTTAKE || state == CarriageState.HATCH_INTAKE)) {
 
 			if (shooterPosition.get() == DoubleSolenoid.Value.kForward) {

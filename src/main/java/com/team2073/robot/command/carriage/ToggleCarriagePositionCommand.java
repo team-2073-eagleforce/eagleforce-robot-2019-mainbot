@@ -15,10 +15,10 @@ public class ToggleCarriagePositionCommand extends AbstractLoggingCommand {
 
 	@Override
 	protected void executeDelegate() {
-		if(appCtx.getElevatorSubsystem().position() < 4){
-			appCtx.getElevatorSubsystem().setCarriagePosition(DoubleSolenoid.Value.kReverse);
-		}
+		if(appCtx.getElevatorSubsystem().position() < 6){
+		appCtx.getElevatorSubsystem().setCarriagePosition(DoubleSolenoid.Value.kReverse);
 	}
+}
 
 	@Override
 	protected void endDelegate() {

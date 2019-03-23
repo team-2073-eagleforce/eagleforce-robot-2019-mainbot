@@ -10,8 +10,8 @@ public class IntakePivotCommand extends AbstractLoggingCommand {
 
     public enum IntakeSetpoint {
         STORE(2.5d),
-        INTAKE(140d),
-        VERTICAL(111d);
+        INTAKE(145d),
+        VERTICAL(112d);
 
         private Double position;
 

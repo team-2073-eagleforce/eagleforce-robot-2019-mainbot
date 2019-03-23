@@ -2,7 +2,6 @@ package com.team2073.robot.subsystem.climber;
 
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
-import com.team2073.common.util.ConversionUtil;
 import com.team2073.common.util.Timer;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
@@ -10,8 +9,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState;
-import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DEPLOY_FORKS;
-import static com.team2073.robot.subsystem.climber.RobotIntakeSubsystem.RobotIntakeState.DISABLED;
 
 public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<RobotIntakeState> {
     private final RobotContext robotCtx = RobotContext.getInstance();
@@ -19,6 +16,7 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 
     private DoubleSolenoid forkSolenoid = appCtx.getForkDeploySolenoid();
     private DoubleSolenoid robotGrabSolenoid = appCtx.getRobotGrabSolenoid();
+//    private Solenoid footSolenoid = appCtx.getFootDeploySolenoid();
 
     private boolean timeStart;
 
@@ -42,19 +40,26 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
         state = goalState;
     }
 
+//    public void dropFoot(){
+//        footSolenoid.set(true);
+//    }
+
     @Override
     public void onPeriodic() {
 
-//        switch (state) {
-//            // Forks up, clamp down
-//            case STORE:
-//                forkSolenoid.set(DoubleSolenoid.Value.kForward);
-//                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
-//                break;
-//            // Forks down, clamps up
-//            case DEPLOY_FORKS:
-//                forkSolenoid.set(DoubleSolenoid.Value.kReverse);
-////                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+
+        switch (state) {
+            // Forks up, clamp down
+            case STORE:
+//                System.out.println("RUNNING");
+                forkSolenoid.set(Value.kReverse);
+                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
+                break;
+            // Forks down, clamps up
+            case DEPLOY_FORKS:
+                forkSolenoid.set(Value.kForward);
+                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+                System.out.println("SET DOWN");
 //                if (!timeStart){
 //                    timer.start();
 //                    timeStart = true;
@@ -64,21 +69,21 @@ public class RobotIntakeSubsystem implements PeriodicRunnable, StateSubsystem<Ro
 //                    timer.stop();
 //                    timeStart = false;
 //                }
-//
-//                break;
-//            // Clamps up
-//            case OPEN_INTAKE:
-//                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
-//                break;
-//            // Clamps down
-//            case CLAMP:
-//                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
-//                break;
-//            case DISABLED:
-//                break;
-//            default:
-//                throw new IllegalStateException("Unknown state: " + state);
-//        }
+
+                break;
+            // Clamps up
+            case OPEN_INTAKE:
+                robotGrabSolenoid.set(DoubleSolenoid.Value.kReverse);
+                break;
+            // Clamps down
+            case CLAMP:
+                robotGrabSolenoid.set(DoubleSolenoid.Value.kForward);
+                break;
+            case DISABLED:
+                break;
+            default:
+                throw new IllegalStateException("Unknown state: " + state);
+        }
 
     }
 
