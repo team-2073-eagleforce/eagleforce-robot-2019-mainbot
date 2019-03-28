@@ -66,7 +66,7 @@ public class OperatorInterface {
 	private MultiTrigger hatchShoot = new MultiTrigger(new InverseTrigger(cargoModeTrigger), backTrigger);
 	private MultiTrigger cargoIntake = new MultiTrigger(cargoModeTrigger, a);
 	private MultiTrigger hatchIntake = new MultiTrigger(new InverseTrigger(cargoModeTrigger), a);
-	private ElevatorHeightTrigger elevatorAboveIntakes = new ElevatorHeightTrigger(25d);
+	private ElevatorHeightTrigger elevatorAboveIntakes = new ElevatorHeightTrigger(32d);
 	private MultiTrigger cargoModeAndElevatorUp = new MultiTrigger(elevatorAboveIntakes, cargoModeTrigger);
 	private MultiTrigger grabbingHatch = new MultiTrigger(new CarriageAmpedTrigger(30d),
 			new InverseTrigger(cargoModeTrigger));
@@ -76,16 +76,17 @@ public class OperatorInterface {
 
 	private MultiTrigger outtakeCargo = new MultiTrigger(b, cargoModeTrigger);
 	private MultiTrigger outtakeHatch = new MultiTrigger(b, new InverseTrigger(cargoModeTrigger));
-	private MultiTrigger elevatorUpAndNotGoingDown = new MultiTrigger(cargoModeAndElevatorUp,
-			new InverseTrigger(new CompareTrigger(25d, appCtx.getMediator()::getElevatorGoalPosition,
-					CompareTrigger.Comparitor.LESS_THAN_OR_EQUAL_TO)));
+	private MultiTrigger lbAndCargoMode = new MultiTrigger(lb, cargoModeTrigger);
+//	private MultiTrigger elevatorUpAndNotGoingDown = new MultiTrigger(cargoModeAndElevatorUp,
+//			new InverseTrigger(new CompareTrigger(25d, appCtx.getMediator()::getElevatorGoalPosition,
+//					CompareTrigger.Comparitor.LESS_THAN_OR_EQUAL_TO)));
 
 
 
 	public OperatorInterface() {
 		//DRIVE
-		stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
-		stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
+		stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
+		stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
 
 //		Stick 3
 		cargoShoot.whenActive(new CarriageCommand(CarriageState.CARGO_OUTTAKE));
@@ -95,7 +96,8 @@ public class OperatorInterface {
 
 		stickTwo.toggleWhenPressed(new CameraLEDCommand());
 
-		elevatorUpAndNotGoingDown.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
+		cargoModeAndElevatorUp.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
+		lbAndCargoMode.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
 
 		//Controller
 		dpadLeftAndCargo.whenActive(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
@@ -104,8 +106,8 @@ public class OperatorInterface {
 		dpadDownAndNotClimb.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
 		dpadDownAndNotClimb.whenActive(new ElevatorToPositionCommand(ElevatorHeight.LOW_DETERMINE));
 //		grabbingHatch.whenActive(new BumpElevatorCommand(8d));
-        downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
-        upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.OPEN_INTAKE));
+		downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
+		upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.OPEN_INTAKE));
 		controllerBack.whenPressed(new ZeroElevatorCommand());
 
 //		INTAKE ('A' Button)
@@ -131,7 +133,7 @@ public class OperatorInterface {
 
 		x.whileHeld(new ToggleCarriagePositionCommand());
 
-		lb.whenPressed(new ElevatorToPositionCommand(ElevatorHeight.CARGO_SHIP_BALL));
+		lbAndCargoMode.whenActive(new ElevatorToPositionCommand(ElevatorHeight.CARGO_SHIP_BALL));
 
         rightTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.INTAKE));
         leftTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.VERTICAL));

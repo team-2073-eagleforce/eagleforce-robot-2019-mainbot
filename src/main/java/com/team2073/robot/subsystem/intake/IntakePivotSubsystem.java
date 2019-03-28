@@ -20,15 +20,15 @@ import edu.wpi.first.wpilibj.RobotState;
 public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem {
 
 //    MAINBOT
-    private static final double POT_MIN_VALUE = .2104;
-    private static final double POT_MAX_VALUE = .1264;
+    private static final double POT_MIN_VALUE = .3852;
+    private static final double POT_MAX_VALUE = .3046;
 
 //    PRACTICE BOT
 //    private static final double POT_MIN_VALUE = .3683;
 //    private static final double POT_MAX_VALUE = .4503;
 
     private static final double MIN_POSITION = 0;
-    private static final double MAX_POSITION = 153.3;
+    private static final double MAX_POSITION = 148.3;
     private static final double MAX_VELOCITY = 800;
     private static final double PERCENT_FOR_MAX_VELOCITY = .6;
     private static final double MAX_ACCELERATION = 1500d;
@@ -69,7 +69,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         intakeMaster.setInverted(directionalityProperties.isIntakePivotMaster());
         intakeSlave.follow(intakeMaster);
         intakeMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
-        intakeMaster.setSensorPhase(false);
+        intakeMaster.setSensorPhase(true);
         intakeMaster.setNeutralMode(NeutralMode.Brake);
         intakeSlave.setNeutralMode(NeutralMode.Brake);
         holdingPID.setPositionSupplier(this::position);
@@ -109,7 +109,7 @@ public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsyst
         if(!hasZeroed)
             zeroFromPot();
 
-//        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
+        System.out.println("Intake Pivot Position: " + position() + "\t Pot value: " + pot.get() + "\t Voltage: " + intakeMaster.getMotorOutputVoltage());
         if (setpoint == null) {
             return;
         }

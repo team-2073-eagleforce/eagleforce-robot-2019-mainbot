@@ -148,9 +148,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
 
 
-//        if (isAtTop()) {
-//            elevatorMaster.setSelectedSensorPosition(converter.asTics(MAX_HEIGHT), 0, 10);
-//        }
+        if (isAtTop()) {
+            elevatorMaster.setSelectedSensorPosition(converter.asTics(MAX_HEIGHT), 0, 10);
+        }
 
 		if (setpoint == null) {
 			return;
