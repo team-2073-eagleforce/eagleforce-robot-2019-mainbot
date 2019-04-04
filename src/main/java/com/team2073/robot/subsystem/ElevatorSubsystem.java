@@ -70,6 +70,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 			profileConfig, this::position, holdingPID);
 
 	private Double setpoint;
+	private double climbPercent;
 	private Value shifterValue = elevatorShifter.get();
 
 	private ElevatorState currentState = ElevatorState.NORMAL_OPERATION;
@@ -131,11 +132,15 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		return currentState;
 	}
 
+	public void setClimbPercent(double percent){
+		this.climbPercent = percent;
+	}
+
 	@Override
 	public void onPeriodic() {
-		if(appCtx.getController().getRawButton(7)){
-			zeroElevator();
-		}
+//		if(appCtx.getController().getRawButton(7)){
+//			zeroElevator();
+//		}
 //        System.out.println("Elevator Position: " + position());
 		if (isAtBottom() && currentState != ElevatorState.CLIMBING) {
 			elevatorMaster.setSelectedSensorPosition(converter.asTics(MIN_HEIGHT), 0, 10);
@@ -155,7 +160,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		if (setpoint == null) {
 			return;
 		}
-
 //
 		switch (currentState) {
 			case NORMAL_OPERATION:
@@ -172,7 +176,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 //                time += .01;
 				break;
 			case CLIMBING:
-				climbingOperation();
+				climbingOperation(climbPercent);
 				break;
 			case HOLD_CLIMB:
 				if (lastState != currentState) {
@@ -217,10 +221,15 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 
 	}
 
-	private void climbingOperation() {
-		double defaultOutput = -appCtx.getController().getRawAxis(5);
-		double adjustedOutput = defaultOutput * ((MAX_CLIMBING_HEIGHT + 5 - position()) / (MAX_CLIMBING_HEIGHT + 5));
+	public void manuallySetMotors(double value){
+		elevatorMaster.set(ControlMode.PercentOutput, value);
+	}
+
+	private void climbingOperation(double percent) {
+		double defaultOutput = percent;
+		double adjustedOutput = defaultOutput * ((MAX_CLIMBING_HEIGHT + 1 - position()) / (MAX_CLIMBING_HEIGHT + 1));
 		double motorOutput;
+
 		if (elevatorShifter.get() != Value.kReverse) {
 			shiftLowGear();
 			motorOutput = 0;
@@ -229,8 +238,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		} else {
 			motorOutput = defaultOutput;
 		}
-
-		if (/*isAtBottom()*/position() < 1 && motorOutput < 0) {
+		if (/*isAtBottom()*/position() < .25 && motorOutput < 0) {
 			motorOutput = 0;
 		}
 

@@ -2,23 +2,23 @@ package com.team2073.robot;
 
 import com.team2073.common.trigger.ControllerTriggerTrigger;
 import com.team2073.common.trigger.MultiTrigger;
-import com.team2073.robot.command.*;
+import com.team2073.robot.command.DriveShiftCommand;
+import com.team2073.robot.command.IntakePivotCommand;
 import com.team2073.robot.command.IntakePivotCommand.IntakeSetpoint;
+import com.team2073.robot.command.carriage.CarriageCommand;
 import com.team2073.robot.command.carriage.ToggleCarriagePositionCommand;
 import com.team2073.robot.command.carriage.ToggleHatchCommand;
 import com.team2073.robot.command.elevator.ElevatorToPositionCommand;
 import com.team2073.robot.command.elevator.ElevatorToPositionCommand.ElevatorHeight;
 import com.team2073.robot.command.elevator.ZeroElevatorCommand;
-import com.team2073.robot.command.carriage.CarriageCommand;
-import com.team2073.robot.command.CameraLEDCommand;
 import com.team2073.robot.command.intakeRoller.IntakeCommand;
 import com.team2073.robot.command.intakeRoller.IntakeStopCommand;
 import com.team2073.robot.command.intakeRoller.OutakeCommand;
 import com.team2073.robot.command.triggers.*;
+import com.team2073.robot.command.climb.*;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.subsystem.CarriageSubsystem.CarriageState;
 import com.team2073.robot.subsystem.ElevatorSubsystem.ElevatorState;
-import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -82,7 +82,6 @@ public class OperatorInterface {
 //					CompareTrigger.Comparitor.LESS_THAN_OR_EQUAL_TO)));
 
 
-
 	public OperatorInterface() {
 		//DRIVE
 		stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
@@ -94,10 +93,9 @@ public class OperatorInterface {
 		hatchShoot.whenActive(new CarriageCommand(CarriageState.HATCH_OUTTAKE));
 		hatchShoot.whenInactive(new CarriageCommand(CarriageState.STOP));
 
-		stickTwo.toggleWhenPressed(new CameraLEDCommand());
+//		stickTwo.toggleWhenPressed(new CameraLEDCommand());
 
 		cargoModeAndElevatorUp.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
-		lbAndCargoMode.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
 
 		//Controller
 		dpadLeftAndCargo.whenActive(new ElevatorToPositionCommand(ElevatorHeight.BOTTOM));
@@ -106,8 +104,6 @@ public class OperatorInterface {
 		dpadDownAndNotClimb.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
 		dpadDownAndNotClimb.whenActive(new ElevatorToPositionCommand(ElevatorHeight.LOW_DETERMINE));
 //		grabbingHatch.whenActive(new BumpElevatorCommand(8d));
-		downDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.CLAMP));
-		upDpadAndClimb.whenActive(new RobotGrabberCommand(RobotIntakeSubsystem.RobotIntakeState.OPEN_INTAKE));
 		controllerBack.whenPressed(new ZeroElevatorCommand());
 
 //		INTAKE ('A' Button)
@@ -133,13 +129,18 @@ public class OperatorInterface {
 
 		x.whileHeld(new ToggleCarriagePositionCommand());
 
+		lbAndCargoMode.whenActive(new IntakePivotCommand(IntakeSetpoint.STORE));
 		lbAndCargoMode.whenActive(new ElevatorToPositionCommand(ElevatorHeight.CARGO_SHIP_BALL));
 
-        rightTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.INTAKE));
-        leftTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.VERTICAL));
+		rightTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.INTAKE));
+//		leftTrigger.whenActive(new IntakePivotCommand(IntakeSetpoint.VERTICAL));
 		controllerStart.whenPressed(new IntakePivotCommand(IntakeSetpoint.STORE));
 
 		climbMode.whenActive(new ClimbModeCommandGroup());
+		leftTrigger.whileActive(new ClimbCommand());
+		controllerBack.whenPressed(new FinishClimbCommandGroup());
+		stickTwo.whenPressed(new ClimbLevelTwoCommand());
+
 	}
 
 

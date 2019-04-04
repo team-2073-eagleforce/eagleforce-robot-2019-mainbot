@@ -10,11 +10,11 @@ public class IntakeOutForClimberCommand extends AbstractLoggingCommand {
     @Override
     protected void initializeDelegate() {
         appctx.getMediator().elevatorGoal(ElevatorToPositionCommand.ElevatorHeight.CARGO_SHIP_BALL.getValue());
-        appctx.getMediator().intakePivotGoal(IntakePivotCommand.IntakeSetpoint.INTAKE.getValue());
+        appctx.getMediator().intakePivotGoal(IntakePivotCommand.IntakeSetpoint.VERTICAL.getValue());
     }
 
     @Override
     protected boolean isFinishedDelegate() {
-        return (appctx.getIntakePivotSubsystem().position() > 100);
+        return (appctx.getIntakePivotSubsystem().position() > 100) && (appctx.getElevatorSubsystem().position() > 25);
     }
 }

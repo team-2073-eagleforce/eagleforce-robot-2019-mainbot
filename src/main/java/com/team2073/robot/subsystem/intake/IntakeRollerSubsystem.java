@@ -50,9 +50,10 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
     }
 
     public enum IntakeRollerState {
-        INTAKE_SPEED(1.),
+        INTAKE_SPEED(1d),
         OUTTAKE_SPEED(-.9),
         STOP(0d),
+        CLIMB_ROLL(.3),
         DISABLED(0d);
 
         private Double percent;

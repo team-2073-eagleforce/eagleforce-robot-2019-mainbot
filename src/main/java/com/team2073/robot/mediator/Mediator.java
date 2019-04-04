@@ -7,9 +7,11 @@ import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.subsystem.CarriageSubsystem;
 import com.team2073.robot.subsystem.DrivetrainSubsystem;
 import com.team2073.robot.subsystem.ElevatorSubsystem;
-import com.team2073.robot.subsystem.climber.RobotIntakeSubsystem;
+import com.team2073.robot.subsystem.StiltSubsystem;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
+
+import java.io.File;
 
 public class Mediator implements PeriodicRunnable {
 	private final ApplicationContext appCtx = ApplicationContext.getInstance();
@@ -18,11 +20,11 @@ public class Mediator implements PeriodicRunnable {
 	private IntakeRollerSubsystem intakeRoller = appCtx.getIntakeRollerSubsystem();
 	private IntakePivotSubsystem intakePivot = appCtx.getIntakePivotSubsystem();
 	private CarriageSubsystem shooter = appCtx.getCarriageSubsystem();
-	private RobotIntakeSubsystem robotIntake = appCtx.getRobotIntakeSubsystem();
+	private StiltSubsystem stilt = appCtx.getStiltSubsystem();
 	private ElevatorSubsystem elevator = appCtx.getElevatorSubsystem();
 	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
 
-	private static final double INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION = 130;
+	private static final double INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION = 120;
 	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 22;
 	private static final double ELEVATOR_CLEARS_INTAKE = 24.5;/**/
 	private static final double INTAKE_BELOW_CARRIAGE = 15;/**/
@@ -34,6 +36,9 @@ public class Mediator implements PeriodicRunnable {
 	private Double elevatorGoalPosition;
 	private Double intakeGoalPosition;
 
+	private Double elevatorSetpoint;
+	private Double intakeSetpoint;
+
 	public Mediator() {
 		autoRegisterWithPeriodicRunner();
 	}
@@ -41,11 +46,13 @@ public class Mediator implements PeriodicRunnable {
 	//ELEVATOR
 	public void elevatorGoal(double setpoint) {
 		double adjustedSetpoint = checkElevatorSetpoint(setpoint);
+		elevatorSetpoint = adjustedSetpoint;
 		elevator.set(adjustedSetpoint);
 	}
 
 	public void intakePivotGoal(double setpoint) {
 		double adjustedSetpoint = checkIntakePivotSetpoint(setpoint);
+		intakeSetpoint = adjustedSetpoint;
 		intakePivot.set(adjustedSetpoint);
 	}
 
@@ -66,14 +73,19 @@ public class Mediator implements PeriodicRunnable {
 					&& intakePivot.position() > INTAKE_BELOW_CARRIAGE)) {
 				if (elevatorReturnPosition != null && intakeInGoalBound(intakeGoalPosition)) {
 					if (elevatorReturnPosition < ELEVATOR_BOTTOM_SAFE_RANGE) {
+
+						elevatorSetpoint = ELEVATOR_BOTTOM_SAFE_RANGE;
 						elevator.set(ELEVATOR_BOTTOM_SAFE_RANGE);
 					} else {
+						elevatorSetpoint = elevatorReturnPosition;
 						elevator.set(elevatorReturnPosition);
 					}
 					elevatorReturnPosition = null;
 					intakeGoalPosition = null;
 				} else if (elevatorGoalPosition != null && !(elevatorGoalPosition < ELEVATOR_BOTTOM_SAFE_RANGE
 						&& intakePivot.position() < INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION)) {
+
+					elevatorSetpoint = elevatorGoalPosition;
 					elevator.set(elevatorGoalPosition);
 				}
 			}
@@ -136,13 +148,19 @@ public class Mediator implements PeriodicRunnable {
 				&& intakePivot.position() > INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION
 				&& elevator.position() < MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT) {
 
-			adjustedSetpoint = INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION;
+			adjustedSetpoint = intakePivot.position();
 			intakeGoalPosition = setpoint;
 			if (elevator.getSetpoint() != null)
 				elevatorReturnPosition = elevator.getSetpoint();
-			else
-				elevatorReturnPosition = elevator.position();
-			elevator.set(ELEVATOR_CLEARS_INTAKE);
+			else{
+//				elevatorReturnPosition = elevator.position();
+				elevatorReturnPosition = null;
+			}
+
+			if(elevator.getSetpoint() < ELEVATOR_CLEARS_INTAKE ){
+				elevatorSetpoint = ELEVATOR_CLEARS_INTAKE;
+				elevator.set(ELEVATOR_CLEARS_INTAKE);
+			}
 		} else if (setpoint > INTAKE_BELOW_CARRIAGE
 				&& intakePivot.position() < INTAKE_BELOW_CARRIAGE
 				&& elevator.position() < ELEVATOR_CLEARS_INTAKE) {
@@ -153,6 +171,7 @@ public class Mediator implements PeriodicRunnable {
 			} else {
 				elevatorReturnPosition = elevator.position();
 			}
+			elevatorSetpoint = ELEVATOR_CLEARS_INTAKE;
 			elevator.set(ELEVATOR_CLEARS_INTAKE);
 		}
 

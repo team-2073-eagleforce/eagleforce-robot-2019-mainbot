@@ -11,6 +11,8 @@ public class DriveShiftCommand extends AbstractLoggingCommand {
     public DriveShiftCommand(DoubleSolenoid.Value value){
         this.value = value;
     }
+
+//    FORWARD IS LOW, REVERSE IS HIGH
     @Override
     protected void initializeDelegate() {
         ApplicationContext.getInstance().getDrivetrainSubsystem().shiftDrivetrain(value);

@@ -8,6 +8,7 @@ public class ElevatorToPositionCommand extends AbstractLoggingCommand {
 	private ApplicationContext appCtx = ApplicationContext.getInstance();
 
 	private ElevatorHeight height;
+	private double manualHeight;
 
 	public enum ElevatorHeight {
 		BOTTOM(.5),
@@ -37,9 +38,18 @@ public class ElevatorToPositionCommand extends AbstractLoggingCommand {
 		this.height = height;
 	}
 
+	public ElevatorToPositionCommand(double manualHeight){
+		this.manualHeight = manualHeight;
+	}
+
 	@Override
 	protected void initializeDelegate() {
 		double setpoint;
+		if (height == null) {
+			appCtx.getElevatorSubsystem().set(manualHeight);
+			return;
+		}
+
 		switch (height) {
 			case LOW_DETERMINE:
 				if(appCtx.getCarriageSubsystem().isCargoMode()){

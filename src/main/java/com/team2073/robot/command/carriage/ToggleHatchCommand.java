@@ -20,8 +20,8 @@ public class ToggleHatchCommand extends AbstractLoggingCommand{
 
     @Override
     protected void endDelegate() {
-//        if(!RobotState.isDisabled()){
+        if(!RobotState.isDisabled()){
             appCtx.getCarriageSubsystem().set(CarriageState.HATCH_MODE);
-//        }
+        }
     }
 }

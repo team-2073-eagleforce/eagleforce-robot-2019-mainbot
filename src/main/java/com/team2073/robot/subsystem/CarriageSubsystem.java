@@ -27,13 +27,16 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 	private DigitalInput cargoSensor = appCtx.getCargoSensor();
 	private DoubleSolenoid shooterPosition = appCtx.getShooterClampSolenoid();
 
-	private CarriageState state = CarriageState.HATCH_STALL;
+	private Boolean isCargoMode;
 
+	private CarriageState state = CarriageState.HATCH_STALL;
+// FORWARD IS HATCH, REVERSE IS CARGO
 	public CarriageSubsystem() {
 		autoRegisterWithPeriodicRunner();
 		shooterLeft.setInverted(directionalityProperties.isShooterLeft());
 		shooterRight.setInverted(directionalityProperties.isShooterRight());
 		shooterPosition.set(DoubleSolenoid.Value.kForward);
+		isCargoMode = false;
 
 		shooterRight.setNeutralMode(NeutralMode.Brake);
 		shooterLeft.setNeutralMode(NeutralMode.Brake);
@@ -52,9 +55,11 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 		switch (state){
 			case CARGO_MODE:
 				shooterPosition.set(DoubleSolenoid.Value.kReverse);
+				isCargoMode = true;
 				break;
 			case HATCH_MODE:
 				shooterPosition.set(DoubleSolenoid.Value.kForward);
+				isCargoMode = false;
 				break;
 		}
 
@@ -136,7 +141,8 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 	}
 
 	public boolean isCargoMode(){
-		return (shooterPosition.get() == DoubleSolenoid.Value.kReverse);
+//		return (shooterPosition.get() == DoubleSolenoid.Value.kReverse);
+		return isCargoMode;
 	}
 
 	public double getAmperage(){
