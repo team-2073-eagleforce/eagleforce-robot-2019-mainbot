@@ -84,8 +84,8 @@ public class OperatorInterface {
 
 	public OperatorInterface() {
 		//DRIVE
-		stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
-		stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
+		stickFour.whenPressed(new DriveShiftCommand(DoubleSolenoid.Value.kReverse));
+		stickFour.whenReleased(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
 
 //		Stick 3
 		cargoShoot.whenActive(new CarriageCommand(CarriageState.CARGO_OUTTAKE));

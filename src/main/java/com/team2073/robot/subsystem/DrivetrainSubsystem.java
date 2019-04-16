@@ -71,7 +71,7 @@ public class DrivetrainSubsystem implements PeriodicRunnable {
 
         rightMaster.setSensorPhase(true);
         leftMaster.setSensorPhase(true);
-        shiftDrivetrain(DoubleSolenoid.Value.kReverse);
+        shiftDrivetrain(DoubleSolenoid.Value.kForward);
 
     }
 

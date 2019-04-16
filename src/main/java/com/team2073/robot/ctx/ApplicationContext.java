@@ -378,14 +378,14 @@ public class ApplicationContext {
 
 	public DigitalOutput getCameraLED() {
 		if (cameraLED == null) {
-			cameraLED = new DigitalOutput(4);
+			cameraLED = new DigitalOutput(9);
 		}
 		return cameraLED;
 	}
 
 	public DigitalInput getIntakeIndex() {
 		if (intakeIndex == null) {
-			intakeIndex = new DigitalInput(9);
+			intakeIndex = new DigitalInput(5);
 		}
 		return intakeIndex;
 	}

@@ -14,6 +14,7 @@ public class ClimbModeCommandGroup extends CommandGroup{
 
 		addSequential(new IntakeOutForClimberCommand());
 		addSequential(new DriveShiftCommand(DoubleSolenoid.Value.kForward));
+		addSequential(new StiltCommand());
 		addSequential(new WaitCommand(.25));
 		addSequential(new ElevatorToPositionCommand(20d));
 		addSequential(new ElevatorStateCommand(ElevatorSubsystem.ElevatorState.CLIMBING));

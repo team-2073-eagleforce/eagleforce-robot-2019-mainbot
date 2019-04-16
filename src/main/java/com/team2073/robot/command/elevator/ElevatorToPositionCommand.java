@@ -11,15 +11,15 @@ public class ElevatorToPositionCommand extends AbstractLoggingCommand {
 	private double manualHeight;
 
 	public enum ElevatorHeight {
-		BOTTOM(.5),
+		BOTTOM(1.5d),
 		DRIVE(31.25),
 		LOW_BALL(16d),
 		LOW_HATCH(8d),
 		LOW_DETERMINE(null),
-		MID_BALL(45.5),
+		MID_BALL(44d),
 		MID_HATCH(37d),
 		MID_DETERMINE(null),
-		HIGH_BALL(71.5),
+		HIGH_BALL(73d),
 		HIGH_HATCH(65d),
 		HIGH_DETERMINE(null),
 		CARGO_SHIP_BALL(27.5);

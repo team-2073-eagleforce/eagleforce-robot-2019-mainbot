@@ -14,7 +14,9 @@ public class FinishClimbCommandGroup extends CommandGroup {
 
 	public FinishClimbCommandGroup() {
 		addSequential(new ElevatorStateCommand(ElevatorSubsystem.ElevatorState.NORMAL_OPERATION));
-		addSequential(new IntakePivotCommand(IntakePivotCommand.IntakeSetpoint.STORE));
+		addSequential(new IntakePivotCommand(IntakePivotCommand.IntakeSetpoint.VERTICAL));
+		addSequential(new ElevatorToPositionCommand(30d));
+		addSequential(new StiltUpCommand());
 
 	}
 

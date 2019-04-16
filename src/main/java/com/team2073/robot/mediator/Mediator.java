@@ -24,9 +24,9 @@ public class Mediator implements PeriodicRunnable {
 	private ElevatorSubsystem elevator = appCtx.getElevatorSubsystem();
 	private DrivetrainSubsystem drivetrain = appCtx.getDrivetrainSubsystem();
 
-	private static final double INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION = 120;
-	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 22;
-	private static final double ELEVATOR_CLEARS_INTAKE = 24.5;/**/
+	private static final double INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION = 130;
+	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 20;
+	private static final double ELEVATOR_CLEARS_INTAKE = 23.5;/**/
 	private static final double INTAKE_BELOW_CARRIAGE = 15;/**/
 	private static final double ELEVATOR_BOTTOM_SAFE_RANGE = 5;
 	private static final double INTAKE_PIVOT_SAFE_RANGE = 5;

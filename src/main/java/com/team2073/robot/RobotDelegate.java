@@ -53,6 +53,9 @@ public class RobotDelegate extends AbstractRobotDelegate {
     public void robotPeriodic() {
 	    System.out.println("ElevatorPosition: " + appCtx.getElevatorSubsystem().position()
 			    + "\t IntakePosition: " + appCtx.getIntakePivotSubsystem().position() );
+	    if(!appCtx.getElevatorBottomLimit().get()){
+		    System.out.println("\n\n\n ZERO \n\n\n");
+	    }
 //	    if(appCtx.getController().getRawButton(1)){
 //	        intakeRoller.set(IntakeRollerSubsystem.IntakeRollerState.INTAKE_SPEED);
 //        }else{
@@ -88,9 +91,6 @@ public class RobotDelegate extends AbstractRobotDelegate {
 
 //        System.out.println("ELEVATOR MAX: " + appCtx.getElevatorTopLimit().get() +
 //                "\t ELEVATOR MIN: " + appCtx.getElevatorBottomLimit().get());
-//        if(!appCtx.getElevatorBottomLimit().get()){
-//            System.out.println("\n\n\n ZERO \n\n\n");
-//        }
 
     }
 
