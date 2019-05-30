@@ -31,6 +31,7 @@ public class ApplicationContext {
 	private static ApplicationContext instance;
 
 	private Logger log = LoggerFactory.getLogger(getClass());
+
 	/*CAMERA */
 	private UsbCamera trackingCam;
 	private SerialPort trackingCamSerial;
@@ -147,7 +148,7 @@ public class ApplicationContext {
 	public Joystick getController() {
 		if (controller == null) {
 			controller = new Joystick(CONTROLLER_PORT);
-		}
+	}
 		return controller;
 	}
 

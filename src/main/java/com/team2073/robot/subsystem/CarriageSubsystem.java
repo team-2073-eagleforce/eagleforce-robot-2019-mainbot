@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team2073.common.ctx.RobotContext;
 import com.team2073.common.periodic.PeriodicRunnable;
+import com.team2073.common.util.Timer;
 import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
@@ -44,10 +45,12 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 
 	private void setPower(Double percent) {
 		shooterLeft.set(ControlMode.PercentOutput, percent);
-		shooterRight.set(ControlMode.PercentOutput, percent);
+		shooterRight.set(ControlMode.PercentOutput, -percent);
 	}
 
-
+	private CarriageState lastState;
+	private Timer timer = new Timer();
+	private boolean timerStart = false;
 	@Override
 	public void onPeriodic() {
 //		System.out.println("MODE: "+ state.toString());
@@ -72,8 +75,21 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 				set(CarriageState.CARGO_STALL);
 			}
 		}
-
-		setPower(state.getPercent());
+		if(state != CarriageState.HATCH_OUTTAKE){
+			setPower(state.getPercent());
+		}else{
+			if(lastState != state){
+				setPower(state.getPercent());
+				if(!timerStart){
+					timer.start();
+					timerStart = true;
+				}
+			}else if (timer.hasWaited(75)){
+				setPower(0d);
+				timerStart = false;
+			}
+		}
+		lastState = state;
 	}
 
 	@Override
@@ -88,7 +104,7 @@ public class CarriageSubsystem implements PeriodicRunnable, StateSubsystem<Carri
 
 
 	public enum CarriageState {
-		CARGO_INTAKE(-.333),
+		CARGO_INTAKE(-1d),
 		CARGO_OUTTAKE(.7),
 		CARGO_STALL(-.15),
 		HATCH_INTAKE(.9),

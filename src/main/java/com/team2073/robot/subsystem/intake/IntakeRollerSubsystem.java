@@ -6,6 +6,7 @@ import com.team2073.robot.conf.ApplicationProperties;
 import com.team2073.robot.conf.MotorDirectionalityProperties;
 import com.team2073.robot.ctx.ApplicationContext;
 import com.team2073.robot.mediator.StateSubsystem;
+import com.team2073.robot.subsystem.ElevatorSubsystem;
 import edu.wpi.first.wpilibj.SpeedController;
 
 import static com.team2073.robot.subsystem.intake.IntakeRollerSubsystem.IntakeRollerState;
@@ -31,7 +32,17 @@ public class IntakeRollerSubsystem implements PeriodicRunnable, StateSubsystem<I
 
     @Override
     public void onPeriodic() {
-        setPower(state.getPercent());
+        if(appCtx.getElevatorSubsystem().getCurrentState() != ElevatorSubsystem.ElevatorState.CLIMBING){
+
+            setPower(state.getPercent());
+        }else{
+            if(appCtx.getController().getRawButton(1)){
+                setPower(IntakeRollerState.INTAKE_SPEED.percent);
+            }else{
+                setPower(state.getPercent());
+            }
+        }
+
     }
 
     @Override

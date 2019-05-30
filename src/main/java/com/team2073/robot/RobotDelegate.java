@@ -13,6 +13,7 @@ import com.team2073.robot.svc.camera.CameraOverlayAdapter;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Watchdog;
 
 import java.sql.SQLOutput;
@@ -31,16 +32,15 @@ public class RobotDelegate extends AbstractRobotDelegate {
 	UsbCamera livestreamCam = CameraServer.getInstance().startAutomaticCapture();
 
 
-	public RobotDelegate(double period) {
-        super(period);
-    }
 
+	public RobotDelegate(double period) {
+		super(period);
+	}
 
     @Override
     public void robotInit() {
         loader.autoRegisterAllPropContainers(getClass().getPackage().getName());
         loader.loadProperties();
-        intakeRoller = appCtx.getIntakeRollerSubsystem();
         intakePivot = appCtx.getIntakePivotSubsystem();
         elevator = appCtx.getElevatorSubsystem();
 //        robotCtx.getDataRecorder().disable();
@@ -51,11 +51,13 @@ public class RobotDelegate extends AbstractRobotDelegate {
 
     @Override
     public void robotPeriodic() {
-	    System.out.println("ElevatorPosition: " + appCtx.getElevatorSubsystem().position()
-			    + "\t IntakePosition: " + appCtx.getIntakePivotSubsystem().position() );
-	    if(!appCtx.getElevatorBottomLimit().get()){
-		    System.out.println("\n\n\n ZERO \n\n\n");
-	    }
+		if(RobotState.isDisabled()) {
+			System.out.println("ElevatorPosition: " + appCtx.getElevatorSubsystem().position()
+					+ "\t IntakePosition: " + appCtx.getIntakePivotSubsystem().position());
+			if (!appCtx.getElevatorBottomLimit().get()) {
+				System.out.println("\n\n\n ZERO \n\n\n");
+			}
+		}
 //	    if(appCtx.getController().getRawButton(1)){
 //	        intakeRoller.set(IntakeRollerSubsystem.IntakeRollerState.INTAKE_SPEED);
 //        }else{

@@ -8,15 +8,18 @@ import com.team2073.robot.command.elevator.ElevatorToPositionCommand;
 import com.team2073.robot.subsystem.ElevatorSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.TimedCommand;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class FinishClimbCommandGroup extends CommandGroup {
 
 	public FinishClimbCommandGroup() {
 		addSequential(new ElevatorStateCommand(ElevatorSubsystem.ElevatorState.NORMAL_OPERATION));
-		addSequential(new IntakePivotCommand(IntakePivotCommand.IntakeSetpoint.VERTICAL));
+		addSequential(new IntakePivotCommand(IntakePivotCommand.IntakeSetpoint.STORE));
 		addSequential(new ElevatorToPositionCommand(30d));
-		addSequential(new StiltUpCommand());
+		addSequential(new TimedCommand(1));
+		addSequential(new ElevatorStateCommand(ElevatorSubsystem.ElevatorState.CLIMBING));
+//		addSequential(new StiltUpCommand());
 
 	}
 

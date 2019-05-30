@@ -11,8 +11,6 @@ import com.team2073.robot.subsystem.StiltSubsystem;
 import com.team2073.robot.subsystem.intake.IntakePivotSubsystem;
 import com.team2073.robot.subsystem.intake.IntakeRollerSubsystem;
 
-import java.io.File;
-
 public class Mediator implements PeriodicRunnable {
 	private final ApplicationContext appCtx = ApplicationContext.getInstance();
 	private final RobotContext robotCtx = RobotContext.getInstance();
@@ -26,7 +24,7 @@ public class Mediator implements PeriodicRunnable {
 
 	private static final double INTAKE_MINIMUM_OUTSIDE_CLEARING_POSITION = 130;
 	private static final double MINIMUM_ELEVATOR_HEIGHT_TO_PIVOT = 20;
-	private static final double ELEVATOR_CLEARS_INTAKE = 23.5;/**/
+	private static final double ELEVATOR_CLEARS_INTAKE = 24d;/**/
 	private static final double INTAKE_BELOW_CARRIAGE = 15;/**/
 	private static final double ELEVATOR_BOTTOM_SAFE_RANGE = 5;
 	private static final double INTAKE_PIVOT_SAFE_RANGE = 5;

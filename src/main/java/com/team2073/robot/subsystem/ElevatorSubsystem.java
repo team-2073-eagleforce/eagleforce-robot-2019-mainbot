@@ -98,9 +98,9 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		elevatorMaster.configPeakOutputForward(1, 10);
 		elevatorSlave1.configPeakOutputForward(1, 10);
 		elevatorSlave2.configPeakOutputForward(1, 10);
-		elevatorMaster.configPeakOutputReverse(-.6, 10);
-		elevatorSlave1.configPeakOutputReverse(-.6, 10);
-		elevatorSlave2.configPeakOutputReverse(-.6, 10);
+		elevatorMaster.configPeakOutputReverse(-.8, 10);
+		elevatorSlave1.configPeakOutputReverse(-.8, 10);
+		elevatorSlave2.configPeakOutputReverse(-.8, 10);
 
 		elevatorSlave1.follow(elevatorMaster);
 		elevatorSlave2.follow(elevatorMaster);
@@ -176,7 +176,11 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 //                time += .01;
 				break;
 			case CLIMBING:
-				climbingOperation(climbPercent);
+				if(Math.abs(appCtx.getController().getRawAxis(1)) > .05){
+					climbingOperation(-appCtx.getController().getRawAxis(1));
+				}else{
+					climbingOperation(climbPercent);
+				}
 				break;
 			case HOLD_CLIMB:
 				if (lastState != currentState) {
@@ -205,6 +209,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		elevatorMaster.set(ControlMode.PercentOutput, .05);
 	}
 
+
 	private void normalOperation() {
 		if (!isPositionSafe(setpoint)) {
 			setpoint = findClosestBound(MIN_HEIGHT, setpoint, MAX_HEIGHT);
@@ -220,7 +225,6 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		}
 
 	}
-
 	public void manuallySetMotors(double value){
 		elevatorMaster.set(ControlMode.PercentOutput, value);
 	}
@@ -237,7 +241,7 @@ public class ElevatorSubsystem implements PeriodicRunnable, PositionalSubsystem 
 		} else {
 			motorOutput = percent;
 		}
-		if ((isAtBottom() || position() < -4d) && motorOutput < 0) {
+		if ((isAtBottom() || position() < -5d) && motorOutput < 0) {
 			motorOutput = 0;
 		}
 

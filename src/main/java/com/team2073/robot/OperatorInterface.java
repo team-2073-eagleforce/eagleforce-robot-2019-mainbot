@@ -57,7 +57,10 @@ public class OperatorInterface {
 	private JoystickButton wheelTriangle = new JoystickButton(driveWheel, 4);
 	private ControllerTriggerTrigger leftTrigger = new ControllerTriggerTrigger(controller, 2);
 	private ControllerTriggerTrigger rightTrigger = new ControllerTriggerTrigger(controller, 3);
-	private MultiTrigger climbMode = new MultiTrigger(leftPaddle, rightPaddle);
+
+	private ControllerTriggerTrigger rightWheelButton = new ControllerTriggerTrigger(driveWheel, 3);
+	private ControllerTriggerTrigger leftWheelButton = new ControllerTriggerTrigger(driveWheel, 2);
+	private MultiTrigger climbMode = new MultiTrigger(leftWheelButton/*leftPaddle*/, /*rightPaddle*/ rightWheelButton);
 	private ElevatorStateTrigger isClimbMode = new ElevatorStateTrigger(ElevatorState.CLIMBING);
 	private MultiTrigger downDpadAndClimb = new MultiTrigger(isClimbMode, dPadDown);
 	private MultiTrigger upDpadAndClimb = new MultiTrigger(isClimbMode, dPadUp);

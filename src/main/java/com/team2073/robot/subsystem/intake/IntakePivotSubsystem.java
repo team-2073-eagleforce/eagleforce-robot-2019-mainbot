@@ -25,8 +25,8 @@ import java.sql.SQLOutput;
 public class IntakePivotSubsystem implements PeriodicRunnable, PositionalSubsystem {
 
 	//    MAINBOT
-	private static final double POT_MIN_VALUE = .4172;
-	private static final double POT_MAX_VALUE = .2983;
+	private static final double POT_MIN_VALUE = .4573;
+	private static final double POT_MAX_VALUE = .3390;
 	private static final double MIN_POSITION = 0;
 	private static final double MAX_POSITION = 224.8;
 

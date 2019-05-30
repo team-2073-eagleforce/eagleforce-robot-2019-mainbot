@@ -2,6 +2,7 @@ package com.team2073.robot.command;
 
 import com.team2073.common.command.AbstractLoggingCommand;
 import com.team2073.robot.ctx.ApplicationContext;
+import com.team2073.robot.subsystem.ElevatorSubsystem;
 
 public class IntakePivotCommand extends AbstractLoggingCommand {
     private ApplicationContext appCtx = ApplicationContext.getInstance();
@@ -10,7 +11,7 @@ public class IntakePivotCommand extends AbstractLoggingCommand {
 
     public enum IntakeSetpoint {
         STORE(2.5d),
-        INTAKE(160d),
+        INTAKE(169d),
         VERTICAL(140d);
 
         private Double position;
@@ -29,7 +30,12 @@ public class IntakePivotCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        appCtx.getMediator().intakePivotGoal(setpoint.getValue());
+
+        if(appCtx.getElevatorSubsystem().getCurrentState() != ElevatorSubsystem.ElevatorState.CLIMBING && setpoint == IntakeSetpoint.STORE){
+            appCtx.getMediator().intakePivotGoal(setpoint.getValue());
+        }else{
+            appCtx.getIntakePivotSubsystem().set(IntakeSetpoint.VERTICAL.getValue());
+        }
     }
 
     @Override
